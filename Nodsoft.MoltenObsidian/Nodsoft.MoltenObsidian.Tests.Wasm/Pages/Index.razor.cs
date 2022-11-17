@@ -5,11 +5,19 @@ namespace Nodsoft.MoltenObsidian.Tests.Wasm.Pages;
 
 public partial class Index : ComponentBase
 {
-	private static readonly MarkupString _convertedMarkdown = new ObsidianText(MarkdownText).ToHtml(new(new ObsidianPipelineBuilder(true).Build()));
+	private static readonly ObsidianText _obsidianText = new(MarkdownText);
+	private static readonly MarkupString _convertedMarkdown = _obsidianText.ToHtml(new(new ObsidianPipelineBuilder(true).Build()));
+	
 
 	private const string MarkdownText = 
 		/*lang=markdown*/"""
-	    # Hello, world!
+	    ---
+	    title: Hello World
+	    publish: true
+	    aliases: [test, demo, example]
+	    ---
+	    
+	    # Hello, world! 
 
 	    This is a sample Markdown document.  
 	    And a paragraph with **bold** and *italic* text.

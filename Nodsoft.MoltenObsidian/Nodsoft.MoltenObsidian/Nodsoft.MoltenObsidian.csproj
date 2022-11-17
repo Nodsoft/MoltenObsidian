@@ -17,6 +17,7 @@
 		<PackageReference Include="Markdig" Version="0.30.4" />
 		<PackageReference Include="Markdig.SyntaxHighlighting" Version="1.1.7" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.11" />
+		<PackageReference Include="YamlDotNet" Version="12.0.2" />
 	</ItemGroup>
 
 </Project>

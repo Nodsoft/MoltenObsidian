@@ -1,4 +1,9 @@
 ﻿using Markdig;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.NodeDeserializers;
 
 namespace Nodsoft.MoltenObsidian.Converter;
 
@@ -27,9 +32,7 @@ public sealed class ObsidianHtmlConverter
 	/// Converts Obsidian-flavoured Markdown to HTML.
 	/// </summary>
 	/// <param name="markdown">The Markdown to convert.</param>
-	/// <returns>The HTML.</returns>
-	public string Convert(string markdown)
-	{
-		return Markdown.ToHtml(markdown, _pipeline);
-	}
+	/// <param name="parseYamlFrontMatter">Whether to parse YAML front matter and exclude it from the Markdown HTML output.</param>
+	/// <returns>The converted Markdown, in HTML format.</returns>
+	public string Convert(string markdown) => Markdown.ToHtml(markdown, _pipeline);
 }
