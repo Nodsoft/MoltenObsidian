@@ -19,7 +19,7 @@ public readonly record struct ObsidianText
 		.Build();
 	
 	/// <summary>
-	/// The text of the ObsidianText.
+	/// The Obsidian-flavoured Markdown text.
 	/// </summary>
 	public string Text { get; }
 	
@@ -30,7 +30,7 @@ public readonly record struct ObsidianText
 	public Dictionary<string, object> FrontMatter { get; }
 
 	/// <summary>
-	/// The length of the ObsidianText.
+	/// The length of <see cref="Text"/>.
 	/// </summary>
 	public int Length => Text.Length;
 

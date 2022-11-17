@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian", "N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tests.Wasm", "Nodsoft.MoltenObsidian.Tests.Wasm\Nodsoft.MoltenObsidian.Tests.Wasm.csproj", "{426F7149-8C9E-48DE-A3CE-4A06D0203D78}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tests.Server", "Nodsoft.MoltenObsidian.Tests.Server\Nodsoft.MoltenObsidian.Tests.Server.csproj", "{EC301077-31DB-4ECF-B8C4-11F482ED24BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		{426F7149-8C9E-48DE-A3CE-4A06D0203D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{426F7149-8C9E-48DE-A3CE-4A06D0203D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{426F7149-8C9E-48DE-A3CE-4A06D0203D78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
