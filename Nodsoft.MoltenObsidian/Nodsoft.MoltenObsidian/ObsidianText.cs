@@ -9,6 +9,7 @@ namespace Nodsoft.MoltenObsidian;
 /// <summary>
 /// Represents a string of Obsian-flavoured Markdown text.
 /// </summary>
+[PublicAPI]
 public readonly record struct ObsidianText
 {
 	/// <summary>
