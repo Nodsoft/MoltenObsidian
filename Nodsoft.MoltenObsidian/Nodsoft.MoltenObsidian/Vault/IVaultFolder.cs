@@ -1,42 +1,43 @@
 ﻿namespace Nodsoft.MoltenObsidian.Vault;
 
 /// <summary>
-/// Represents a folder, within an Obsidian vault.
+/// Specifies a folder, within an Obsidian vault.
 /// </summary>
 /// <remarks>
 /// This interface is storage-agnostic, and should be able to be implemented using any storage mechanism.
 /// </remarks>
-/// <seealso cref="IReadOnlyVault" />
+/// <seealso cref="IVault" />
 [PublicAPI]
 public interface IVaultFolder
 {
 	/// <summary>
-	/// Gets the name of the folder.
+	/// The name of this folder.
 	/// </summary>
 	string Name { get; }
 
 	/// <summary>
-	/// Gets the path of the folder.
+	/// The path of this folder, relative to the vault root.
 	/// </summary>
 	string Path { get; }
 
 	/// <summary>
-	/// Gets the parent folder of the folder.
+	/// The parent folder of this folder.
+	/// This will be <see langword="null" /> if this folder is the root folder.
 	/// </summary>
 	IVaultFolder? Parent { get; }
 
 	/// <summary>
-	/// Gets the subfolders of the folder.
+	/// The immediate child folders of this folder.
 	/// </summary>
 	IReadOnlyList<IVaultFolder> Subfolders { get; }
 
 	/// <summary>
-	/// Gets the files in the folder.
+	/// The files inside this folder, excluding subfolders.
 	/// </summary>
 	IReadOnlyList<IVaultFile> Files { get; }
 
 	/// <summary>
-	/// Gets the vault that the folder belongs to.
+	/// The vault that the folder belongs to.
 	/// </summary>
-	IReadOnlyVault Vault { get; }
+	IVault Vault { get; }
 }

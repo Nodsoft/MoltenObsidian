@@ -1,13 +1,13 @@
 ﻿namespace Nodsoft.MoltenObsidian.Vault;
 
 /// <summary>
-/// Represents a Markdown file, within an obsidian vault.
+/// Specifies a Markdown file, within an obsidian vault.
 /// Once read, this file yields a <see cref="ObsidianText"/> instance.
 /// </summary>
 /// <remarks>
 ///	This interface is storage-agnostic, and should be able to be implemented using any storage mechanism.
 /// </remarks>
-/// <seealso cref="IReadOnlyVault"/>
+/// <seealso cref="IVault"/>
 /// <seealso cref="IVaultFile"/>
 [PublicAPI]
 public interface IVaultMarkdownFile : IVaultFile

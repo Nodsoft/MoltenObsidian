@@ -1,12 +1,12 @@
 ﻿namespace Nodsoft.MoltenObsidian.Vault;
 
 /// <summary>
-/// Represents a generic file, within an obsidian vault.
+/// Specifies a generic file representation, within an obsidian vault.
 /// </summary>
 /// <remarks>
 ///	This interface is storage-agnostic, and should be able to be implemented using any storage mechanism.
 /// </remarks>
-/// <seealso cref="IReadOnlyVault"/>
+/// <seealso cref="IVault"/>
 [PublicAPI]
 public interface IVaultFile
 {
@@ -19,6 +19,14 @@ public interface IVaultFile
 	/// The full path of the file, relative to the vault root.
 	/// </summary>
 	string Path { get; }
+	
+	/// <summary>
+	/// The MIME type of the file's contents.
+	/// </summary>
+	/// <remarks>
+	/// This is used to determine how to handle the file when it is opened.
+	/// </remarks>
+	string ContentType { get; }
 
 	/// <summary>
 	/// The folder that contains this file.

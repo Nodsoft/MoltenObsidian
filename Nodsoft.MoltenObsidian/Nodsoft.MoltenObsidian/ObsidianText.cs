@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Nodsoft.MoltenObsidian.Converter;
+﻿using Nodsoft.MoltenObsidian.Converter;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -71,11 +70,11 @@ public readonly record struct ObsidianText
 	/// Returns the text of the ObsidianText.
 	/// </summary>
 	/// <returns>The text of the ObsidianText.</returns>
-	public MarkupString ToHtml() => new(ObsidianHtmlConverter.Default.Convert(Text));
+	public string ToHtml() => ObsidianHtmlConverter.Default.Convert(Text);
 	
 	/// <inheritdoc cref="ToHtml()"/>
 	/// <param name="converter">The converter to use.</param>
-	public MarkupString ToHtml(ObsidianHtmlConverter converter) => new(converter.Convert(Text));
+	public string ToHtml(ObsidianHtmlConverter converter) => converter.Convert(Text);
 
 
 	/// <summary>

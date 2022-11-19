@@ -7,7 +7,7 @@
 ///	This interface is storage-agnostic, and should be able to be implemented using any storage mechanism.
 /// </remarks>
 [PublicAPI]
-public interface IReadOnlyVault
+public interface IVault
 {
 	/// <summary>
 	/// The name of the vault.
@@ -32,4 +32,28 @@ public interface IReadOnlyVault
 	/// <param name="path">The path of the file to retrieve.</param>
 	/// <returns>The file with the specified path.</returns>
 	IVaultFile? GetFile(string path);
+	
+	/// <summary>
+	/// A dictionary of all files in the vault, keyed by their relative paths.
+	/// </summary>
+	/// <remarks>
+	/// The paths are relative to the vault root, and do not include the vault root's name.
+	/// </remarks>
+	IReadOnlyDictionary<string, IVaultFile> Files { get; }
+	
+	/// <summary>
+	/// A dictionary of all folders in the vault, keyed by their relative paths.
+	/// </summary>
+	/// <remarks>
+	/// The paths are relative to the vault root, and do not include the vault root's name.
+	/// </remarks>
+	IReadOnlyDictionary<string, IVaultFolder> Folders { get; }
+	
+	/// <summary>
+	/// A dictionary of all markdown files in the vault, keyed by their relative paths.
+	/// </summary>
+	/// <remarks>
+	/// The paths are relative to the vault root, and do not include the vault root's name.
+	/// </remarks>
+	IReadOnlyDictionary<string, IVaultMarkdownFile> MarkdownFiles { get; }
 }
