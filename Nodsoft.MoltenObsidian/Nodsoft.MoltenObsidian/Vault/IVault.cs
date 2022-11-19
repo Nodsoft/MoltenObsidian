@@ -24,7 +24,7 @@ public interface IVault
 	/// </summary>
 	/// <param name="path">The path of the folder to retrieve.</param>
 	/// <returns>The folder with the specified path.</returns>
-	IVaultFolder GetFolder(string path);
+	IVaultFolder? GetFolder(string path);
 
 	/// <summary>
 	/// The file with the specified path, or null if no such file exists.

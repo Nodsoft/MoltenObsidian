@@ -6,7 +6,7 @@ namespace Nodsoft.MoltenObsidian.Tests.Wasm.Pages;
 public partial class Index : ComponentBase
 {
 	private static readonly ObsidianText _obsidianText = new(MarkdownText);
-	private static readonly MarkupString _convertedMarkdown = _obsidianText.ToHtml(new(new ObsidianPipelineBuilder(true).Build()));
+	private static readonly MarkupString _convertedMarkdown = new(_obsidianText.ToHtml(new(new ObsidianPipelineBuilder(true).Build())));
 	
 
 	private const string MarkdownText = 

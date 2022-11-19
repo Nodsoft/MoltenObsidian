@@ -1,15 +1,28 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.FileProviders;
 using Nodsoft.MoltenObsidian.Converter;
+using Nodsoft.MoltenObsidian.Vault;
+using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
 namespace Nodsoft.MoltenObsidian.Tests.Server.Pages;
 
 public partial class Index : ComponentBase
 {
-	private static readonly ObsidianText _obsidianText = new(MarkdownText);
-	private static readonly MarkupString _convertedMarkdown = _obsidianText.ToHtml(new(new ObsidianPipelineBuilder(true).Build()));
-	
+	[Inject] private IWebHostEnvironment Environment { get; set; } = null!;
 
-	private const string MarkdownText = 
+	private static readonly ObsidianText _obsidianText = new(MarkdownText);
+	private static readonly MarkupString _convertedMarkdown = new(_obsidianText.ToHtml(new(new ObsidianPipelineBuilder(true).Build())));
+
+	private IVault _vault;
+
+	protected override Task OnInitializedAsync()
+	{
+		_vault = FileSystemVault.FromDirectory(new(Path.Join(Environment.ContentRootPath, "Vault", "SocialGuard")));
+
+		return base.OnInitializedAsync();
+	}
+
+	private const string MarkdownText =
 		/*lang=Markdown*/"""
 	    ---
 	    title: Hello World

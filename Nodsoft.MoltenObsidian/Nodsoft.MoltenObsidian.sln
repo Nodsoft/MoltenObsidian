@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian", "Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj", "{2E243320-E7EC-4CE7-B488-2358869E7EE7}"
 EndProject
@@ -7,6 +7,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tests.Server", "Nodsoft.MoltenObsidian.Tests.Server\Nodsoft.MoltenObsidian.Tests.Server.csproj", "{EC301077-31DB-4ECF-B8C4-11F482ED24BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.FileSystem", "Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj", "{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{65974834-8043-49B1-9555-B8A63FEF6B29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,7 +28,13 @@ Global
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{EC301077-31DB-4ECF-B8C4-11F482ED24BD} = {65974834-8043-49B1-9555-B8A63FEF6B29}
+		{426F7149-8C9E-48DE-A3CE-4A06D0203D78} = {65974834-8043-49B1-9555-B8A63FEF6B29}
 	EndGlobalSection
 EndGlobal

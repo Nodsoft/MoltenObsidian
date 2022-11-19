@@ -8,7 +8,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
 	  <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Vault" />
 	</ItemGroup>
 
 </Project>

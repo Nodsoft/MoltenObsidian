@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 
 Nodsoft.MoltenObsidian/.idea/
+
+Nodsoft.MoltenObsidian/Nodsoft.MoltenObsidian.Tests.Server/Vault/
