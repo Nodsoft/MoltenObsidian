@@ -15,12 +15,7 @@ public sealed class FileSystemVault : IVault
 	public string Name { get; private set; } = null!;
 	public IVaultFolder Root { get; private set; } = null!;
 	
-	public IVaultFolder? GetFolder(string? path) 
-		=> path is null or "" 
-			? Root 
-			: Folders.TryGetValue(path, out IVaultFolder? folder) 
-				? folder 
-				: null;
+	public IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.TryGetValue(path, out IVaultFolder? folder) ? folder : null;
 
 	public IVaultFile? GetFile(string path) => Files.TryGetValue(path, out IVaultFile? file) ? file : null;
 	

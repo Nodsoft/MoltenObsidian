@@ -1,15 +1,20 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Nodsoft.MoltenObsidian.Tests.Server.Data;
+using Nodsoft.MoltenObsidian.Blazor;
+using Nodsoft.MoltenObsidian.Vault;
+using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
-var app = builder.Build();
+builder.Services.AddSingleton<IVault>(services => FileSystemVault.FromDirectory(
+	new(Path.Join(services.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "Vault", "SocialGuard"))
+));
+
+builder.Services.AddMoltenObsidianBlazorIntegration();
+
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

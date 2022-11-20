@@ -8,18 +8,8 @@
 /// </remarks>
 /// <seealso cref="IVault"/>
 [PublicAPI]
-public interface IVaultFile
+public interface IVaultFile : IVaultEntity
 {
-	/// <summary>
-	/// The name of the file.
-	/// </summary>
-	string Name { get; }
-
-	/// <summary>
-	/// The full path of the file, relative to the vault root.
-	/// </summary>
-	string Path { get; }
-	
 	/// <summary>
 	/// The MIME type of the file's contents.
 	/// </summary>
@@ -27,11 +17,6 @@ public interface IVaultFile
 	/// This is used to determine how to handle the file when it is opened.
 	/// </remarks>
 	string ContentType { get; }
-
-	/// <summary>
-	/// The folder that contains this file.
-	/// </summary>
-	IVaultFolder Parent { get; }
 	
 	/// <summary>
 	/// Reads the contents of the file, as a buffer.

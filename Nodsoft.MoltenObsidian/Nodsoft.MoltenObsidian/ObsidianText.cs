@@ -95,7 +95,7 @@ public readonly record struct ObsidianText
 		int firstLine = Array.FindIndex(lines, _LineDelimiterPredicate);
 		int secondLine = Array.FindIndex(lines, firstLine + 1, _LineDelimiterPredicate);
 
-		if (firstLine is 0 && secondLine is 0)
+		if (firstLine is not 0 || secondLine is -1)
 		{
 			return (null, obsidianMarkdown);
 		}

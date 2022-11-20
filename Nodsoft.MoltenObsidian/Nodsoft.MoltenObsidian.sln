@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{65974834-8043-49B1-9555-B8A63FEF6B29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Blazor", "Nodsoft.MoltenObsidian.Blazor\Nodsoft.MoltenObsidian.Blazor.csproj", "{C9211C79-D1A5-46CE-952D-AA27903D6CCD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD} = {65974834-8043-49B1-9555-B8A63FEF6B29}

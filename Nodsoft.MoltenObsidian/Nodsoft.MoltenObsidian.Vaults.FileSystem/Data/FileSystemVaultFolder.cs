@@ -7,18 +7,19 @@ namespace Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
 /// </summary>
 internal sealed class FileSystemVaultFolder : FileSystemVaultEntityBase, IVaultFolder
 {
+	internal DirectoryInfo PhysicalDirectoryInfo { get; }
+	
 	private readonly FileSystemVaultFolder[] _subfolders;
 	private readonly FileSystemVaultFile[] _files;
 
-	public FileSystemVaultFolder(DirectoryInfo entity, IVaultFolder? parent, IVault vault) : base(entity, parent)
+	public FileSystemVaultFolder(DirectoryInfo entity, IVaultFolder? parent, IVault vault) : base(entity, parent, vault)
 	{
-		Vault = vault;
-
+		PhysicalDirectoryInfo = entity;
 		_subfolders = entity.GetDirectories().Select(d => new FileSystemVaultFolder(d, this, vault)).ToArray();
-		_files = entity.GetFiles().Select(f => FileSystemVaultFile.Create(f, this)).ToArray();
+		_files = entity.GetFiles().Select(f => FileSystemVaultFile.Create(f, this, vault)).ToArray();
 	}
 
-	public IVault Vault { get; }
+
 
 	public IReadOnlyList<IVaultFolder> Subfolders => _subfolders;
 

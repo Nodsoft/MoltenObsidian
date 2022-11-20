@@ -27,6 +27,7 @@ public static class VaultExtensions
 		// Traverse the subfolders.
 		Dictionary<string, IVaultFile> files = new();
 		_FolderTraversal(folder, ref files);
+		
 		return files;
 		
 		
@@ -61,6 +62,7 @@ public static class VaultExtensions
 		// Traverse the subfolders.
 		Dictionary<string, IVaultFolder> folders = new();
 		_FolderTraversal(folder, ref folders);
+		
 		return folders;
 		
 		

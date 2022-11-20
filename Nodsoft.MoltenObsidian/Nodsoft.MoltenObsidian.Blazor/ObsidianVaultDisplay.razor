@@ -1,0 +1,18 @@
+﻿@using Nodsoft.MoltenObsidian.Vault
+
+@if (Path is null or "" or "/")
+{
+	@Index((Vault, _currentPath))
+}
+else if (_foundEntity is IVaultFolder folder)
+{
+	@FoundFolder((folder, _currentPath))
+}
+else if (_foundEntity is IVaultMarkdownFile file)
+{
+	@FoundFile((file, _currentPath))
+}
+else if (_foundEntity is null)
+{
+	@NotFound(Path)
+}
