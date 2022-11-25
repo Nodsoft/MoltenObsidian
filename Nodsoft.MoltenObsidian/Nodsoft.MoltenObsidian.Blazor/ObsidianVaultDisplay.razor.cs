@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Microsoft.AspNetCore.Components;
 using Nodsoft.MoltenObsidian.Blazor.Services;
 using Nodsoft.MoltenObsidian.Vault;
@@ -16,7 +15,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	[Inject] public VaultRouter Router { get; set; } = null!;
 	[Inject] public NavigationManager Navigation { get; set; } = null!;
 
-	[Parameter, EditorRequired] public string? Path { get; set; } = "/";
+	[Parameter, EditorRequired] public string? CurrentPath { get; set; } = "/";
 
 	[Parameter] public RenderFragment<(IVault, string)> Index { get; set; } = DefaultTemplates.IndexDefaultTemplate;
 	[Parameter] public RenderFragment<string> NotFound { get; set; } = DefaultTemplates.NotFoundDefaultTemplate;
@@ -32,11 +31,11 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	{
 		await base.OnParametersSetAsync();
 		
-		_currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
+		_currentPath = Uri.UnescapeDataString(Navigation.ToBaseRelativePath(Navigation.Uri));
 
-		if (Path is not null)
+		if (CurrentPath is not null)
 		{
-			_foundEntity = Router.RouteTo(Path);
+			_foundEntity = Router.RouteTo(CurrentPath);
 		}
 	}
 }

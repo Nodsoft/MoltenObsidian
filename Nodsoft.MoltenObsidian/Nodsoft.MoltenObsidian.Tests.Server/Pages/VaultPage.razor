@@ -1,5 +1,4 @@
-﻿@page "/vault"
-@page "/vault/{*VaultPath}"
+﻿@page "/vault/{*VaultPath}"
 @inject IVault Vault
 
 @using Nodsoft.MoltenObsidian.Vault
@@ -9,10 +8,8 @@
 
 <hr />
 
-<ObsidianVaultDisplay Path="@VaultPath">
-	@* <NotFound> *@
-	@* 	<h3>No page was found in the vault.</h3> *@
-	@* </NotFound> *@
+<ObsidianVaultDisplay CurrentPath="@VaultPath">
+
 </ObsidianVaultDisplay>
 
 

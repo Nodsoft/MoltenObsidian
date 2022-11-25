@@ -1,6 +1,6 @@
 ﻿@using Nodsoft.MoltenObsidian.Vault
 
-@if (Path is null or "" or "/")
+@if (CurrentPath is null or "" or "/")
 {
 	@Index((Vault, _currentPath))
 }
@@ -14,5 +14,5 @@ else if (_foundEntity is IVaultMarkdownFile file)
 }
 else if (_foundEntity is null)
 {
-	@NotFound(Path)
+	@NotFound(CurrentPath)
 }

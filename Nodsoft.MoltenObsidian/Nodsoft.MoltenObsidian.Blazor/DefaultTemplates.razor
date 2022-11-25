@@ -14,16 +14,20 @@
 		</article>
 	};
 
-	internal static RenderFragment FoundFolderDefaultTemplate((IVaultFolder Folder, string VaultBaseUri) value) => __builder =>
+	internal static RenderFragment FoundFolderDefaultTemplate((IVaultFolder Folder, string CurrentPath) value) => __builder =>
 	{
+		// Calculate the difference between the current folder and the base folder.
+		// The path of the current folder should match the end of the VaultBaseUri.
+		string basePath = value.CurrentPath[..^(value.Folder.Path.Length + 1)];
+
 		<nav name="@value.Folder.Name">
 			<h1>@value.Folder.Name</h1>
 			
 			<ul>
-				@foreach (IVaultFolder file in value.Folder.Subfolders)
+				@foreach (IVaultFolder folder in value.Folder.Subfolders)
 				{
 					<li>
-						<a href="@value.VaultBaseUri/@file.Path">@file.Name</a>
+						<a href="@basePath/@folder.Path/">@folder.Name</a>
 					</li>
 				}
 			</ul>
@@ -32,7 +36,7 @@
 				@foreach (IVaultFile file in value.Folder.Files)
 				{
 					<li>
-						<a href="@value.VaultBaseUri/@file.Path">@file.Name</a>
+						<a href="@basePath/@file.Path[..^3]">@file.Name[..^3]</a>
 					</li>
 				}
 			</ul>
@@ -84,7 +88,7 @@
 				@if(item.Value is IVaultFolder subfolder)
 				{
 					<li>
-						<a href="@vaultBaseUri/@subfolder.Path">@subfolder.Name</a>
+						<a href="@vaultBaseUri/@subfolder.Path/">@subfolder.Name</a>
 						@FolderNavigationTree(subfolder, vaultBaseUri)
 					</li>
 				}
@@ -92,7 +96,7 @@
 				{
 					// The file's path should be filtered to remove the file's extension (".md").
 					<li>
-						<a href="@vaultBaseUri/@(file.Path[0..^3])">@file.Name</a>
+						<a href="@vaultBaseUri/@(file.Path[..^3])">@file.Name[..^3]</a>
 					</li>
 				}
 			}
