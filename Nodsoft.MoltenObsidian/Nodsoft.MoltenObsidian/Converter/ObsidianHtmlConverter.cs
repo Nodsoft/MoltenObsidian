@@ -34,5 +34,6 @@ public sealed class ObsidianHtmlConverter
 	/// <param name="markdown">The Markdown to convert.</param>
 	/// <param name="parseYamlFrontMatter">Whether to parse YAML front matter and exclude it from the Markdown HTML output.</param>
 	/// <returns>The converted Markdown, in HTML format.</returns>
-	public string Convert(string markdown) => Markdown.ToHtml(markdown, _pipeline);
+	// ReSharper disable once RedundantNameQualifier
+	public string Convert(string markdown) => Markdig.Markdown.ToHtml(markdown, _pipeline);
 }

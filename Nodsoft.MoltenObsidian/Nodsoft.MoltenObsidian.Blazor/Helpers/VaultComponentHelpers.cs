@@ -60,13 +60,8 @@ public static class VaultComponentHelpers
 			? _slugRegex.Replace(routeAttribute.Template, string.Empty) 
 			: routeAttribute.Template;
 		
-		// Third. Does the base path start and end with slashes?
-		// If not, add them.
-		if (!basePath.StartsWith('/'))
-		{
-			basePath = $"/{basePath}";
-		}
-		
+		// Third. Does the base path end with slashes?
+		// If not, add it.
 		if (!basePath.EndsWith('/'))
 		{
 			basePath = $"{basePath}/";

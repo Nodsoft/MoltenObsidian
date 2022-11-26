@@ -9,7 +9,7 @@
 	{
 		MarkupString content = new(value.File.ReadDocument().ToHtml());
 		
-		<article name="@value.VaultBaseUri/@value.File.Name">
+		<article name="@value.File.Name">
 			@content
 		</article>
 	};
@@ -27,7 +27,7 @@
 				@foreach (IVaultFolder folder in value.Folder.Subfolders)
 				{
 					<li>
-						<a href="@basePath/@folder.Path/">@folder.Name</a>
+						<a href="@folder.Path/">@folder.Name</a>
 					</li>
 				}
 			</ul>
@@ -36,7 +36,7 @@
 				@foreach (IVaultFile file in value.Folder.Files)
 				{
 					<li>
-						<a href="@basePath/@file.Path[..^3]">@file.Name[..^3]</a>
+						<a href="@file.Path[..^3]">@file.Name[..^3]</a>
 					</li>
 				}
 			</ul>
@@ -88,7 +88,7 @@
 				@if(item.Value is IVaultFolder subfolder)
 				{
 					<li>
-						<a href="@vaultBaseUri/@subfolder.Path/">@subfolder.Name</a>
+						<a href="@subfolder.Path/">@subfolder.Name</a>
 						@FolderNavigationTree(subfolder, vaultBaseUri)
 					</li>
 				}
@@ -96,7 +96,7 @@
 				{
 					// The file's path should be filtered to remove the file's extension (".md").
 					<li>
-						<a href="@vaultBaseUri/@(file.Path[..^3])">@file.Name[..^3]</a>
+						<a href="@(file.Path[..^3])">@file.Name[..^3]</a>
 					</li>
 				}
 			}

@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Nodsoft.MoltenObsidian.Blazor.Services;
 using Nodsoft.MoltenObsidian.Vault;
 
@@ -14,8 +15,10 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	[Inject] public IVault Vault { get; set; } = null!;
 	[Inject] public VaultRouter Router { get; set; } = null!;
 	[Inject] public NavigationManager Navigation { get; set; } = null!;
+	[Inject] public IJSRuntime Js { get; set; } = null!;
 
 	[Parameter, EditorRequired] public string? CurrentPath { get; set; } = "/";
+	[Parameter, EditorRequired] public string? BasePath { get; set; } = "/";
 
 	[Parameter] public RenderFragment<(IVault, string)> Index { get; set; } = DefaultTemplates.IndexDefaultTemplate;
 	[Parameter] public RenderFragment<string> NotFound { get; set; } = DefaultTemplates.NotFoundDefaultTemplate;
@@ -37,5 +40,10 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 		{
 			_foundEntity = Router.RouteTo(CurrentPath);
 		}
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await Js.InvokeVoidAsync("eval", /*lang=javascript*/$"document.querySelector('base').href = '{BasePath}'");
 	}
 }

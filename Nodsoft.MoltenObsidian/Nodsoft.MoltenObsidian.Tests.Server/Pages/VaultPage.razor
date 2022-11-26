@@ -2,13 +2,14 @@
 @inject IVault Vault
 
 @using Nodsoft.MoltenObsidian.Vault
+@using Nodsoft.MoltenObsidian.Blazor.Helpers
 
 <h3>VaultPage</h3>
 @VaultPath
 
 <hr />
 
-<ObsidianVaultDisplay CurrentPath="@VaultPath">
+<ObsidianVaultDisplay BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath">
 
 </ObsidianVaultDisplay>
 
