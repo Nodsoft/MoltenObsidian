@@ -3,9 +3,9 @@ using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
 
-internal sealed class FileSystemVaultMarkdownFile : FileSystemVaultFile, IVaultMarkdownFile
+internal sealed class FileSystemVaultNote : FileSystemVaultFile, IVaultNote
 {
-	public FileSystemVaultMarkdownFile(FileInfo file, IVaultFolder parent, IVault vault) : base(file, parent, vault) { }
+	public FileSystemVaultNote(FileInfo file, IVaultFolder parent, IVault vault) : base(file, parent, vault) { }
 	
 	public override string ContentType => "text/markdown";
 	

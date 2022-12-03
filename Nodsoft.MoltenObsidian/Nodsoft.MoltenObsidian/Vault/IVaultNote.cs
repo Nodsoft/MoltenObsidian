@@ -10,7 +10,7 @@
 /// <seealso cref="IVault"/>
 /// <seealso cref="IVaultFile"/>
 [PublicAPI]
-public interface IVaultMarkdownFile : IVaultFile
+public interface IVaultNote : IVaultFile
 {
 	/// <summary>
 	/// Reads the file as an ObsidianText instance.

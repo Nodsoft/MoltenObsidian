@@ -27,6 +27,6 @@ internal class FileSystemVaultFile : FileSystemVaultEntityBase, IVaultFile
 	
 	public static FileSystemVaultFile Create(FileInfo file, IVaultFolder parent, IVault vault) 
 		=> file.Extension is ".md" 
-			? new FileSystemVaultMarkdownFile(file, parent, vault) 
+			? new FileSystemVaultNote(file, parent, vault) 
 			: new FileSystemVaultFile(file, parent, vault);
 }

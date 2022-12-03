@@ -82,8 +82,8 @@ public static class VaultExtensions
 	/// </summary>
 	/// <param name="file">The file to resolve the path from.</param>
 	/// <param name="relativePath">The relative path to resolve.</param>
-	/// <returns>The resolved file (that could be a <see cref="IVaultMarkdownFile" />), or <see langword="null"/> if the file could not be found.</returns>
-	public static IVaultFile? ResolveRelativeLink(this IVaultMarkdownFile file, string relativePath)
+	/// <returns>The resolved file (that could be a <see cref="IVaultNote" />), or <see langword="null"/> if the file could not be found.</returns>
+	public static IVaultFile? ResolveRelativeLink(this IVaultNote file, string relativePath)
 	{
 		// First split the path into its components.
 		string[] pathComponents = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
@@ -107,6 +107,10 @@ public static class VaultExtensions
 				return resolvedFile;
 			}
 		}
+		
+		/*
+		 * TODO: Resolve relative links with folder definitions.
+		 */
 
 		// Last ditch attempt: Could it be a full path?
 		// Check against the vault Files dictionary.
@@ -119,10 +123,10 @@ public static class VaultExtensions
 		
 		static IVaultFile? _FromFolderFiles(IVaultFolder? folder, string fileName) 
 			=> folder?.Files.FirstOrDefault(f => f.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase))
-			?? folder?.Files.FirstOrDefault(f => f is IVaultMarkdownFile { NoteName: var noteName } 
+			?? folder?.Files.FirstOrDefault(f => f is IVaultNote { NoteName: var noteName } 
 				&& noteName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
 		
-		static IVaultFile? _TraverseUpstream(IVaultFolder folder, string fileName, bool seekChildFolders = false)
+		static IVaultFile? _TraverseUpstream(IVaultFolder folder, string fileName)
 		{
 			// First try to resolve in the current folder.
 			IVaultFile? resolvedFile = _FromFolderFiles(folder, fileName);

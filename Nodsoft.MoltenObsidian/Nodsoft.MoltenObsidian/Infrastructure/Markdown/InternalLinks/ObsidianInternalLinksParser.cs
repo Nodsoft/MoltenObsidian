@@ -55,7 +55,6 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 		}
 		
 		// Grab the remainder of the slice, and check if it matches the internal link pattern.
-		string? remainder = slice.Text[slice.Start..];
 		Match match = InternalLinkRegex.Match(slice.Text, slice.Start);
 
 		if (!match.Success)
@@ -65,10 +64,9 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 
 //		// Adjust the slice to account for the matched text
 		slice.Start = match.Index + match.Length;
-//		slice.End = slice.Start + match.Length;
-		
-			
-		
+
+
+
 		InternalLink internalLink = new()
 		{
 			TargetNote = match.Groups["link"].Value,
@@ -78,7 +76,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 			IsClosed = true
 		};
 
-		if (processor.Context?.Properties.GetValueOrDefault("currentFile") as IVaultMarkdownFile is { } currentFile 
+		if (processor.Context?.Properties.GetValueOrDefault("currentFile") as IVaultNote is { } currentFile 
 			&& internalLink.ResolveVaultLink(currentFile) is { } resolved)
 		{
 			internalLink.Url = internalLink switch

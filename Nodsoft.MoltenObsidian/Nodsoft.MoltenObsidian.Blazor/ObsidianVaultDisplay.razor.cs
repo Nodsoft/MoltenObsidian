@@ -22,7 +22,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 
 	[Parameter] public RenderFragment<(IVault, string)> Index { get; set; } = DefaultTemplates.IndexDefaultTemplate;
 	[Parameter] public RenderFragment<string> NotFound { get; set; } = DefaultTemplates.NotFoundDefaultTemplate;
-	[Parameter] public RenderFragment<(IVaultMarkdownFile, string)> FoundFile { get; set; } = DefaultTemplates.FoundFileDefaultTemplate;
+	[Parameter] public RenderFragment<(IVaultNote, string)> FoundFile { get; set; } = DefaultTemplates.FoundFileDefaultTemplate;
 	[Parameter] public RenderFragment<(IVaultFolder, string)> FoundFolder { get; set; } = DefaultTemplates.FoundFolderDefaultTemplate;
 	[Parameter] public RenderFragment<(string, Exception)> Error { get; set; } = DefaultTemplates.ErrorDefaultTemplate;
 

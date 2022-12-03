@@ -5,7 +5,7 @@
 
 
 @code {
-	internal static RenderFragment FoundFileDefaultTemplate((IVaultMarkdownFile File, string VaultBaseUri) value) => __builder =>
+	internal static RenderFragment FoundFileDefaultTemplate((IVaultNote File, string VaultBaseUri) value) => __builder =>
 	{
 		MarkupString content = new(value.File.ReadDocument().ToHtml());
 		
@@ -92,7 +92,7 @@
 						@FolderNavigationTree(subfolder, vaultBaseUri)
 					</li>
 				}
-				else if (item.Value is IVaultMarkdownFile file)
+				else if (item.Value is IVaultNote file)
 				{
 					// The file's path should be filtered to remove the file's extension (".md").
 					<li>

@@ -21,7 +21,7 @@ public sealed class FileSystemVault : IVault
 	
 	public IReadOnlyDictionary<string, IVaultFile> Files { get; private set; } = null!;
 	public IReadOnlyDictionary<string, IVaultFolder> Folders { get; private set; } = null!;
-	public IReadOnlyDictionary<string, IVaultMarkdownFile> MarkdownFiles { get; private set; } = null!;
+	public IReadOnlyDictionary<string, IVaultNote> Notes { get; private set; } = null!;
 
 	/// <summary>
 	/// Creates a new <see cref="FileSystemVault"/> instance from the specified path.
@@ -57,8 +57,8 @@ public sealed class FileSystemVault : IVault
 
 			// Now we need to get all the markdown files.
 		// We can do this by filtering the Files dictionary, grabbing all the files that end with ".md".
-		vault.MarkdownFiles = vault.Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-			.ToDictionary(static x => x.Key, static x => (IVaultMarkdownFile)x.Value);
+		vault.Notes = vault.Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+			.ToDictionary(static x => x.Key, static x => (IVaultNote)x.Value);
 		
 		return vault;
 	}

@@ -11,11 +11,6 @@
 public interface IVaultFile : IVaultEntity
 {
 	/// <summary>
-	/// The folder that contains this entity.
-	/// </summary>
-	new IVaultFolder Parent { get; }
-
-	/// <summary>
 	/// The MIME type of the file's contents.
 	/// </summary>
 	/// <remarks>

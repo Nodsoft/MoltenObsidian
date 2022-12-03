@@ -50,10 +50,10 @@ public interface IVault
 	IReadOnlyDictionary<string, IVaultFolder> Folders { get; }
 	
 	/// <summary>
-	/// A dictionary of all markdown files in the vault, keyed by their relative paths.
+	/// A dictionary of all markdown files (called notes) in the vault, keyed by their relative paths.
 	/// </summary>
 	/// <remarks>
 	/// The paths are relative to the vault root, and do not include the vault root's name.
 	/// </remarks>
-	IReadOnlyDictionary<string, IVaultMarkdownFile> MarkdownFiles { get; }
+	IReadOnlyDictionary<string, IVaultNote> Notes { get; }
 }

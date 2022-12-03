@@ -28,9 +28,9 @@ public sealed class InternalLinksExtension : IMarkdownExtension
 
 	public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
 	{
-		if (renderer is NormalizeRenderer normalizeRenderer && !normalizeRenderer.ObjectRenderers.Contains<NormalizeInternalLinksRenderer>())
-		{
-			normalizeRenderer.ObjectRenderers.InsertBefore<LinkInlineRenderer>(new NormalizeInternalLinksRenderer());
-		}
+//		if (renderer is NormalizeRenderer normalizeRenderer && !normalizeRenderer.ObjectRenderers.Contains<NormalizeInternalLinksRenderer>())
+//		{
+//			normalizeRenderer.ObjectRenderers.InsertBefore<LinkInlineRenderer>(new NormalizeInternalLinksRenderer());
+//		}
 	}
 }

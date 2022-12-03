@@ -40,7 +40,7 @@ public sealed class ObsidianHtmlConverter
 	/// <inheritdoc cref="Convert(string)" />
 	/// <param name="currentFile">The current file whose contents are being converted.</param>
 	// ReSharper disable once RedundantNameQualifier
-	public string Convert(string markdown, IVaultMarkdownFile currentFile)
+	public string Convert(string markdown, IVaultNote currentFile)
 		=> Markdig.Markdown.ToHtml(markdown, _pipeline, new()
 			{
 				Properties =

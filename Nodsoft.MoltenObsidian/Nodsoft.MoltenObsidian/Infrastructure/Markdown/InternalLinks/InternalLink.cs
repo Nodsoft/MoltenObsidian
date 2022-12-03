@@ -44,7 +44,7 @@ public sealed class InternalLink : LinkInline
 	/// <param name="vault">The vault to resolve the link against.</param>
 	/// <param name="currentNote">The note that contains the link.</param>
 	/// <returns>The resolved file</returns>
-	public IVaultFile? ResolveVaultLink(IVaultMarkdownFile currentNote) 
+	public IVaultFile? ResolveVaultLink(IVaultNote currentNote) 
 		// Resolve the note.
 		// Is it an absolute path? If so, resolve it against the vault root.
 		// First, try to resolve it as a relative path, gradually moving up the directory tree.

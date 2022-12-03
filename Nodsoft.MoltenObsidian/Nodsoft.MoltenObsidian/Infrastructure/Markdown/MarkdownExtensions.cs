@@ -13,7 +13,7 @@ public static class MarkdownExtensions
 	/// Enables support for Obsidian wikilinks-style internal links.
 	/// </summary>
 	/// <remarks>
-	/// This extension requires the ParserContext to contain the holding <see cref="IVaultMarkdownFile" /> on key <c>vaultFile</c> in order to resolve the links.
+	/// This extension requires the ParserContext to contain the holding <see cref="IVaultNote" /> on key <c>vaultFile</c> in order to resolve the links.
 	/// </remarks>
 	/// <param name="builder">The <see cref="MarkdownPipelineBuilder"/> to enable the extension on.</param>
 	/// <returns>The <see cref="MarkdownPipelineBuilder"/> with the extension enabled.</returns>

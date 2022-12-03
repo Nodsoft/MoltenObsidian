@@ -15,13 +15,13 @@ public readonly record struct ObsidianText
 	/// <summary>
 	/// The Obsidian vault file that this text was loaded from.
 	/// </summary>
-	private readonly IVaultMarkdownFile? _vaultFile;
+	private readonly IVaultNote? _vaultFile;
 
 	/// <summary>
 	/// Creates a new <see cref="ObsidianText"/> from the specified string.
 	/// </summary>
 	/// <param name="obsidianText">The Obsidian-flavoured Markdown string.</param>
-	public ObsidianText(string obsidianText, IVaultMarkdownFile? vaultFile = null)
+	public ObsidianText(string obsidianText, IVaultNote? vaultFile = null)
 	{
 		_vaultFile = vaultFile;
 		
