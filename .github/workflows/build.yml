@@ -10,9 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        configuration: [ Debug, Release ]
 
     steps:
       - uses: actions/checkout@v3
@@ -31,13 +28,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --output ${{ github.workspace }}/artifacts/build/${{ matrix.configuration }}
+        run: dotnet build --no-restore
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.configuration }}
-          path: ${{ github.workspace }}/artifacts/build/${{ matrix.configuration }}
