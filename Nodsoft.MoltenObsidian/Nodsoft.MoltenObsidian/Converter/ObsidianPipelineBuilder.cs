@@ -1,5 +1,6 @@
 ﻿using ColorCode.Styling;
 using Markdig;
+using Nodsoft.MoltenObsidian.Infrastructure.Markdown;
 
 #if NET6_0_OR_GREATER
 using Markdown.ColorCode;
@@ -22,6 +23,7 @@ public sealed class ObsidianPipelineBuilder : MarkdownPipelineBuilder
 	{
 		// Configure the pipeline for all features. This should enable 90% of all Obsidian MD features.
 		this.UseAdvancedExtensions()
+			.UseInternalLinks()
 #if NET6_0_OR_GREATER
 			.UseColorCode(darkTheme ? StyleDictionary.DefaultDark : StyleDictionary.DefaultLight)
 #else

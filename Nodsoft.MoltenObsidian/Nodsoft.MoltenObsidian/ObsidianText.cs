@@ -1,4 +1,5 @@
 ﻿using Nodsoft.MoltenObsidian.Converter;
+using Nodsoft.MoltenObsidian.Vault;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -11,6 +12,28 @@ namespace Nodsoft.MoltenObsidian;
 [PublicAPI]
 public readonly record struct ObsidianText
 {
+	/// <summary>
+	/// The Obsidian vault file that this text was loaded from.
+	/// </summary>
+	private readonly IVaultMarkdownFile? _vaultFile;
+
+	/// <summary>
+	/// Creates a new <see cref="ObsidianText"/> from the specified string.
+	/// </summary>
+	/// <param name="obsidianText">The Obsidian-flavoured Markdown string.</param>
+	public ObsidianText(string obsidianText, IVaultMarkdownFile? vaultFile = null)
+	{
+		_vaultFile = vaultFile;
+		
+		// First, check if the text starts with a YAML header, and split it off if so.
+		(string? frontMatter, Text) = SplitYamlFrontMatter(obsidianText);
+
+		// If there is a YAML header, parse it into a dictionary.
+		// Otherwise, set the frontmatter to an empty dictionary.
+		FrontMatter = frontMatter is null ? new() : ParseYamlFrontMatter(frontMatter);
+	}
+
+
 	/// <summary>
 	/// YAML deserializer used to parse the YAML frontmatter, if present.
 	/// </summary>
@@ -33,21 +56,7 @@ public readonly record struct ObsidianText
 	/// The length of <see cref="Text"/>.
 	/// </summary>
 	public int Length => Text.Length;
-
-	/// <summary>
-	/// Creates a new <see cref="ObsidianText"/> from the specified string.
-	/// </summary>
-	/// <param name="obsidianText">The Obsidian-flavoured Markdown string.</param>
-	public ObsidianText(string obsidianText)
-	{
-		// First, check if the text starts with a YAML header, and split it off if so.
-		(string? frontMatter, Text) = SplitYamlFrontMatter(obsidianText);
-
-		// If there is a YAML header, parse it into a dictionary.
-		// Otherwise, set the frontmatter to an empty dictionary.
-		FrontMatter = frontMatter is null ? new() : ParseYamlFrontMatter(frontMatter);
-	}
-
+	
 	/// <summary>
 	/// Creates a new ObsidianText from the specified string.
 	/// </summary>
@@ -70,11 +79,15 @@ public readonly record struct ObsidianText
 	/// Returns the text of the ObsidianText.
 	/// </summary>
 	/// <returns>The text of the ObsidianText.</returns>
-	public string ToHtml() => ObsidianHtmlConverter.Default.Convert(Text);
+	public string ToHtml() => _vaultFile is null 
+		? ObsidianHtmlConverter.Default.Convert(Text) 
+		: ObsidianHtmlConverter.Default.Convert(Text, _vaultFile);
 	
 	/// <inheritdoc cref="ToHtml()"/>
 	/// <param name="converter">The converter to use.</param>
-	public string ToHtml(ObsidianHtmlConverter converter) => converter.Convert(Text);
+	public string ToHtml(ObsidianHtmlConverter converter) => _vaultFile is null 
+		? converter.Convert(Text) 
+		: converter.Convert(Text, _vaultFile);
 
 
 	/// <summary>

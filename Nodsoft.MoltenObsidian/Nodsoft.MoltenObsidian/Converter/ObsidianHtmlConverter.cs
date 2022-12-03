@@ -1,4 +1,5 @@
 ﻿using Markdig;
+using Nodsoft.MoltenObsidian.Vault;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
@@ -32,8 +33,20 @@ public sealed class ObsidianHtmlConverter
 	/// Converts Obsidian-flavoured Markdown to HTML.
 	/// </summary>
 	/// <param name="markdown">The Markdown to convert.</param>
-	/// <param name="parseYamlFrontMatter">Whether to parse YAML front matter and exclude it from the Markdown HTML output.</param>
 	/// <returns>The converted Markdown, in HTML format.</returns>
 	// ReSharper disable once RedundantNameQualifier
 	public string Convert(string markdown) => Markdig.Markdown.ToHtml(markdown, _pipeline);
+	
+	/// <inheritdoc cref="Convert(string)" />
+	/// <param name="currentFile">The current file whose contents are being converted.</param>
+	// ReSharper disable once RedundantNameQualifier
+	public string Convert(string markdown, IVaultMarkdownFile currentFile)
+		=> Markdig.Markdown.ToHtml(markdown, _pipeline, new()
+			{
+				Properties =
+				{
+					{ "currentFile", currentFile }
+				}
+			}
+		);
 }

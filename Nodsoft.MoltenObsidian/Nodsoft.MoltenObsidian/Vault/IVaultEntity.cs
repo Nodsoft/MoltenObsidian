@@ -21,7 +21,7 @@ public interface IVaultEntity
 	/// <summary>
 	/// The folder that contains this entity.
 	/// </summary>
-	IVaultFolder Parent { get; }
+	IVaultFolder? Parent { get; }
 	
 	/// <summary>
 	/// The vault that this entity belongs to.

@@ -9,5 +9,5 @@ internal sealed class FileSystemVaultMarkdownFile : FileSystemVaultFile, IVaultM
 	
 	public override string ContentType => "text/markdown";
 	
-	public ObsidianText ReadDocument() => new(Encoding.UTF8.GetString(ReadAllBytes()));
+	public ObsidianText ReadDocument() => new(Encoding.UTF8.GetString(ReadAllBytes()), this);
 }

@@ -76,4 +76,82 @@ public static class VaultExtensions
 			}
 		}
 	}
+
+	/// <summary>
+	/// Resolves a relative path's target file, relative to the current file.
+	/// </summary>
+	/// <param name="file">The file to resolve the path from.</param>
+	/// <param name="relativePath">The relative path to resolve.</param>
+	/// <returns>The resolved file (that could be a <see cref="IVaultMarkdownFile" />), or <see langword="null"/> if the file could not be found.</returns>
+	public static IVaultFile? ResolveRelativeLink(this IVaultMarkdownFile file, string relativePath)
+	{
+		// First split the path into its components.
+		string[] pathComponents = relativePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+		
+		// Is the path a single component? If so, it's a file in the same folder, or inferred path.
+		if (pathComponents is [{ } fileName])
+		{
+			// First try to resolve in the file's current folder (if it has one, else it's the vault itself).
+			IVaultFile? resolvedFile = _FromFolderFiles(file.Parent, fileName)
+				// If that didn't work, try to resolve by traversing the vault, upstream first.
+				?? _TraverseUpstream(file.Parent, fileName)
+				// ...and if that didn't work, try to resolve by traversing the vault, downstream.
+				?? _TraverseDownstream(file.Parent, fileName)
+				// ...and how about downstream from vault root?
+				?? _TraverseDownstream(file.Vault.Root, fileName);
+			
+			// If we found a file, return it.
+			
+			if (resolvedFile is not null)
+			{
+				return resolvedFile;
+			}
+		}
+
+		// Last ditch attempt: Could it be a full path?
+		// Check against the vault Files dictionary.
+		else if (file.Vault.Files.TryGetValue(relativePath, out IVaultFile? resolvedFile))
+		{
+			return resolvedFile;
+		}
+		
+		return null;
+		
+		static IVaultFile? _FromFolderFiles(IVaultFolder? folder, string fileName) 
+			=> folder?.Files.FirstOrDefault(f => f.Name.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+			?? folder?.Files.FirstOrDefault(f => f is IVaultMarkdownFile { NoteName: var noteName } 
+				&& noteName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+		
+		static IVaultFile? _TraverseUpstream(IVaultFolder folder, string fileName, bool seekChildFolders = false)
+		{
+			// First try to resolve in the current folder.
+			IVaultFile? resolvedFile = _FromFolderFiles(folder, fileName);
+
+			resolvedFile = resolvedFile switch
+			{
+				// If that didn't work, try to resolve by traversing the vault, upstream first.
+				null when folder.Parent is not null => _TraverseUpstream(folder.Parent, fileName),
+				_ => resolvedFile
+			};
+
+			return resolvedFile;
+		}
+		
+		static IVaultFile? _TraverseDownstream(IVaultFolder parent, string fileName)
+		{
+			foreach (IVaultFolder? folder in parent.Subfolders)
+			{
+				// Does that folder contain the file?
+				if ((_FromFolderFiles(folder, fileName) ?? _TraverseDownstream(folder, fileName)) is { } resolvedFile)
+				{
+					return resolvedFile;
+				}
+				
+				// If not, try the next folder.
+			}
+			
+			// If we got here, the file wasn't found.
+			return null;
+		}
+	}
 }

@@ -20,4 +20,12 @@ public interface IVaultMarkdownFile : IVaultFile
 	/// <exception cref="InvalidDataException">Thrown if the file is not a valid Markdown file.</exception>
 	/// <exception cref="UnauthorizedAccessException">Thrown if the file cannot be accessed.</exception>
 	ObsidianText ReadDocument();
+	
+	/// <summary>
+	/// The name of the obsidian note. This usually corresponds to the file name, without the extension.
+	/// </summary>
+	/// <remarks>
+	/// This is a convenience property, and is equivalent to <see cref="IVaultFile.Name"/> without the extension.
+	/// </remarks>
+	string NoteName => Name.EndsWith(".md") ? Name[..^3] : Name;
 }
