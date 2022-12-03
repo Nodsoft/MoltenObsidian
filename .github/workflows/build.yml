@@ -13,8 +13,6 @@ jobs:
     strategy:
       matrix:
         configuration: [ Debug, Release ]
-        
-      max-parallel: 1
 
     steps:
       - uses: actions/checkout@v3
@@ -33,7 +31,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --output ${{ github.workspace }}/artifacts
+        run: dotnet build --no-restore --configuration ${{ matrix.configuration }} --output ${{ github.workspace }}/artifacts/build/${{ matrix.configuration }}
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
@@ -42,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.configuration }}
-          path: ${{ github.workspace }}/artifacts
+          path: ${{ github.workspace }}/artifacts/build/${{ matrix.configuration }}
