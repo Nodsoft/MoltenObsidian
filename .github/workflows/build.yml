@@ -1,6 +1,8 @@
 name: .NET Build & Test
 
-permissions: { }
+permissions: 
+  contents: read
+
 
 on:
   - push

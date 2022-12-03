@@ -1,7 +1,9 @@
 name: Publish NuGet packages
 
 permissions: 
+  contents: write
   packages: write
+  
 
 # Controls when the action will run. 
 on:
