@@ -1,0 +1,23 @@
+﻿@page "/vault/{*VaultPath}"
+@inject IVault Vault
+
+@using Nodsoft.MoltenObsidian.Vault
+@using Nodsoft.MoltenObsidian.Blazor.Helpers
+
+<h3>VaultPage</h3>
+@VaultPath
+
+<hr />
+
+<ObsidianVaultDisplay BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath">
+
+</ObsidianVaultDisplay>
+
+
+@code {
+
+	[Parameter]
+	public string VaultPath { get; set; }
+
+	protected override async Task OnInitializedAsync() { }
+}

@@ -1,0 +1,107 @@
+﻿@attribute [SuppressMessage("ReSharper", "InconsistentNaming")]
+
+@using Nodsoft.MoltenObsidian.Vault
+@using System.Diagnostics.CodeAnalysis
+
+
+@code {
+	internal static RenderFragment FoundFileDefaultTemplate((IVaultNote File, string VaultBaseUri) value) => __builder =>
+	{
+		MarkupString content = new(value.File.ReadDocument().ToHtml());
+		
+		<article name="@value.File.Name">
+			@content
+		</article>
+	};
+
+	internal static RenderFragment FoundFolderDefaultTemplate((IVaultFolder Folder, string CurrentPath) value) => __builder =>
+	{
+		// Calculate the difference between the current folder and the base folder.
+		// The path of the current folder should match the end of the VaultBaseUri.
+		string basePath = value.CurrentPath[..^(value.Folder.Path.Length + 1)];
+
+		<nav name="@value.Folder.Name">
+			<h1>@value.Folder.Name</h1>
+			
+			<ul>
+				@foreach (IVaultFolder folder in value.Folder.Subfolders)
+				{
+					<li>
+						<a href="@folder.Path/">@folder.Name</a>
+					</li>
+				}
+			</ul>
+
+			<ul>
+				@foreach (IVaultFile file in value.Folder.Files)
+				{
+					<li>
+						<a href="@file.Path[..^3]">@file.Name[..^3]</a>
+					</li>
+				}
+			</ul>
+		</nav>
+	};
+	
+	internal static RenderFragment<string> NotFoundDefaultTemplate => static path => __builder =>
+	{
+		<div>
+			<h1>No result.</h1>
+			<p>Nothing was found at path <code>@path</code>.</p>
+		</div>
+	};
+	
+	internal static RenderFragment<(string path, Exception e)> ErrorDefaultTemplate => static value => __builder =>
+	{
+		<div>
+			<h1>Error.</h1>
+			<p>An error occured while trying to access <code>@value.path</code> :</p>
+			<p>@value.e.Message</p>
+		</div>
+	};
+
+	internal static RenderFragment IndexDefaultTemplate((IVault Vault, string VaultBaseUri) value) => __builder =>
+	{
+		<nav name="@value.Vault.Name">
+			<h1>@value.Vault.Name</h1>
+			
+			@* Display a hierarchical view of all Markdown files, ranged by subfolders. *@
+			@FolderNavigationTree(value.Vault.Root, value.VaultBaseUri, true)
+		</nav>
+	};
+
+	private static @RenderFragment FolderNavigationTree(IVaultFolder folder, string vaultBaseUri, bool isRoot = false) => __builder =>
+	{
+		// Merge all subfolders and files into a single list.
+		IOrderedEnumerable<KeyValuePair<string, IVaultEntity>> items = folder.Subfolders
+			.Where(f => !isRoot || f.Name != ".obsidian")
+			.Cast<IVaultEntity>()
+			.Concat(folder.Files)
+			.Select(x => new KeyValuePair<string, IVaultEntity>(x.Path, x))
+			.OrderBy(x => x.Key);
+
+		// Display the list.
+		
+		<ul>
+			@foreach (KeyValuePair<string, IVaultEntity> item in items)
+			{
+				@if(item.Value is IVaultFolder subfolder)
+				{
+					<li>
+						<a href="@subfolder.Path/">@subfolder.Name</a>
+						@FolderNavigationTree(subfolder, vaultBaseUri)
+					</li>
+				}
+				else if (item.Value is IVaultNote file)
+				{
+					// The file's path should be filtered to remove the file's extension (".md").
+					<li>
+						<a href="@(file.Path[..^3])">@file.Name[..^3]</a>
+					</li>
+				}
+			}
+		</ul>
+	};
+
+}
+
