@@ -25,18 +25,21 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	/// [[note_one|not note one]]
 	/// [[note#section|display|tooltip]]
 	/// </example>
-	private static readonly Regex InternalLinkRegex = new(
+	private static readonly Regex _internalLinkRegex = new(
 		@"\[\[(
 			# link, and optional anchor
-			(?<link>[^\|\]]+)(\#(?<anchor>[^\|\]]+))? 
+			(?<link>[^\|\#\]]+)?(\#(?<anchor>[^\|\]]+))? 
 			# display title (optional)
 			(\|(?<title>[^|\]]+))? 
 			# tooltip (optional)
 			(\|(?<tooltip>[^|\]]+))? 
 		)\]\]",
-		RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace
+		RegexOptions.Compiled 
+		| RegexOptions.IgnorePatternWhitespace 
+		| RegexOptions.ExplicitCapture 
+		| RegexOptions.Multiline
 	);
-
+	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ObsidianInternalLinksParser"/> class.
 	/// </summary>
@@ -55,7 +58,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 		}
 		
 		// Grab the remainder of the slice, and check if it matches the internal link pattern.
-		Match match = InternalLinkRegex.Match(slice.Text, slice.Start);
+		Match match = _internalLinkRegex.Match(slice.Text, slice.Start);
 
 		if (!match.Success)
 		{
@@ -64,9 +67,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 
 //		// Adjust the slice to account for the matched text
 		slice.Start = match.Index + match.Length;
-
-
-
+		
 		InternalLink internalLink = new()
 		{
 			TargetNote = match.Groups["link"].Value,
@@ -81,19 +82,21 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 		{
 			internalLink.Url = internalLink switch
 			{
-				{ TargetNote: not null, TargetSection: { } section and not "" } when resolved.Path is [.. var path, '.', 'm', 'd']
+				{ TargetNote: not (null or ""), TargetSectionLinkFragment: { } section and not "" } 
+					when resolved.Path is [.. var path, '.', 'm', 'd']
 					=> $"{path}#{section.ToLowerInvariant().Replace(' ', '-')}",
-				{ TargetNote: not null } when resolved.Path is [.. var path, '.', 'm', 'd'] => path,
-				{ TargetSection: not (null or "") } => $"#{internalLink.TargetSection.ToLowerInvariant().Replace(' ', '-')}",
+				
+				{ TargetNote: not (null or "") } when resolved.Path is [.. var path, '.', 'm', 'd'] => path,
+				{ TargetSection: not (null or "") } => $"{currentFile.Path}#{internalLink.TargetSectionLinkFragment}",
 				_ => "#"
 			};
 
 			internalLink.Title = internalLink switch
 			{
 				{ Display: { } display and not "" } => display,
-				{ TargetNote: { } note and not "", TargetSection: { } section and not "" } => $"{note}#{section}",
+				{ TargetNote: { } note and not "", TargetSection: { } section and not "" } => $"{note} > {section}",
 				{ TargetNote: not (null or "") } => internalLink.TargetNote,
-				{ TargetSection: not (null or "") } => $"#{internalLink.TargetSection}",
+				{ TargetSection: not (null or "") } => $"{internalLink.TargetSection}",
 				_ => string.Empty
 			};
 			
