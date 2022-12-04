@@ -7,13 +7,16 @@
 
 		<Company>Nodsoft Systems</Company>
 		<Authors>Sakura Akeno Isayeki</Authors>
+		<Title>Molten Obsidian</Title>
 		<Product>Molten Obsidian</Product>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/Nodsoft/MoltenObsidian</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Nodsoft/MoltenObsidian</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<!--<PackageIcon>logo.png</PackageIcon>-->
 
-		<!--<GitVersionBaseDirectory>$(MSBuildThisFileDirectory)</GitVersionBaseDirectory>-->
+		<!-- Generate XML documentation -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 
