@@ -16,6 +16,14 @@ namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;
 public sealed class InternalLink : LinkInline
 {
 	/// <summary>
+	/// Initializes a new instance of the <see cref="InternalLink"/> class.
+	/// </summary>
+	public InternalLink()
+	{
+		IsClosed = true;
+	}
+	
+	/// <summary>
 	/// Regex substitution pattern for internal link anchors, to replace spaces with dashes and remove all other invalid characters.
 	/// </summary>
 	private static readonly Regex _anchorRegex = new(@"[^\w.]+", RegexOptions.Compiled);

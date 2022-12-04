@@ -26,7 +26,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	/// [[note#section|display|tooltip]]
 	/// </example>
 	private static readonly Regex _internalLinkRegex = new(
-		@"\[\[(
+		@"^\[\[(
 			# link, and optional anchor
 			(?<link>[^\|\#\]]+)?(\#(?<anchor>[^\|\]]+))? 
 			# display title (optional)
@@ -45,36 +45,41 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	/// </summary>
 	public ObsidianInternalLinksParser()
 	{
-		OpeningCharacters = new[] { '[', ']' };
+		OpeningCharacters = new[] { '[' };
 	}
 
 	/// <inheritdoc />
 	public override bool Match(InlineProcessor processor, ref StringSlice slice)
 	{
 		// Seek to the first two opening brackets
-		if (slice.CurrentChar is not '[')
+		if (slice.CurrentChar is not '[' && slice.PeekChar() is not '[')
 		{
 			return false;
 		}
-		
+
 		// Grab the remainder of the slice, and check if it matches the internal link pattern.
-		Match match = _internalLinkRegex.Match(slice.Text, slice.Start);
+		Match match = _internalLinkRegex.Match(slice.Text[slice.Start..slice.End]);
 
-		if (!match.Success)
+		if (match is { Groups: [{ Name: "0" }]})
 		{
 			return false;
 		}
 
-//		// Adjust the slice to account for the matched text
-		slice.Start = match.Index + match.Length;
-		
+
 		InternalLink internalLink = new()
 		{
 			TargetNote = match.Groups["link"].Value,
 			TargetSection = match.Groups["anchor"].Value,
 			Display = match.Groups["title"].Value, 
 			Tooltip = match.Groups["tooltip"].Value,
-			IsClosed = true
+
+			Span =
+			{
+				Start = processor.GetSourcePosition(slice.Start, out int line, out int column),
+				End = processor.GetSourcePosition(slice.Start + match.Length, out _, out _)
+			},
+			Line = line,
+			Column = column,
 		};
 
 		if (processor.Context?.Properties.GetValueOrDefault("currentFile") as IVaultNote is { } currentFile 
@@ -102,6 +107,9 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 			
 			internalLink.AppendChild(new LiteralInline(internalLink.Title));
 			processor.Inline = internalLink;
+			
+			// Adjust the slice to account for the matched text
+			slice.Start += match.Length;
 			
 			return true;
 		}
