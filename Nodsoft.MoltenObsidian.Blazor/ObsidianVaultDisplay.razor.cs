@@ -20,10 +20,10 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	[Parameter, EditorRequired] public string? CurrentPath { get; set; } = "/";
 	[Parameter, EditorRequired] public string? BasePath { get; set; } = "/";
 
-	[Parameter] public RenderFragment<(IVault, string)> Index { get; set; } = DefaultTemplates.IndexDefaultTemplate;
+	[Parameter] public RenderFragment<IVault> Index { get; set; } = DefaultTemplates.IndexDefaultTemplate;
 	[Parameter] public RenderFragment<string> NotFound { get; set; } = DefaultTemplates.NotFoundDefaultTemplate;
-	[Parameter] public RenderFragment<(IVaultNote, string)> FoundFile { get; set; } = DefaultTemplates.FoundFileDefaultTemplate;
-	[Parameter] public RenderFragment<(IVaultFolder, string)> FoundFolder { get; set; } = DefaultTemplates.FoundFolderDefaultTemplate;
+	[Parameter] public RenderFragment<IVaultNote> FoundFile { get; set; } = DefaultTemplates.FoundFileDefaultTemplate;
+	[Parameter] public RenderFragment<IVaultFolder> FoundFolder { get; set; } = DefaultTemplates.FoundFolderDefaultTemplate;
 	[Parameter] public RenderFragment<(string, Exception)> Error { get; set; } = DefaultTemplates.ErrorDefaultTemplate;
 
 

@@ -3,9 +3,9 @@
 
 @(_foundEntity switch 
 {
-	_ when CurrentPath is null or "" or "/" => Index((Vault, _currentPath)),
-	IVaultFolder folder => FoundFolder((folder, _currentPath)),
-	IVaultNote file => FoundFile((file, _currentPath)),
+	_ when CurrentPath is null or "" or "/" => Index(Vault),
+	IVaultFolder folder => FoundFolder(folder),
+	IVaultNote file => FoundFile(file),
 	_ => NotFound(_currentPath)
 })
 
