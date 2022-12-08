@@ -2,11 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian", "Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj", "{2E243320-E7EC-4CE7-B488-2358869E7EE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tests.Wasm", "Nodsoft.MoltenObsidian.Tests.Wasm\Nodsoft.MoltenObsidian.Tests.Wasm.csproj", "{426F7149-8C9E-48DE-A3CE-4A06D0203D78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Samples.Wasm", "Samples\Nodsoft.MoltenObsidian.Samples.Wasm\Nodsoft.MoltenObsidian.Samples.Wasm.csproj", "{426F7149-8C9E-48DE-A3CE-4A06D0203D78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tests.Server", "Nodsoft.MoltenObsidian.Tests.Server\Nodsoft.MoltenObsidian.Tests.Server.csproj", "{EC301077-31DB-4ECF-B8C4-11F482ED24BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Samples.Server", "Samples\Nodsoft.MoltenObsidian.Samples.Server\Nodsoft.MoltenObsidian.Samples.Server.csproj", "{EC301077-31DB-4ECF-B8C4-11F482ED24BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.FileSystem", "Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj", "{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.FileSystem", "Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj", "{A2C0720A-8D93-4A81-8BE9-05607DE96BC5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{65974834-8043-49B1-9555-B8A63FEF6B29}"
 EndProject
@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.config\dotnet-tools.json = .config\dotnet-tools.json
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vaults", "Vaults", "{F447B3AF-B704-44F4-8385-CA1C98F27A4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,5 +53,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD} = {65974834-8043-49B1-9555-B8A63FEF6B29}
 		{426F7149-8C9E-48DE-A3CE-4A06D0203D78} = {65974834-8043-49B1-9555-B8A63FEF6B29}
+		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
 	EndGlobalSection
 EndGlobal

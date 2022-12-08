@@ -8,20 +8,3 @@
 	IVaultNote file => FoundFile(file),
 	_ => NotFound(_currentPath)
 })
-
-@* @if (CurrentPath is null or "" or "/") *@
-@* { *@
-@* 	@Index((Vault, _currentPath)) *@
-@* } *@
-@* else if (_foundEntity is IVaultFolder folder) *@
-@* { *@
-@* 	@FoundFolder((folder, _currentPath)) *@
-@* } *@
-@* else if (_foundEntity is IVaultMarkdownFile file) *@
-@* { *@
-@* 	@FoundFile((file, _currentPath)) *@
-@* } *@
-@* else if (_foundEntity is null) *@
-@* { *@
-@* 	@NotFound(CurrentPath) *@
-@* } *@

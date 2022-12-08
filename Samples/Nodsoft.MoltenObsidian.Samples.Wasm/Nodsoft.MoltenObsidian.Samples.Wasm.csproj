@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
+	  <ProjectReference Include="..\..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 	</ItemGroup>
 
 </Project>

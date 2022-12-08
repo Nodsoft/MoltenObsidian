@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Nodsoft.MoltenObsidian.Converter;
 
-namespace Nodsoft.MoltenObsidian.Tests.Wasm.Pages;
+namespace Nodsoft.MoltenObsidian.Samples.Wasm.Pages;
 
 public partial class Index : ComponentBase
 {

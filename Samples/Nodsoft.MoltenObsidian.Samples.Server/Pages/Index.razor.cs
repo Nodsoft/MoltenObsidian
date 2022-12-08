@@ -3,7 +3,7 @@ using Nodsoft.MoltenObsidian.Converter;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
-namespace Nodsoft.MoltenObsidian.Tests.Server.Pages;
+namespace Nodsoft.MoltenObsidian.Samples.Server.Pages;
 
 public partial class Index : ComponentBase
 {

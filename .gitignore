@@ -351,4 +351,4 @@ MigrationBackup/
 
 .idea/
 
-Nodsoft.MoltenObsidian.Tests.Server/Vault/
+Samples/*/Vault/
