@@ -22,7 +22,10 @@ public static class VaultManifestGenerator
 		// Grab all the files in the vault
 		foreach ((_, IVaultFile file) in vault.Files)
 		{
-			files.Add(await ProcessFileAsync(file));
+			if (file.Name is not RemoteVaultManifest.ManifestFileName)
+			{
+				files.Add(await ExtractManifestAsync(file));
+			}
 		}
 
 		// Build and return the manifest
@@ -38,7 +41,7 @@ public static class VaultManifestGenerator
 	/// </summary>
 	/// <param name="file">The file to extract information from.</param>
 	/// <returns>A <see cref="ManifestFile"/> instance.</returns>
-	private static async Task<ManifestFile> ProcessFileAsync(IVaultFile file)
+	private static async Task<ManifestFile> ExtractManifestAsync(IVaultFile file)
 	{
 		// Read the file. We'll need it later.
 		await using Stream stream = file.OpenRead();

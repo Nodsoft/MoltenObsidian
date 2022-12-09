@@ -5,6 +5,8 @@
 /// </summary>
 public class RemoteVaultManifest
 {
+	public const string ManifestFileName = "moltenobsidian.manifest.json";
+	
 	/// <summary>
 	/// The name of the vault.
 	/// </summary>

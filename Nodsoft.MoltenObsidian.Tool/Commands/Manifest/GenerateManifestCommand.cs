@@ -91,8 +91,8 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		await AnsiConsole.Console.Status().StartAsync("Writing manifest...", async ctx =>
 		{
 			manifestFile = settings.OutputPath is null
-				? new(Path.Combine(settings.VaultPath.FullName, "moltenobsidian.manifest.json"))
-				: new(Path.Combine(settings.OutputPath.FullName, "moltenobsidian.manifest.json"));
+				? new(Path.Combine(settings.VaultPath.FullName, RemoteVaultManifest.ManifestFileName))
+				: new(Path.Combine(settings.OutputPath.FullName, RemoteVaultManifest.ManifestFileName));
 
 			await using FileStream stream = manifestFile.Open(FileMode.OpenOrCreate, FileAccess.Write);
 			await JsonSerializer.SerializeAsync(stream, manifest);
