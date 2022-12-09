@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>Common assets for remote Molten Obsidian vaults implementations.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="System.Text.Json" Version="7.0.0" />
+	</ItemGroup>
+
+</Project>

@@ -23,7 +23,7 @@ internal class FileSystemVaultFile : FileSystemVaultEntityBase, IVaultFile
 		return File.ReadAllBytes(fullPath);
 	}
 
-	public Stream OpenRead() => File.OpenRead(Path);
+	public Stream OpenRead() => File.OpenRead(System.IO.Path.Join(((FileSystemVaultFolder)Vault.Root).PhysicalDirectoryInfo.FullName, Path));
 	
 	public static FileSystemVaultFile Create(FileInfo file, IVaultFolder parent, IVault vault) 
 		=> file.Extension is ".md" 
