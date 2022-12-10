@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
-@namespace Nodsoft.MoltenObsidian.Tests.Server.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
@@ -7,12 +6,13 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
-		<base href="~/" />
+		<base href="/" />
 		<link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
 		<link href="/css/site.css" rel="stylesheet" />
 		<link href="/Nodsoft.MoltenObsidian.Samples.Server.styles.css" rel="stylesheet" />
 		<component render-mode="ServerPrerendered" type="typeof(HeadOutlet)" />
 	</head>
+	
 	<body>
 		@RenderBody()
 

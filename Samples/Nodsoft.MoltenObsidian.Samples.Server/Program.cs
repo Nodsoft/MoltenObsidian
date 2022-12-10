@@ -1,6 +1,7 @@
 using Nodsoft.MoltenObsidian.Blazor;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
+using Nodsoft.MoltenObsidian.Vaults.Http;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,17 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddSingleton<IVault>(services => FileSystemVault.FromDirectory(
-	new(Path.Join(services.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "Vault", "SocialGuard"))
-));
+//builder.Services.AddSingleton<IVault>(services => FileSystemVault.FromDirectory(
+//	new(Path.Join(services.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "Vault", "SocialGuard"))
+//));
+
+builder.Services.AddHttpClient("",client =>
+{
+	client.BaseAddress = new("http://localhost:57333/");
+});
+
+builder.Services.AddSingleton<IVault, HttpRemoteVault>();
+
 
 builder.Services.AddMoltenObsidianBlazorIntegration();
 

@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Nodsoft.MoltenObsidian.Tests.Server": {
+    "Nodsoft.MoltenObsidian.Samples.Server": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
