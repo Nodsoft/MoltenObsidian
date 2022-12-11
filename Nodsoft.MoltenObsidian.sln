@@ -26,11 +26,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vaults", "Vaults", "{F447B3
 		Vaults\Directory.Build.props = Vaults\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.Http", "Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj", "{97AAEF56-C376-470D-AE7E-5375838242D6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tool", "Nodsoft.MoltenObsidian.Tool\Nodsoft.MoltenObsidian.Tool.csproj", "{0F3380F3-FEA2-46CA-9E0D-4405E22DB8FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.Http.Common", "Vaults\Nodsoft.MoltenObsidian.Vaults.Http.Common\Nodsoft.MoltenObsidian.Vaults.Http.Common.csproj", "{111CEA0D-AA4D-4F3C-890C-510729CB9689}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Manifest", "Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj", "{111CEA0D-AA4D-4F3C-890C-510729CB9689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,10 +56,6 @@ Global
 		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9211C79-D1A5-46CE-952D-AA27903D6CCD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{97AAEF56-C376-470D-AE7E-5375838242D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97AAEF56-C376-470D-AE7E-5375838242D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97AAEF56-C376-470D-AE7E-5375838242D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97AAEF56-C376-470D-AE7E-5375838242D6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0F3380F3-FEA2-46CA-9E0D-4405E22DB8FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0F3380F3-FEA2-46CA-9E0D-4405E22DB8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F3380F3-FEA2-46CA-9E0D-4405E22DB8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,7 +69,5 @@ Global
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD} = {65974834-8043-49B1-9555-B8A63FEF6B29}
 		{426F7149-8C9E-48DE-A3CE-4A06D0203D78} = {65974834-8043-49B1-9555-B8A63FEF6B29}
 		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
-		{97AAEF56-C376-470D-AE7E-5375838242D6} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
-		{111CEA0D-AA4D-4F3C-890C-510729CB9689} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
 	EndGlobalSection
 EndGlobal

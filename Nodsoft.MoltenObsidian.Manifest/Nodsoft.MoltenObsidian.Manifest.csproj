@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+
+		<Description>Implementation for Molten Obsidian vault Manifest, used for vault implementations where structure scanning is not possible.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Text.Json" Version="7.0.0" />
+	</ItemGroup>
+
+</Project>

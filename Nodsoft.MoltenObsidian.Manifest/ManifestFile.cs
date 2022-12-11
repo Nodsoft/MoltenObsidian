@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Nodsoft.MoltenObsidian.Vaults.Http.Common;
+namespace Nodsoft.MoltenObsidian.Manifest;
 
 /// <summary>
 /// Represents a vault file within a manifest.

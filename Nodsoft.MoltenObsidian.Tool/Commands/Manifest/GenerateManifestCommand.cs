@@ -3,7 +3,7 @@ using System.Text.Json;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Tool.Services;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
-using Nodsoft.MoltenObsidian.Vaults.Http.Common;
+using Nodsoft.MoltenObsidian.Manifest;
 using Spectre.Console;
 using Spectre.Console.Cli;
 

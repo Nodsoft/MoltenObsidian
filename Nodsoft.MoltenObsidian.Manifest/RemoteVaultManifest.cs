@@ -1,4 +1,4 @@
-﻿namespace Nodsoft.MoltenObsidian.Vaults.Http.Common;
+﻿namespace Nodsoft.MoltenObsidian.Manifest;
 
 /// <summary>
 /// Represents a vault manifest, used to list the contents of a Molten Obsidian vault stored remotely.

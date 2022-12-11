@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
-using Nodsoft.MoltenObsidian.Vaults.Http.Common;
+using Nodsoft.MoltenObsidian.Manifest;
 
 namespace Nodsoft.MoltenObsidian.Tool.Services;
 
