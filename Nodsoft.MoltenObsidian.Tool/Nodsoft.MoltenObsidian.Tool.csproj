@@ -5,7 +5,9 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
+		
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>moltenobsidian</ToolCommandName>
 		<Description>Utilitary CLI tool for Molten Obsidian, used for Vault manipulation purposes.</Description>
 		
 		<!-- Override: No documentation is needed for a CLI tool. Spectre already does it for us. -->
