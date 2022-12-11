@@ -31,6 +31,10 @@ jobs:
         project: [ 
           { name: "Main", path: "Nodsoft.MoltenObsidian/Nodsoft.MoltenObsidian.csproj" },
           { name: "Blazor", path: "Nodsoft.MoltenObsidian.Blazor/Nodsoft.MoltenObsidian.Blazor.csproj" },
+          { name: "Manifest", path: "Nodsoft.MoltenObsidian.Manifest/Nodsoft.MoltenObsidian.Manifest.csproj" },
+          { name: "CLI Tool", path: "Nodsoft.MoltenObsidian.Tool/Nodsoft.MoltenObsidian.Tool.csproj" },
+        
+          # Vault implementations
           { name: "Filesystem Vault", path: "Nodsoft.MoltenObsidian.Vaults.FileSystem/Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" }
         ]
         
