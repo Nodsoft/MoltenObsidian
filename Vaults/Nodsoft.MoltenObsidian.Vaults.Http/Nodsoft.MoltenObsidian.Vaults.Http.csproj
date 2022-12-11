@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Nodsoft.MoltenObsidian.Vaults.Http.Common\Nodsoft.MoltenObsidian.Vaults.Http.Common.csproj" />
+	</ItemGroup>
+
+</Project>
