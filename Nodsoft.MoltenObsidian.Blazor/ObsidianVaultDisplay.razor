@@ -5,6 +5,6 @@
 {
 	_ when CurrentPath is null or "" or "/" => Index(Vault),
 	IVaultFolder folder => FoundFolder(folder),
-	IVaultNote file => FoundFile(file),
+	IVaultNote file => FoundNote(file),
 	_ => NotFound(_currentPath)
 })

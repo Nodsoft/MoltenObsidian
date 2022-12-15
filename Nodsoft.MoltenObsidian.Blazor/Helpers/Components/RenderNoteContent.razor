@@ -1,0 +1,21 @@
+﻿@using Nodsoft.MoltenObsidian.Vault
+
+@ContentMarkup
+
+@code {
+	/// <summary>
+	/// The note to render content for.
+	/// </summary>
+	[Parameter, EditorRequired]
+	public IVaultNote Note { get; set; }
+	
+	/// <summary>
+	/// The content to render.
+	/// </summary>
+	public MarkupString ContentMarkup { get; private set; }
+	
+	protected override async Task OnParametersSetAsync()
+	{
+		ContentMarkup = new((await Note.ReadDocumentAsync()).ToHtml());
+	}
+}

@@ -16,7 +16,8 @@ public class HttpRemoteFile : IVaultFile
 	}
 
 	internal static HttpRemoteFile FromManifest(ManifestFile file, string name, IVaultFolder parent) 
-		=> file.ContentType.StartsWith("text/markdown", StringComparison.OrdinalIgnoreCase) 
+		=> file.ContentType?.StartsWith("text/markdown", StringComparison.OrdinalIgnoreCase)
+		?? name.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
 			? new HttpRemoteNote(file, name, parent) 
 			: new HttpRemoteFile(file, name, parent);
 
@@ -26,7 +27,7 @@ public class HttpRemoteFile : IVaultFile
 	
 	public async ValueTask<byte[]> ReadBytesAsync()
 	{
-		using HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
+		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
 		using HttpResponseMessage response = await httpClient.GetAsync(_manifestFile.Path);
 		return await response.Content.ReadAsByteArrayAsync();
 		
@@ -34,7 +35,7 @@ public class HttpRemoteFile : IVaultFile
 
 	public async ValueTask<Stream> OpenReadAsync()
 	{
-		using HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
+		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
 		using HttpResponseMessage response = await httpClient.GetAsync(_manifestFile.Path);
 		return await response.Content.ReadAsStreamAsync();
 	}

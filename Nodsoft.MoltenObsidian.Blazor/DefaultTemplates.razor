@@ -1,16 +1,14 @@
-﻿@attribute [SuppressMessage("ReSharper", "InconsistentNaming")]
+﻿@using Nodsoft.MoltenObsidian.Blazor.Helpers;
+@using Nodsoft.MoltenObsidian.Vault;
+@using System.Diagnostics.CodeAnalysis;
 
-@using Nodsoft.MoltenObsidian.Vault
-@using System.Diagnostics.CodeAnalysis
-
+@attribute [SuppressMessage("ReSharper", "InconsistentNaming")]
 
 @code {
-	internal static RenderFragment FoundFileDefaultTemplate(IVaultNote file) => __builder =>
+	internal static RenderFragment FoundNoteDefaultTemplate(IVaultNote file) => __builder =>
 	{
-		MarkupString content = new(file.ReadDocumentAsync().GetAwaiter().GetResult().ToHtml());
-		
 		<article name="@file.Name">
-			@content
+			<RenderNoteContent Note="@file" />
 		</article>
 	};
 
