@@ -10,6 +10,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Blazor\Nodsoft.MoltenObsidian.Blazor.csproj" />
 	  <ProjectReference Include="..\..\Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
+	  <ProjectReference Include="..\..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
 	  <ProjectReference Include="..\..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 	</ItemGroup>
 

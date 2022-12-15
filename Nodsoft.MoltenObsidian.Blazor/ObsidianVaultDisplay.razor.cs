@@ -12,7 +12,7 @@ namespace Nodsoft.MoltenObsidian.Blazor;
 [PublicAPI]
 public sealed partial class ObsidianVaultDisplay : ComponentBase
 {
-	[Inject] public IVault Vault { get; set; } = null!;
+	[Inject, Parameter] public IVault Vault { get; set; } = null!;
 	[Inject] public VaultRouter Router { get; set; } = null!;
 	[Inject] public NavigationManager Navigation { get; set; } = null!;
 	[Inject] public IJSRuntime Js { get; set; } = null!;

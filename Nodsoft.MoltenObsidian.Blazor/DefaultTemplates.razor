@@ -7,7 +7,7 @@
 @code {
 	internal static RenderFragment FoundFileDefaultTemplate(IVaultNote file) => __builder =>
 	{
-		MarkupString content = new(file.ReadDocument().ToHtml());
+		MarkupString content = new(file.ReadDocumentAsync().GetAwaiter().GetResult().ToHtml());
 		
 		<article name="@file.Name">
 			@content
