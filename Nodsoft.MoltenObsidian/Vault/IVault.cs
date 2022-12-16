@@ -20,19 +20,19 @@ public interface IVault
 	IVaultFolder Root { get; }
 
 	/// <summary>
-	/// The folder with the specified path.
+	/// Gets the folder with the specified path.
 	/// </summary>
 	/// <param name="path">The path of the folder to retrieve.</param>
 	/// <returns>The folder with the specified path.</returns>
-	IVaultFolder? GetFolder(string path);
+	IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.TryGetValue(path, out IVaultFolder? folder) ? folder : null;
 
 	/// <summary>
-	/// The file with the specified path, or null if no such file exists.
+	/// Gets the file with the specified path, or null if no such file exists.
 	/// </summary>
 	/// <param name="path">The path of the file to retrieve.</param>
 	/// <returns>The file with the specified path.</returns>
-	IVaultFile? GetFile(string path);
-	
+	IVaultFile? GetFile(string path) => Files.TryGetValue(path, out IVaultFile? file) ? file : null;
+
 	/// <summary>
 	/// A dictionary of all files in the vault, keyed by their relative paths.
 	/// </summary>
