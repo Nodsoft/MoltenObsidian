@@ -14,21 +14,8 @@ builder.Services.AddServerSideBlazor();
 //	new(Path.Join(services.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "Vault", "SocialGuard"))
 //));
 
-builder.Services.AddHttpClient("", client =>
-{
-	client.BaseAddress = new("http://localhost:7010/");
-});
-
-builder.Services.AddSingleton<IVault>(services =>
-{
-	var httpClient = services.GetRequiredService<IHttpClientFactory>().CreateClient();
-	
-	// Get the vault manifest from the server
-	RemoteVaultManifest manifest = httpClient.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json").GetAwaiter().GetResult()
-		?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
-	
-	return HttpRemoteVault.FromManifest(manifest, httpClient);
-});
+builder.Services.AddHttpClient("", client => client.BaseAddress = new("http://localhost:7010/"));
+builder.Services.AddMoltenObsidianHttpVault(services => services.GetRequiredService<IHttpClientFactory>().CreateClient(""));
 
 builder.Services.AddMoltenObsidianBlazorIntegration();
 
