@@ -114,7 +114,7 @@ public static class VaultExtensions
 
 		// Last ditch attempt: Could it be a full path?
 		// Check against the vault Files dictionary.
-		else if (file.Vault.Files.TryGetValue(relativePath, out IVaultFile? resolvedFile))
+		else if (file.Vault.GetFile(relativePath) is { } resolvedFile)
 		{
 			return resolvedFile;
 		}
@@ -158,4 +158,6 @@ public static class VaultExtensions
 			return null;
 		}
 	}
+	
+	
 }
