@@ -32,6 +32,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Mani
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.Http", "Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj", "{40A328BD-469C-4F71-8F2B-AB55DFA37EB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Samples.EmbeddedVault", "Samples\Nodsoft.MoltenObsidian.Samples.EmbeddedVault\Nodsoft.MoltenObsidian.Samples.EmbeddedVault.csproj", "{623AA0A9-CCF1-4ADA-82C8-3F3EA9D4E989}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Vaults.Embedded", "Vaults\Nodsoft.MoltenObsidian.Vaults.Embedded\Nodsoft.MoltenObsidian.Vaults.Embedded.csproj", "{58399944-1EFC-4848-A2F8-5D2682F3C6E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,11 +74,21 @@ Global
 		{40A328BD-469C-4F71-8F2B-AB55DFA37EB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40A328BD-469C-4F71-8F2B-AB55DFA37EB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40A328BD-469C-4F71-8F2B-AB55DFA37EB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{623AA0A9-CCF1-4ADA-82C8-3F3EA9D4E989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{623AA0A9-CCF1-4ADA-82C8-3F3EA9D4E989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{623AA0A9-CCF1-4ADA-82C8-3F3EA9D4E989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{623AA0A9-CCF1-4ADA-82C8-3F3EA9D4E989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58399944-1EFC-4848-A2F8-5D2682F3C6E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58399944-1EFC-4848-A2F8-5D2682F3C6E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58399944-1EFC-4848-A2F8-5D2682F3C6E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58399944-1EFC-4848-A2F8-5D2682F3C6E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{EC301077-31DB-4ECF-B8C4-11F482ED24BD} = {65974834-8043-49B1-9555-B8A63FEF6B29}
 		{426F7149-8C9E-48DE-A3CE-4A06D0203D78} = {65974834-8043-49B1-9555-B8A63FEF6B29}
 		{A2C0720A-8D93-4A81-8BE9-05607DE96BC5} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
 		{40A328BD-469C-4F71-8F2B-AB55DFA37EB3} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
+		{623AA0A9-CCF1-4ADA-82C8-3F3EA9D4E989} = {65974834-8043-49B1-9555-B8A63FEF6B29}
+		{58399944-1EFC-4848-A2F8-5D2682F3C6E7} = {F447B3AF-B704-44F4-8385-CA1C98F27A4D}
 	EndGlobalSection
 EndGlobal
