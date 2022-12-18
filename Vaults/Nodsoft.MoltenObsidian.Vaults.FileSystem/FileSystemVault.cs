@@ -17,8 +17,11 @@ public sealed class FileSystemVault : IVault
 	
 	public IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.TryGetValue(path, out IVaultFolder? folder) ? folder : null;
 
-	public IVaultFile? GetFile(string path) => Files.TryGetValue(path, out IVaultFile? file) ? file : null;
-	
+	public IVaultFile? GetFile(string path)
+		=> Files.TryGetValue(Path.HasExtension(path) ? path : Path.ChangeExtension(path, ".md"), out IVaultFile? file)
+			? file
+			: null;
+
 	public IReadOnlyDictionary<string, IVaultFile> Files { get; private set; } = null!;
 	public IReadOnlyDictionary<string, IVaultFolder> Folders { get; private set; } = null!;
 	public IReadOnlyDictionary<string, IVaultNote> Notes { get; private set; } = null!;

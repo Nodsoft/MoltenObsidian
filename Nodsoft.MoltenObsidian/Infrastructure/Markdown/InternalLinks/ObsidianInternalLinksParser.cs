@@ -99,9 +99,9 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 			internalLink.Title = internalLink switch
 			{
 				{ Display: { } display and not "" } => display,
-				{ TargetNote: { } note and not "", TargetSection: { } section and not "" } => $"{note} > {section}",
-				{ TargetNote: not (null or "") } => internalLink.TargetNote,
-				{ TargetSection: not (null or "") } => $"{internalLink.TargetSection}",
+				{ TargetNote: { } note and not "", TargetSection: { } section and not "" } => $"{note.Split("/").Last()} > {section}",
+				{ TargetNote: not (null or "") } => internalLink.TargetNote.Split("/").Last(),
+				{ TargetSection: not (null or "") } => internalLink.TargetSection,
 				_ => string.Empty
 			};
 			

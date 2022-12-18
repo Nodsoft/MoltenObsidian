@@ -2,6 +2,7 @@
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Manifest;
+using MimeTypes = Nodsoft.MoltenObsidian.Manifest.MimeTypes;
 
 namespace Nodsoft.MoltenObsidian.Tool.Services;
 
@@ -44,7 +45,7 @@ public static class VaultManifestGenerator
 	private static async Task<ManifestFile> ExtractManifestAsync(IVaultFile file)
 	{
 		// Read the file. We'll need it later.
-		await using Stream stream = file.OpenRead();
+		await using Stream stream = await file.OpenReadAsync();
 
 		// Build a new file object
 		return new()
@@ -52,7 +53,8 @@ public static class VaultManifestGenerator
 			Path = file.Path,
 			Hash = Convert.ToBase64String(await SHA256.HashDataAsync(stream)), // Create a SHA256 hash of the file
 			Size = stream.Length,
-			Metadata = file is IVaultNote note ? note.ReadDocument().FrontMatter : new()
+			ContentType = MimeTypes.GetMimeType(file.Name),
+			Metadata = file is IVaultNote note ? (await note.ReadDocumentAsync()).FrontMatter : new()
 		};
 	}
 }

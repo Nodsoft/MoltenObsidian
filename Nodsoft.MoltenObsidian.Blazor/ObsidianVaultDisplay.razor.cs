@@ -12,7 +12,7 @@ namespace Nodsoft.MoltenObsidian.Blazor;
 [PublicAPI]
 public sealed partial class ObsidianVaultDisplay : ComponentBase
 {
-	[Inject] public IVault Vault { get; set; } = null!;
+	[Inject, Parameter] public IVault Vault { get; set; } = null!;
 	[Inject] public VaultRouter Router { get; set; } = null!;
 	[Inject] public NavigationManager Navigation { get; set; } = null!;
 	[Inject] public IJSRuntime Js { get; set; } = null!;
@@ -22,7 +22,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 
 	[Parameter] public RenderFragment<IVault> Index { get; set; } = DefaultTemplates.IndexDefaultTemplate;
 	[Parameter] public RenderFragment<string> NotFound { get; set; } = DefaultTemplates.NotFoundDefaultTemplate;
-	[Parameter] public RenderFragment<IVaultNote> FoundFile { get; set; } = DefaultTemplates.FoundFileDefaultTemplate;
+	[Parameter] public RenderFragment<IVaultNote> FoundNote { get; set; } = DefaultTemplates.FoundNoteDefaultTemplate;
 	[Parameter] public RenderFragment<IVaultFolder> FoundFolder { get; set; } = DefaultTemplates.FoundFolderDefaultTemplate;
 	[Parameter] public RenderFragment<(string, Exception)> Error { get; set; } = DefaultTemplates.ErrorDefaultTemplate;
 

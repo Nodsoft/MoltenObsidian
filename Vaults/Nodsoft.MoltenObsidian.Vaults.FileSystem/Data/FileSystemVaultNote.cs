@@ -9,5 +9,5 @@ internal sealed class FileSystemVaultNote : FileSystemVaultFile, IVaultNote
 	
 	public override string ContentType => "text/markdown";
 	
-	public ObsidianText ReadDocument() => new(Encoding.UTF8.GetString(ReadAllBytes()), this);
+	public async ValueTask<ObsidianText> ReadDocumentAsync() => new(Encoding.UTF8.GetString(await ReadBytesAsync()), this);
 }

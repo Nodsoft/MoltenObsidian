@@ -24,7 +24,7 @@ public interface IVaultFile : IVaultEntity
 	/// <returns>A buffer containing the file contents.</returns>
 	/// <exception cref="IOException">An error occurred while reading the file.</exception>
 	/// <exception cref="UnauthorizedAccessException">The file could not be accessed.</exception>
-	byte[] ReadAllBytes();
+	ValueTask<byte[]> ReadBytesAsync();
 	
 	/// <summary>
 	/// Opens the file for reading, as a stream.
@@ -32,5 +32,5 @@ public interface IVaultFile : IVaultEntity
 	/// <returns>A stream containing the file contents.</returns>
 	/// <exception cref="IOException">An error occurred while opening a stream to the file.</exception>
 	/// <exception cref="UnauthorizedAccessException">The file could not be accessed.</exception>
-	Stream OpenRead();
+	ValueTask<Stream> OpenReadAsync();
 }
