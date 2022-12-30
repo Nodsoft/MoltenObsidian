@@ -4,10 +4,12 @@ using Nodsoft.MoltenObsidian.Tool.Commands.Manifest;
 using Spectre.Console.Cli;
 
 CommandApp app = new();
+
 app.Configure(static config =>
 {
-	config.SetApplicationName("Molten Obsidian - Utility CLI Tool");
+	config.SetApplicationName("moltenobsidian");
 	
+
 #if DEBUG
 	config.PropagateExceptions();
 	config.ValidateExamples();
