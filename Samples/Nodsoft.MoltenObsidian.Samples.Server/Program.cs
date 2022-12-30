@@ -1,8 +1,4 @@
 using Nodsoft.MoltenObsidian.Blazor;
-using Nodsoft.MoltenObsidian.Manifest;
-using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.FileSystem;
-using Nodsoft.MoltenObsidian.Vaults.Http;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
