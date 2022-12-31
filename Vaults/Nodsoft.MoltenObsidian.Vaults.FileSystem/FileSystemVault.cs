@@ -66,16 +66,27 @@ public sealed class FileSystemVault : IVault
 		vault.Name = directory.Name;
 		
 		// Now we need to load all the files and folders
-		// The .obsidian directory is reserved for internal use, so we ignore it
 		vault.Folders = new Dictionary<string, IVaultFolder>(
 			vault.Root.GetFolders(SearchOption.AllDirectories)
-				.Where(f => !excludedFolders.Contains(f.Key)));
+				// Take into account any exclusions
+				.Where(folder =>
+					{
+						string[] segments = folder.Key.Split("/");
+						return !segments.Any(excludedFolders.Contains);
+					}
+				));
 		
 		// Load the files from the above folders
 		vault.Files = new Dictionary<string, IVaultFile>(
 			vault.Folders.Values
 				.SelectMany(f => f.GetFiles(SearchOption.TopDirectoryOnly))
-				.Where(f => !excludedFiles.Contains(f.Key)));
+				// Take into account any exclusions
+				.Where(f =>
+					{
+						string lastSegment = f.Key.Split("/").Last();
+						return !excludedFiles.Contains(lastSegment);
+					}
+				));
 
 		// Now we need to get all the markdown files.
 		// We can do this by filtering the Files dictionary, grabbing all the files that end with ".md".
