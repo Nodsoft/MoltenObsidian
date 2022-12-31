@@ -60,3 +60,23 @@ The given path will then be checked for the existence of the `./.obsidian/` fold
 Nonetheless, if you're adamant on the location, you can bypass the checks by running the same command with the `-f|--force` argument, which will force the creation of a manifest, regardless of that validating folder's presence.
 
 Similarly, there may be cases where you need to output the manifest to a separate folder. In these edge cases, specifying the `-o|--output <output-folder>` argument will allow you to output the manifest in a different folder (all while retaining the conventionally contingent `moltenobsidian.manifest.json` filename).
+
+Finally, if the default list of excluded folders/files is not sufficient, you can overwrite the list using the `--exclude-folder` and `--exclude-file` arguments. These can be invoked multiple times in the same command, like so:
+
+```sh
+moltenobsidian manifest generate "/path/to/vault/root" 
+	--exclude-folder ".obsidian" 
+	--exclude-folder ".git" 
+	--exclude-folder ".github"
+```
+```sh
+moltenobsidian manifest generate "/path/to/vault/root" 
+	--exclude-file "my/secret/document.md" 
+	--exclude-file "secrets.json"
+```
+
+For reference, these are the default exclusions:  
+| **Entity Type** | **Exclusions** |
+| --- | --- |
+| **Folders** | `.obsidian` `.git` `.vs` `.vscode` `node_modules` |
+| **Files** | `.DS_STORE` |
