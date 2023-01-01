@@ -1,0 +1,15 @@
+﻿@* ReSharper disable InconsistentNaming *@
+
+@code {
+	/// <summary>
+	/// Default render fragment used when routing hits a vault Note.
+	/// </summary>
+	/// <param name="note">The note to render.</param>
+	/// <returns>A default render fragment, which simply renders the note's content inside a <c>article</c> element.</returns>
+	public static RenderFragment Render(IVaultNote note) => __builder =>
+	{
+		<article name="@note.Name">
+			<RenderNoteContent Note="@note" />
+		</article>
+	};
+}
