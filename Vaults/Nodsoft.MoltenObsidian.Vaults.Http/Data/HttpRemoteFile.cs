@@ -1,7 +1,7 @@
 ﻿using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 
-namespace Nodsoft.MoltenObsidian.Vaults.Http;
+namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
 public class HttpRemoteFile : IVaultFile
 {

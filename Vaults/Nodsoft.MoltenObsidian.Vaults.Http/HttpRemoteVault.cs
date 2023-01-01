@@ -1,5 +1,6 @@
 ﻿using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
+using Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Http;
 
