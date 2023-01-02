@@ -37,7 +37,7 @@ jobs:
           { name: "CLI Tool", path: "Nodsoft.MoltenObsidian.Tool/Nodsoft.MoltenObsidian.Tool.csproj" },
         
           # Vault implementations
-          { name: "Filesystem Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.FileSystem/Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" }
+          { name: "Filesystem Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.FileSystem/Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" },
           { name: "HTTP Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.Http/Nodsoft.MoltenObsidian.Vaults.Http.csproj" }
         ]
         
