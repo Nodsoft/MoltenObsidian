@@ -28,7 +28,7 @@ public static class VaultDependencyInjectionExtensions
 
 			return HttpRemoteVault.FromManifest(manifest, httpClient);
 		});
-	
+
 	/// <summary>
 	/// Adds a HTTP-based MoltenObsidian vault to the service collection.
 	/// </summary>
