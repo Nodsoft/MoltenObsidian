@@ -78,7 +78,7 @@ public sealed class FileSystemVault : IVault
 		
 		// Load the files from the above folders
 		vault.Files = new Dictionary<string, IVaultFile>(
-			vault.Folders.Values
+			vault.Folders.Values.Concat(new[] { vault.Root })
 				.SelectMany(f => f.GetFiles(SearchOption.TopDirectoryOnly))
 				// Take into account any exclusions
 				.Where(f =>
