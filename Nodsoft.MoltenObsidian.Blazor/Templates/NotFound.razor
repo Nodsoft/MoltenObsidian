@@ -1,0 +1,15 @@
+﻿@* ReSharper disable once InconsistentNaming *@
+
+@code {
+	/// <summary>
+	/// Default render fragment used when routing doen't hit any entity.
+	/// </summary>
+	/// <returns>A default render fragment, which simply renders a usual 404 display.</returns>
+	public static RenderFragment Render(string path) => __builder =>
+	{
+		<div>
+			<h1>No result.</h1>
+			<p>Nothing was found at path <code>@path</code>.</p>
+		</div>
+	};
+}

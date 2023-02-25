@@ -1,4 +1,5 @@
 ﻿@using Nodsoft.MoltenObsidian.Vault
+@using Microsoft.AspNetCore.Components
 
 @ContentMarkup
 
@@ -12,10 +13,49 @@
 	/// <summary>
 	/// The content to render.
 	/// </summary>
-	public MarkupString ContentMarkup { get; private set; }
+	public MarkupString ContentMarkup { get; protected set; }
+
+	/// <summary>
+	/// The obsidian document being rendered.
+	/// </summary>
+	public ObsidianText Document { get; protected set; }
 	
+	/// <summary>
+	/// Fires when the component finished loading the Note as an Obsidian Markdown document.
+	/// </summary>
+	/// <value>An <see cref="EventCallback{TValue}"/> loaded with the markup string.</value>
+	[Parameter]
+	public EventCallback<ObsidianText> DocumentLoaded { get; set; }
+	
+	
+
+	/// <summary>
+	/// Determines whether the component should render the content.
+	/// </summary>
+	[Parameter]
+	public Func<RenderNoteContent, bool> ShouldRenderContent { get; set; } = static _ => true;
+
+	/// <inheritdoc />
 	protected override async Task OnParametersSetAsync()
 	{
-		ContentMarkup = new((await Note.ReadDocumentAsync()).ToHtml());
+		ObsidianText document = await Note.ReadDocumentAsync();
+		await OnDocumentLoadedAsync(Document = document);
+		
+		ContentMarkup = new(document.ToHtml());
 	}
+
+	/// <inheritdoc cref="ComponentBase.StateHasChanged" />
+	public new void StateHasChanged()
+	{
+		base.StateHasChanged();
+	}
+	
+	/// <inheritdoc />
+	protected override bool ShouldRender() => ShouldRenderContent(this);
+
+	/// <summary>
+	/// Fires the <see cref="DocumentLoaded"/> event.
+	/// </summary>
+	/// <param name="document">The document that was loaded.</param>
+	protected async ValueTask OnDocumentLoadedAsync(ObsidianText document) => await DocumentLoaded.InvokeAsync(document);
 }

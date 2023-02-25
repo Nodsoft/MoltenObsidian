@@ -1,6 +1,6 @@
 ﻿using Nodsoft.MoltenObsidian.Vault;
 
-namespace Nodsoft.MoltenObsidian.Vaults.Http;
+namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
 public sealed class HttpRemoteFolder : IVaultFolder
 {

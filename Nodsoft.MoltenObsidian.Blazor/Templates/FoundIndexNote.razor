@@ -1,0 +1,23 @@
+﻿@* ReSharper disable once InconsistentNaming *@
+
+@code {
+	/// <summary>
+	/// Default render fragment used when routing hits a directory with an index note.
+	/// </summary>
+	/// <param name="note">The index note to render.</param>
+	/// <returns>A default render fragment, which simply renders the note's content inside a <c>article</c> element.</returns>
+	public static RenderFragment Render((IVaultNote note, IVaultFolder folder) value) => __builder =>
+	{
+		bool isRoot = value.folder == value.folder.Vault.Root;
+
+		<nav class="moltenobsidian-folder-nav">
+			@FolderNavigationTree(value.folder, isRoot)
+		</nav>
+		
+		<hr style="margin: 2rem; padding: 0.25rem;" />
+		
+		<article name="@value.note.Name" class="moltenobsidian-index-note">
+			<RenderNoteContent Note="@value.note" />
+		</article>
+	};
+}

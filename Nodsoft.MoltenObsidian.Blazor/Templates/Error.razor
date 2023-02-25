@@ -1,0 +1,16 @@
+﻿@* ReSharper disable once InconsistentNaming *@
+
+@code {
+	/// <summary>
+	/// Default render fragment used when routing hits an error.
+	/// </summary>
+	/// <returns>A default render fragment, which simply renders a usual 500 display.</returns>
+	public static RenderFragment Render((string path, Exception e) value) => __builder =>
+	{
+		<div>
+			<h1>Error.</h1>
+			<p>An error occured while trying to access <code>@value.path</code> :</p>
+			<p>@value.e.Message</p>
+		</div>
+	};
+}
