@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Nodsoft.MoltenObsidian.Blazor.Helpers;
 using Nodsoft.MoltenObsidian.Blazor.Services;
+using Nodsoft.MoltenObsidian.Blazor.Templates;
 using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Blazor;
@@ -57,13 +58,13 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	[Parameter] public ObsidianVaultDisplayOptions Options { get; set; } = new();
 
 	/// <summary>
-	/// The render fragment in charge of rendering the vault's index.
+	/// The render fragment in charge of rendering the vault's root/index.
 	/// </summary>
 	/// <value>
-	///	By default, this is set to <see cref="Templates.FoundVaultIndex"/>, which renders a list of all entities in the vault.
+	///	By default, this is set to <see cref="Templates.FoundVaultRoot"/>, which renders a list of all entities in the vault.
 	/// </value>
 	/// <seealso cref="IVault"/>
-	[Parameter] public RenderFragment<IVault> Index { get; set; } = Templates.FoundVaultIndex.Render;
+	[Parameter] public RenderFragment<IVault> FoundVaultRoot { get; set; } = Templates.FoundVaultRoot.Render;
 	
 	/// <summary>
 	/// The render fragment used when nothing is found at the current path.
@@ -74,16 +75,25 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// The render fragment used when hitting a Note on the current path.
 	/// </summary>
 	/// <value>
-	/// By default, this is set to <see cref="DefaultTemplates.FoundNoteDefaultTemplate"/>, which renders the note's content.
+	/// By default, this is set to <see cref="Templates.FoundNote"/>, which renders the note's content.
 	/// </value>
 	/// <seealso cref="IVaultNote"/>
 	[Parameter] public RenderFragment<IVaultNote> FoundNote { get; set; } = Templates.FoundNote.Render;
 	
 	/// <summary>
+	/// The render fragment used when hitting an Index Note of a directory on the current path.
+	/// </summary>
+	/// <value>
+	/// By default, this is set to <see cref="Templates.FoundIndexNote"/>, which renders the note along with a list of all entities in the vault.
+	/// </value>
+	/// <seealso cref="IVaultNote"/>
+	[Parameter] public RenderFragment<(IVaultNote, IVaultFolder)> FoundIndexNote { get; set; } = Templates.FoundIndexNote.Render;
+	
+	/// <summary>
 	/// The render fragment used when hitting a Folder on the current path.
 	/// </summary>
 	/// <value>
-	/// By default, this is set to <see cref="DefaultTemplates.FoundFolderDefaultTemplate"/>, which renders a list of all immediate descending entities in the folder.
+	/// By default, this is set to <see cref="Templates.FoundFolder"/>, which renders a list of all immediate descending entities in the folder.
 	/// </value>
 	/// <seealso cref="IVaultFolder"/>
 	[Parameter] public RenderFragment<IVaultFolder> FoundFolder { get; set; } = Templates.FoundFolder.Render;
@@ -96,7 +106,9 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 
 	private IVaultEntity? _foundEntity;
 	private string _currentPath = ".";
+	private RenderFragment? _display;
 	
+	/// <inheritdoc />
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
@@ -107,8 +119,19 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 		{
 			_foundEntity = Router.RouteTo(CurrentPath);
 		}
+
+		_display = _foundEntity switch
+		{
+			_ when CurrentPath is null or "" or "/" && await Vault.Root.GetIndexNoteAsync() is { } indexNote => FoundIndexNote((indexNote, Vault.Root)),
+			_ when CurrentPath is null or "" or "/" => FoundVaultRoot(Vault),
+			IVaultFolder folder when await folder.GetIndexNoteAsync() is { } indexNote => FoundIndexNote((indexNote, folder)),
+			IVaultFolder folder => FoundFolder(folder),
+			IVaultNote file => FoundNote(file),
+			_ => NotFound(_currentPath)
+		};
 	}
 
+	/// <inheritdoc />
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)

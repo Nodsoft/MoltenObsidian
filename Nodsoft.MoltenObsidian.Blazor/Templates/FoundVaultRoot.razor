@@ -1,0 +1,17 @@
+﻿@* ReSharper disable once InconsistentNaming *@
+
+@code {
+	/// <summary>
+	/// Default render fragment used when routing hits the vault's root.
+	/// </summary>
+	/// <returns>A default render fragment, which simply lists the vault's content inside <c>ul</c> elements.</returns>
+	internal static RenderFragment Render(IVault vault) => __builder =>
+	{
+		<nav name="@vault.Name">
+			<h1>@vault.Name</h1>
+			
+			@* Display a hierarchical view of all Markdown files, ranged by subfolders. *@
+			@FolderNavigationTree(vault.Root, true)
+		</nav>
+	};
+}

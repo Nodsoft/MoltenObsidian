@@ -13,11 +13,12 @@ public readonly struct ObsidianVaultDisplayOptions
 	
 	/// <summary>
 	/// If enabled, any <c>README.md</c> or <c>index.md</c> file will be displayed as the default/index page.
+	/// This setting can be individually overriden at file-level using the <c>moltenobsidian:index:enabled</c> front matter property.
 	/// </summary>
 	/// <remarks>
 	/// Defaults to <see langword="true" />.
 	/// </remarks>
-	public bool DisplayReadmeOnFolderRoot { get; init; } = true;
+	public bool DisplayIndexNoteOnFolderRoot { get; init; } = true;
 	
 	/// <summary>
 	/// If enabled, a folder index note display will also render the navigation tree for the current folder.
@@ -26,6 +27,6 @@ public readonly struct ObsidianVaultDisplayOptions
 	/// <remarks>
 	/// Defaults to <see langword="true" />.
 	/// </remarks>
-	/// <seealso cref="ObsidianVaultDisplayOptions.DisplayReadmeOnFolderRoot" />
+	/// <seealso cref="DisplayIndexNoteOnFolderRoot" />
 	public bool DisplayFolderNavigation { get; init; } = true;
 }

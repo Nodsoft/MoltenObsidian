@@ -1,0 +1,38 @@
+﻿@using Nodsoft.MoltenObsidian.Vault
+
+@code {
+    public static @RenderFragment FolderNavigationTree(IVaultFolder folder, bool isRoot = false) => __builder =>
+    {
+        // Merge all subfolders and files into a single list.
+        IOrderedEnumerable<KeyValuePair<string, IVaultEntity>> items = folder.Subfolders
+            .Where(f => !isRoot || f.Name != ".obsidian")
+            .Cast<IVaultEntity>()
+            .Concat(folder.Files)
+            .Select(x => new KeyValuePair<string, IVaultEntity>(x.Path, x))
+            .OrderBy(x => x.Key);
+
+        // Display the list.
+		
+        <ul>
+            @foreach (KeyValuePair<string, IVaultEntity> item in items)
+            {
+                switch (item.Value)
+                {
+                    case IVaultFolder subfolder:
+                        <li>
+                            <a href="@subfolder.Path/">@subfolder.Name</a>
+                            @FolderNavigationTree(subfolder)
+                        </li>
+                        break;
+						
+                    case IVaultNote file:
+                        // The file's path should be filtered to remove the file's extension (".md").
+                        <li>
+                            <a href="@file.Path[..^3]">@file.Name[..^3]</a>
+                        </li>
+                        break;
+                }
+            }
+        </ul>
+    };
+}

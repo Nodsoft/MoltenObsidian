@@ -16,6 +16,7 @@ public static class VaultExtensions
 	/// <param name="folder">The folder to search.</param>
 	/// <param name="searchOption">The search option to use.</param>
 	/// <returns>A dictionary of all corresponding files, keyed by their vault-relative path.</returns>
+	/// <seealso cref="IVaultFile" />
 	public static IReadOnlyDictionary<string, IVaultFile> GetFiles(this IVaultFolder folder, SearchOption searchOption)
 	{
 		if (searchOption is SearchOption.TopDirectoryOnly)
@@ -47,10 +48,27 @@ public static class VaultExtensions
 	}
 	
 	/// <summary>
+	/// Gets all note files in this folder, and all subfolders if <paramref name="searchOption"/> is set to <see cref="SearchOption.AllDirectories"/>.
+	/// </summary>
+	/// <param name="folder">The folder to search.</param>
+	/// <param name="searchOption">The search option to use.</param>
+	/// <returns>A dictionary of all corresponding note files, keyed by their vault-relative path.</returns>
+	/// <remarks>
+	/// Note files are files with the extension <c>.md</c>.
+	/// </remarks>
+	/// <seealso cref="GetFiles(IVaultFolder, SearchOption)" />
+	/// <seealso cref="IVaultNote" />
+	public static IReadOnlyDictionary<string, IVaultNote> GetNotes(this IVaultFolder folder, SearchOption searchOption) 
+		=> folder.GetFiles(searchOption)
+			.Where(static f => f.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+			.ToDictionary(static f => f.Key, static f => (IVaultNote)f.Value);
+
+	/// <summary>
 	/// Gets all folders in this folder, and all subfolders if <paramref name="searchOption"/> is set to <see cref="SearchOption.AllDirectories"/>.
 	/// </summary>
 	/// <param name="searchOption">The search option to use.</param>
 	/// <returns>A dictionary of all corresponding folders, keyed by their vault-relative path.</returns>
+	/// <seealso cref="IVaultFolder" />
 	public static IReadOnlyDictionary<string, IVaultFolder> GetFolders(this IVaultFolder folder, SearchOption searchOption)
 	{
 		if (searchOption is SearchOption.TopDirectoryOnly)

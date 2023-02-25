@@ -26,11 +26,11 @@ public readonly record struct ObsidianText
 		_vaultFile = vaultFile;
 		
 		// First, check if the text starts with a YAML header, and split it off if so.
-		(string? frontMatter, Text) = SplitYamlFrontMatter(obsidianText);
+		(string? frontmatter, Text) = SplitYamlFrontMatter(obsidianText);
 
 		// If there is a YAML header, parse it into a dictionary.
 		// Otherwise, set the frontmatter to an empty dictionary.
-		FrontMatter = frontMatter is null ? new() : ParseYamlFrontMatter(frontMatter);
+		Frontmatter = frontmatter is null ? new() : ParseYamlFrontMatter(frontmatter);
 	}
 
 
@@ -50,7 +50,7 @@ public readonly record struct ObsidianText
 	/// The YAML header (frontmatter) found at the beginning of the text,
 	/// parsed into a key-value dictionary.
 	/// </summary>
-	public Dictionary<string, object> FrontMatter { get; }
+	public Dictionary<string, object> Frontmatter { get; }
 
 	/// <summary>
 	/// The length of <see cref="Text"/>.
