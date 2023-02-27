@@ -64,12 +64,12 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	///	By default, this is set to <see cref="Templates.FoundVaultRoot"/>, which renders a list of all entities in the vault.
 	/// </value>
 	/// <seealso cref="IVault"/>
-	[Parameter] public RenderFragment<IVault> FoundVaultRoot { get; set; } = Templates.FoundVaultRoot.Render;
+	[Parameter] public RenderFragment<FoundVaultRoot.FoundVaultRootRenderContext> FoundVaultRoot { get; set; } = Templates.FoundVaultRoot.Render;
 	
 	/// <summary>
 	/// The render fragment used when nothing is found at the current path.
 	/// </summary>
-	[Parameter] public RenderFragment<string> NotFound { get; set; } = Templates.NotFound.Render;
+	[Parameter] public RenderFragment<NotFound.NotFoundRenderContext> NotFound { get; set; } = Templates.NotFound.Render;
 	
 	/// <summary>
 	/// The render fragment used when hitting a Note on the current path.
@@ -78,7 +78,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// By default, this is set to <see cref="Templates.FoundNote"/>, which renders the note's content.
 	/// </value>
 	/// <seealso cref="IVaultNote"/>
-	[Parameter] public RenderFragment<IVaultNote> FoundNote { get; set; } = Templates.FoundNote.Render;
+	[Parameter] public RenderFragment<FoundNote.FoundNoteRenderContext> FoundNote { get; set; } = Templates.FoundNote.Render;
 	
 	/// <summary>
 	/// The render fragment used when hitting an Index Note of a directory on the current path.
@@ -87,7 +87,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// By default, this is set to <see cref="Templates.FoundIndexNote"/>, which renders the note along with a list of all entities in the vault.
 	/// </value>
 	/// <seealso cref="IVaultNote"/>
-	[Parameter] public RenderFragment<(IVaultNote, IVaultFolder)> FoundIndexNote { get; set; } = Templates.FoundIndexNote.Render;
+	[Parameter] public RenderFragment<FoundIndexNote.FoundIndexNoteRenderContext> FoundIndexNote { get; set; } = Templates.FoundIndexNote.Render;
 	
 	/// <summary>
 	/// The render fragment used when hitting a Folder on the current path.
@@ -96,12 +96,12 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// By default, this is set to <see cref="Templates.FoundFolder"/>, which renders a list of all immediate descending entities in the folder.
 	/// </value>
 	/// <seealso cref="IVaultFolder"/>
-	[Parameter] public RenderFragment<IVaultFolder> FoundFolder { get; set; } = Templates.FoundFolder.Render;
+	[Parameter] public RenderFragment<FoundFolder.FoundFolderRenderContext> FoundFolder { get; set; } = Templates.FoundFolder.Render;
 	
 	/// <summary>
 	/// The render fragment used when an error occurs.
 	/// </summary>
-	[Parameter] public RenderFragment<(string, Exception)> Error { get; set; } = Templates.Error.Render;
+	[Parameter] public RenderFragment<Error.ErrorRenderContext> Error { get; set; } = Templates.Error.Render;
 
 
 	private IVaultEntity? _foundEntity;
@@ -122,12 +122,12 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 
 		_display = _foundEntity switch
 		{
-			_ when CurrentPath is null or "" or "/" && await Vault.Root.GetIndexNoteAsync() is { } indexNote => FoundIndexNote((indexNote, Vault.Root)),
-			_ when CurrentPath is null or "" or "/" => FoundVaultRoot(Vault),
-			IVaultFolder folder when await folder.GetIndexNoteAsync() is { } indexNote => FoundIndexNote((indexNote, folder)),
-			IVaultFolder folder => FoundFolder(folder),
-			IVaultNote file => FoundNote(file),
-			_ => NotFound(_currentPath)
+			_ when CurrentPath is null or "" or "/" && await Vault.Root.GetIndexNoteAsync() is { } indexNote => FoundIndexNote(new(indexNote, indexNote.Parent!, Options)),
+			_ when CurrentPath is null or "" or "/" => FoundVaultRoot(new(Vault, Options)),
+			IVaultFolder folder when await folder.GetIndexNoteAsync() is { } indexNote => FoundIndexNote(new(indexNote, folder, Options)),
+			IVaultFolder folder => FoundFolder(new(folder, Options)),
+			IVaultNote file => FoundNote(new(file, Options)),
+			_ => NotFound(new(_currentPath, Options))
 		};
 	}
 

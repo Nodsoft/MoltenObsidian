@@ -4,12 +4,19 @@
 	/// <summary>
 	/// Default render fragment used when routing hits a vault Note.
 	/// </summary>
-	/// <param name="note">The note to render.</param>
+	/// <param name="ctx">The render context.</param>
 	/// <returns>A default render fragment, which simply renders the note's content inside a <c>article</c> element.</returns>
-	public static RenderFragment Render(IVaultNote note) => __builder =>
+	public static RenderFragment Render(FoundNoteRenderContext ctx) => __builder =>
 	{
-		<article name="@note.Name">
-			<RenderNoteContent Note="@note" />
+		<article name="@ctx.Note.Name">
+			<RenderNoteContent Note="@ctx.Note" Converter="ctx.DisplayOptions.Converter" />
 		</article>
 	};
+
+	/// <summary>
+	/// Render context for a found vault Note.
+	/// </summary>
+	/// <param name="Note">The vault Note to render.</param>
+	public record FoundNoteRenderContext(IVaultNote Note, ObsidianVaultDisplayOptions DisplayOptions) : TemplateRenderContextBase(DisplayOptions);
+
 }
