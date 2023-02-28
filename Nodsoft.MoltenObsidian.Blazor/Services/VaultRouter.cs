@@ -10,6 +10,10 @@ public sealed class VaultRouter
 	private readonly IVault _vault;
 	private readonly Dictionary<string, IVaultEntity> _routes;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="VaultRouter"/> class.
+	/// </summary>
+	/// <param name="vault">The vault to route.</param>
 	public VaultRouter(IVault vault)
 	{
 		_vault = vault;
@@ -23,7 +27,7 @@ public sealed class VaultRouter
 	/// <returns>The entity at the specified path.</returns>
 	public IVaultEntity? RouteTo(string path)
 	{
-		// Now find the route within the routing table.
+		// Find the route within the routing table.
 		// First perform a case-sensitive search, falling back to a case-insensitive search if not found.
 		
 		if (_routes.TryGetValue(path, out IVaultEntity? caseSensitive))

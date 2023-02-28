@@ -1,0 +1,33 @@
+﻿@* ReSharper disable once InconsistentNaming *@
+
+@code {
+	/// <summary>
+	/// Default render fragment used when routing hits a vault Folder.
+	/// </summary>
+	/// <param name="folder">The folder to render.</param>
+	/// <returns>A default render fragment, which simply lists the folder's notes inside <c>ul</c> elements.</returns>
+	public static RenderFragment Render(IVaultFolder folder) => __builder =>
+	{
+		<nav name="@folder.Name">
+			<h1>@folder.Name</h1>
+			
+			<ul>
+				@foreach (IVaultFolder subfolder in folder.Subfolders)
+				{
+					<li>
+						<a href="@subfolder.Path/">@subfolder.Name</a>
+					</li>
+				}
+			</ul>
+
+			<ul>
+				@foreach (IVaultFile file in folder.Files)
+				{
+					<li>
+						<a href="@file.Path[..^3]">@file.Name[..^3]</a>
+					</li>
+				}
+			</ul>
+		</nav>
+	};
+}

@@ -54,7 +54,7 @@ public static class VaultManifestGenerator
 			Hash = Convert.ToBase64String(await SHA256.HashDataAsync(stream)), // Create a SHA256 hash of the file
 			Size = stream.Length,
 			ContentType = MimeTypes.GetMimeType(file.Name),
-			Metadata = file is IVaultNote note ? (await note.ReadDocumentAsync()).FrontMatter : new()
+			Metadata = file is IVaultNote note ? (await note.ReadDocumentAsync()).Frontmatter : new()
 		};
 	}
 }

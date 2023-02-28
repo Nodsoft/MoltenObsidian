@@ -1,10 +1,1 @@
-﻿@using Nodsoft.MoltenObsidian.Vault
-
-
-@(_foundEntity switch 
-{
-	_ when CurrentPath is null or "" or "/" => Index(Vault),
-	IVaultFolder folder => FoundFolder(folder),
-	IVaultNote file => FoundNote(file),
-	_ => NotFound(_currentPath)
-})
+﻿@_display

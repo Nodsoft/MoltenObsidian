@@ -2,7 +2,7 @@
 using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 
-namespace Nodsoft.MoltenObsidian.Vaults.Http;
+namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
 internal sealed class HttpRemoteNote : HttpRemoteFile, IVaultNote
 {
