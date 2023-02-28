@@ -6,25 +6,28 @@ namespace Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
 
 public sealed class FtpRemoteVault : IVault
 {
-    internal RemoteVaultManifest? Manifest { get; private init; }
-    
-    internal AsyncFtpClient AsyncFtpClient { get; private init; }
-    
-    private FtpRemoteVault() {}
-    
-    public string Name { get; set; }
-    
-    public IVaultFolder Root => _root;
+    private readonly Dictionary<string, IVaultFile> _files;
+    private readonly Dictionary<string, IVaultFolder> _folders;
+    private readonly Dictionary<string, IVaultNote> _notes;
     private FtpRemoteFolder _root;
 
+    private FtpRemoteVault()
+    {
+    }
+
+    internal RemoteVaultManifest? Manifest { get; private init; }
+
+    internal AsyncFtpClient AsyncFtpClient { get; private init; }
+
+    public string Name { get; set; }
+
+    public IVaultFolder Root => _root;
+
     public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
-    private readonly Dictionary<string, IVaultFolder> _folders;
     public IReadOnlyDictionary<string, IVaultFile> Files => _files;
-    private readonly Dictionary<string,IVaultFile> _files;
-    
+
     public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
-    private readonly Dictionary<string, IVaultNote> _notes;
-    
+
     public static IVault FromManifest(RemoteVaultManifest? manifest, AsyncFtpClient ftpClient)
     {
         FtpRemoteVault vault = new()
@@ -35,16 +38,16 @@ public sealed class FtpRemoteVault : IVault
 
         vault._root = FtpRemoteFolder.FromRoot(manifest.Name, vault);
 
-        foreach (ManifestFile manifestFile in manifest.Files)
+        foreach (var manifestFile in manifest.Files)
         {
             if (manifestFile.Path.Split('/') is not [.. var folderParts, var fileName]) continue;
-            
+
             IVaultFolder? currentFolder = vault._root;
             IVaultFolder? parentFolder = vault._root;
 
-            for (int i = 0; i < folderParts.Length; i++)
+            for (var i = 0; i < folderParts.Length; i++)
             {
-                string pathPart = string.Join('/', folderParts.Take(i + 1));
+                var pathPart = string.Join('/', folderParts.Take(i + 1));
 
                 if (!vault._folders.TryGetValue(pathPart, out currentFolder))
                 {
@@ -55,8 +58,8 @@ public sealed class FtpRemoteVault : IVault
 
                 parentFolder = currentFolder;
             }
-            
-            FtpRemoteFile file = FtpRemoteFile.FromManifest(manifestFile, fileName, currentFolder);
+
+            var file = FtpRemoteFile.FromManifest(manifestFile, fileName, currentFolder);
             ((FtpRemoteFolder)currentFolder).AddFile(file);
             vault._files.Add(manifestFile.Path, file);
         }
