@@ -1,4 +1,5 @@
 using System.Net;
+using FluentFTP;
 using Nodsoft.MoltenObsidian.Blazor;
 using Nodsoft.MoltenObsidian.Samples.FtpServer.Data;
 
@@ -9,16 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMoltenObsidianBlazorIntegration();
-var creds = new NetworkCredential("clear", "clear01");
-// var ips = NetworkInterface.GetAllNetworkInterfaces()
-//     .Where(x => x.NetworkInterfaceType != NetworkInterfaceType.Loopback)
-//     .Where(x => x.OperationalStatus == OperationalStatus.Up)
-//     .SelectMany(x => x.GetIPProperties().UnicastAddresses)
-//     .Where(x => x.Address.AddressFamily == AddressFamily.InterNetwork)
-//     .Select(x => x.Address)
-//     .ToList();
-
-builder.Services.AddMoltenObsidianFtpVault(_ => new(Path.Combine("localhost", "FtpTest"), creds));
+builder.Services.AddMoltenObsidianFtpVault(_ => new AsyncFtpClient("localhost", new("clear", "clear01"), 22));
 
 var app = builder.Build();
 
