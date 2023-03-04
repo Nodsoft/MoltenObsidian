@@ -1,10 +1,9 @@
 ﻿using System.Text.Json;
 using FluentFTP;
-using FluentFTP.Exceptions;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
+using Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -26,17 +25,14 @@ public static class VaultDependencyInjectionExtensions
             {
                 ftpClient.Connect().GetAwaiter().GetResult();
             }
-            catch(FtpException ex)
+            catch(Exception ex)
             {
-                Console.Error.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.StackTrace);
             }
             var bytes = ftpClient.DownloadBytes("moltenobsidian.manifest.json", default).GetAwaiter().GetResult()
                         ?? throw new InvalidOperationException("could not retrieve the vault manifest from the server");
             var manifestBytes = bytes.ToRemoteVaultManifest();
-            if (manifestBytes is null)
-                throw new Exception(
-                    "There was an issue reading the manifest file, ensure your ftp client is configured correctly.");
-            ftpClient.Disconnect();
+            ftpClient.Disconnect().GetAwaiter().GetResult();
             return FtpRemoteVault.FromManifest(manifestBytes, ftpClient);
         });
 }
