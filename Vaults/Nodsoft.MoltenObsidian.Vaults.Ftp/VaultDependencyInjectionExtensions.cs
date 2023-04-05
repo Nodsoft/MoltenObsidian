@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using FluentFTP;
 using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.Ftp;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 [PublicAPI]
 public static class VaultDependencyInjectionExtensions
@@ -16,23 +16,25 @@ public static class VaultDependencyInjectionExtensions
         return JsonSerializer.Deserialize<RemoteVaultManifest>(ms);
     }
 
-    public static IServiceCollection AddMoltenObsidianFtpVault(this IServiceCollection serviceCollection,
-        Func<IServiceProvider, AsyncFtpClient> ftpClientProvider) =>
-        serviceCollection.AddSingleton<IVault>(services =>
+    private static async Task<IVault> BuildFtpVaultAsync(Func<IServiceProvider, AsyncFtpClient> ftpClientProvider, IServiceProvider services)
+    {
+        using var ftpClient = ftpClientProvider(services);
+        try
         {
-            using var ftpClient = ftpClientProvider(services);
-            try
-            {
-                ftpClient.Connect().GetAwaiter().GetResult();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-            }
-            var bytes = ftpClient.DownloadBytes("moltenobsidian.manifest.json", default).GetAwaiter().GetResult()
-                        ?? throw new InvalidOperationException("could not retrieve the vault manifest from the server");
-            var manifestBytes = bytes.ToRemoteVaultManifest();
-            ftpClient.Disconnect().GetAwaiter().GetResult();
-            return FtpRemoteVault.FromManifest(manifestBytes, ftpClient);
-        });
+           await ftpClient.Connect();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.StackTrace);
+        }
+        var bytes = await ftpClient.DownloadBytes("moltenobsidian.manifest.json", default)
+                    ?? throw new InvalidOperationException("could not retrieve the vault manifest from the server");
+        var manifestBytes = bytes.ToRemoteVaultManifest();
+        return FtpRemoteVault.FromManifest(manifestBytes, ftpClient);
+    }
+
+    public static IServiceCollection AddMoltenObsidianFtpVault(this IServiceCollection serviceCollection, Func<IServiceProvider, AsyncFtpClient> ftpClientProvider) =>
+        serviceCollection.AddSingleton<IVault>(services => new TaskFactory()
+            .StartNew(async () => await BuildFtpVaultAsync(ftpClientProvider, services))
+            .Unwrap().GetAwaiter().GetResult());
 }

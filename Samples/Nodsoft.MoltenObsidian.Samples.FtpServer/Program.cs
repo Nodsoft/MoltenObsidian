@@ -2,6 +2,7 @@ using System.Net;
 using FluentFTP;
 using Nodsoft.MoltenObsidian.Blazor;
 using Nodsoft.MoltenObsidian.Samples.FtpServer.Data;
+using Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMoltenObsidianBlazorIntegration();
-builder.Services.AddMoltenObsidianFtpVault(_ => new AsyncFtpClient("localhost", new("clear", "clear01"), 22));
-
+builder.Services.AddMoltenObsidianFtpVault(_ => new AsyncFtpClient("localhost", new NetworkCredential("clear", "clear01"), 21));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,4 +31,4 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-app.Run();
+await app.RunAsync();
