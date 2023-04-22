@@ -1,5 +1,6 @@
 ﻿@using Nodsoft.MoltenObsidian.Vault
 @using Microsoft.AspNetCore.Components
+@using Nodsoft.MoltenObsidian.Converter
 
 @ContentMarkup
 
@@ -27,7 +28,11 @@
 	[Parameter]
 	public EventCallback<ObsidianText> DocumentLoaded { get; set; }
 	
-	
+	/// <summary>
+	/// Obsidian HTML converter to use for rendering.
+	/// </summary>
+	[Parameter]
+	public ObsidianHtmlConverter Converter { get; set; } = ObsidianHtmlConverter.Default;
 
 	/// <summary>
 	/// Determines whether the component should render the content.
@@ -41,7 +46,7 @@
 		ObsidianText document = await Note.ReadDocumentAsync();
 		await OnDocumentLoadedAsync(Document = document);
 		
-		ContentMarkup = new(document.ToHtml());
+		ContentMarkup = new(document.ToHtml(Converter));
 	}
 
 	/// <inheritdoc cref="ComponentBase.StateHasChanged" />

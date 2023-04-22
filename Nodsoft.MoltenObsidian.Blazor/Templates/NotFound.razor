@@ -2,14 +2,21 @@
 
 @code {
 	/// <summary>
-	/// Default render fragment used when routing doen't hit any entity.
+	/// Default render fragment used when routing doesn't hit any entity.
 	/// </summary>
 	/// <returns>A default render fragment, which simply renders a usual 404 display.</returns>
-	public static RenderFragment Render(string path) => __builder =>
+	public static RenderFragment Render(NotFoundRenderContext ctx) => __builder =>
 	{
 		<div>
 			<h1>No result.</h1>
-			<p>Nothing was found at path <code>@path</code>.</p>
+			<p>Nothing was found at path <code>@ctx.Path</code>.</p>
 		</div>
 	};
+
+	/// <summary>
+	/// Render context used when routing doesn't hit any entity.
+	/// </summary>
+	/// <param name="Path">Path that was requested.</param>
+	public sealed record NotFoundRenderContext(string Path, ObsidianVaultDisplayOptions DisplayOptions) : TemplateRenderContextBase(DisplayOptions);
+
 }

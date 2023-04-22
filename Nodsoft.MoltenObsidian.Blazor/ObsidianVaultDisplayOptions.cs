@@ -1,4 +1,6 @@
-﻿namespace Nodsoft.MoltenObsidian.Blazor;
+﻿using Nodsoft.MoltenObsidian.Converter;
+
+namespace Nodsoft.MoltenObsidian.Blazor;
 
 /// <summary>
 /// Defines options for the <see cref="ObsidianVaultDisplay" />.
@@ -28,5 +30,10 @@ public readonly struct ObsidianVaultDisplayOptions
 	/// Defaults to <see langword="true" />.
 	/// </remarks>
 	/// <seealso cref="DisplayIndexNoteOnFolderRoot" />
-	public bool DisplayFolderNavigation { get; init; } = true;
+	public bool DisplayIndexNoteNavigation { get; init; } = true;
+	
+	/// <summary>
+	/// HTML Converter to use for rendering markdown notes.
+	/// </summary>
+	public ObsidianHtmlConverter Converter { get; init; } = ObsidianHtmlConverter.Default;
 }

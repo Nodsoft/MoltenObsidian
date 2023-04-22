@@ -3,13 +3,14 @@
 
 @using Nodsoft.MoltenObsidian.Vault
 @using Nodsoft.MoltenObsidian.Blazor.Helpers
+@using Nodsoft.MoltenObsidian.Converter
 
 <h3>VaultPage</h3>
 @VaultPath
 
 <hr />
 
-<ObsidianVaultDisplay Vault="Vault" BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath">
+<ObsidianVaultDisplay Vault="Vault" BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath" Options="@VaultDisplayOptions">
 
 </ObsidianVaultDisplay>
 
@@ -18,4 +19,10 @@
 
 	[Parameter]
 	public string VaultPath { get; set; }
+
+	public static ObsidianVaultDisplayOptions VaultDisplayOptions = new()
+	{
+		Converter = new(new ObsidianPipelineBuilder(true, true).Build())
+	};
+
 }

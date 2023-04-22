@@ -5,12 +5,21 @@
 	/// Default render fragment used when routing hits an error.
 	/// </summary>
 	/// <returns>A default render fragment, which simply renders a usual 500 display.</returns>
-	public static RenderFragment Render((string path, Exception e) value) => __builder =>
+	public static RenderFragment Render(ErrorRenderContext ctx) => __builder =>
 	{
 		<div>
 			<h1>Error.</h1>
-			<p>An error occured while trying to access <code>@value.path</code> :</p>
-			<p>@value.e.Message</p>
+			<p>An error occured while trying to access <code>@ctx.Path</code> :</p>
+			<p>@ctx.Exception.Message</p>
 		</div>
 	};
+
+	/// <summary>
+	/// Render context for an error.
+	/// </summary>
+	/// <param name="Path">The path that was being accessed when the error occured.</param>
+	/// <param name="Exception">The exception that was thrown.</param>
+	public sealed record ErrorRenderContext(string Path, Exception Exception, ObsidianVaultDisplayOptions DisplayOptions) 
+		: TemplateRenderContextBase(DisplayOptions);
+
 }
