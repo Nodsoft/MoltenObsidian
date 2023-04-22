@@ -17,7 +17,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// <summary>
 	/// The Vault being displayed.
 	/// </summary>
-	[Inject, Parameter] public IVault Vault { get; set; } = null!;
+	[Parameter, EditorRequired] public IVault Vault { get; set; } = null!;
 	
 	/// <summary>
 	/// The router used to navigate the vault.
