@@ -5,13 +5,20 @@
 	/// Default render fragment used when routing hits the vault's root.
 	/// </summary>
 	/// <returns>A default render fragment, which simply lists the vault's content inside <c>ul</c> elements.</returns>
-	internal static RenderFragment Render(IVault vault) => __builder =>
+	internal static RenderFragment Render(FoundVaultRootRenderContext ctx) => __builder =>
 	{
-		<nav name="@vault.Name">
-			<h1>@vault.Name</h1>
+		<nav name="@ctx.Vault.Name">
+			<h1>@ctx.Vault.Name</h1>
 			
 			@* Display a hierarchical view of all Markdown files, ranged by subfolders. *@
-			@FolderNavigationTree(vault.Root, true)
+			@FolderNavigationTree(ctx.Vault.Root, true)
 		</nav>
 	};
+
+	/// <summary>
+	/// Render context for a found Vault Root.
+	/// </summary>
+	/// <param name="Vault">The Vault for which root was found.</param>
+	public sealed record FoundVaultRootRenderContext(IVault Vault, ObsidianVaultDisplayOptions DisplayOptions) : TemplateRenderContextBase(DisplayOptions);
+
 }

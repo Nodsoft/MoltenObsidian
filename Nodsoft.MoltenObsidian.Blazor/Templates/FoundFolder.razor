@@ -4,15 +4,15 @@
 	/// <summary>
 	/// Default render fragment used when routing hits a vault Folder.
 	/// </summary>
-	/// <param name="folder">The folder to render.</param>
+	/// <param name="ctx">The render context.</param>
 	/// <returns>A default render fragment, which simply lists the folder's notes inside <c>ul</c> elements.</returns>
-	public static RenderFragment Render(IVaultFolder folder) => __builder =>
+	public static RenderFragment Render(FoundFolderRenderContext ctx) => __builder =>
 	{
-		<nav name="@folder.Name">
-			<h1>@folder.Name</h1>
+		<nav name="@ctx.Folder.Name">
+			<h1>@ctx.Folder.Name</h1>
 			
 			<ul>
-				@foreach (IVaultFolder subfolder in folder.Subfolders)
+				@foreach (IVaultFolder subfolder in ctx.Folder.Subfolders)
 				{
 					<li>
 						<a href="@subfolder.Path/">@subfolder.Name</a>
@@ -21,7 +21,7 @@
 			</ul>
 
 			<ul>
-				@foreach (IVaultFile file in folder.Files)
+				@foreach (IVaultFile file in ctx.Folder.Files)
 				{
 					<li>
 						<a href="@file.Path[..^3]">@file.Name[..^3]</a>
@@ -30,4 +30,12 @@
 			</ul>
 		</nav>
 	};
+
+	/// <summary>
+	/// Render context for a found folder.
+	/// </summary>
+	/// <param name="Folder">The folder that was found.</param>
+	public sealed record FoundFolderRenderContext(IVaultFolder Folder, ObsidianVaultDisplayOptions DisplayOptions)
+		: TemplateRenderContextBase(DisplayOptions);
+
 }

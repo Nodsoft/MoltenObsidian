@@ -4,20 +4,39 @@
 	/// <summary>
 	/// Default render fragment used when routing hits a directory with an index note.
 	/// </summary>
-	/// <param name="note">The index note to render.</param>
+	/// <param name="ctx">The render context.</param>
 	/// <returns>A default render fragment, which simply renders the note's content inside a <c>article</c> element.</returns>
-	public static RenderFragment Render((IVaultNote note, IVaultFolder folder) value) => __builder =>
+	public static RenderFragment Render(FoundIndexNoteRenderContext ctx) => __builder =>
 	{
-		bool isRoot = value.folder == value.folder.Vault.Root;
+		bool isRoot = ctx.Folder == ctx.Folder.Vault.Root;
 
-		<nav class="moltenobsidian-folder-nav">
-			@FolderNavigationTree(value.folder, isRoot)
-		</nav>
-		
-		<hr style="margin: 2rem; padding: 0.25rem;" />
-		
-		<article name="@value.note.Name" class="moltenobsidian-index-note">
-			<RenderNoteContent Note="@value.note" />
-		</article>
+		if (ctx.DisplayOptions.DisplayIndexNoteNavigation)
+		{
+			<nav class="moltenobsidian-folder-nav">
+				@FolderNavigationTree(ctx.Folder, isRoot)
+			</nav>
+		}
+
+		// Add a horizontal rule if we're displaying both the index note and the folder navigation.
+		if (ctx.DisplayOptions is { DisplayIndexNoteNavigation: true, DisplayIndexNoteOnFolderRoot: true })
+		{
+			<hr style="margin: 2rem; padding: 0.25rem;" />
+		}
+
+		if (ctx.DisplayOptions.DisplayIndexNoteOnFolderRoot || !isRoot)
+		{
+			<article name="@ctx.Note.Name" class="moltenobsidian-index-note">
+				<RenderNoteContent Note="@ctx.Note" Converter="ctx.DisplayOptions.Converter" />
+			</article>
+		}
 	};
+
+	/// <summary>
+	/// Render context for a found index note.
+	/// </summary>
+	/// <param name="Note">The index note to render.</param>
+	/// <param name="Folder">The folder containing the index note.</param>
+	public sealed record FoundIndexNoteRenderContext(IVaultNote Note, IVaultFolder Folder, ObsidianVaultDisplayOptions DisplayOptions)
+		: TemplateRenderContextBase(DisplayOptions);
+
 }
