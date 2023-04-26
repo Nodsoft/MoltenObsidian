@@ -7,9 +7,9 @@ namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 public sealed class FtpRemoteVault : IVault
 {
-    private readonly Dictionary<string, IVaultFile> _files;
-    private readonly Dictionary<string, IVaultFolder> _folders;
-    private readonly Dictionary<string, IVaultNote> _notes;
+    private readonly Dictionary<string, IVaultFile> _files = new();
+    private readonly Dictionary<string, IVaultNote> _notes = new();
+    private Dictionary<string, IVaultFolder> _folders = new();
     private FtpRemoteFolder _root;
 
     private FtpRemoteVault()
@@ -38,10 +38,10 @@ public sealed class FtpRemoteVault : IVault
         };
 
         vault._root = FtpRemoteFolder.FromRoot(manifest.Name, vault);
-
+        vault._folders = new Dictionary<string, IVaultFolder>();
         foreach (var manifestFile in manifest.Files)
         {
-            if (manifestFile.Path.Split('/') is not [.. var folderParts, var fileName]) continue;
+            if (manifestFile.Path.Split('/') is not [.. string[] folderParts, string fileName]) continue;
 
             IVaultFolder? currentFolder = vault._root;
             IVaultFolder? parentFolder = vault._root;
