@@ -4,10 +4,8 @@
 @VaultPath
 
 <ObsidianVaultDisplay Vault="@Vault" BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath">
-    
 </ObsidianVaultDisplay>
 
 @code {
-    [Parameter]
-    public string VaultPath { get; set; }
+    [Parameter] public string VaultPath { get; set; }
 }

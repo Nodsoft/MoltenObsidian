@@ -5,8 +5,8 @@ namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 public sealed class FtpRemoteFolder : IVaultFolder
 {
-    private List<FtpRemoteFile> _files;
-    private List<FtpRemoteFolder> _subfolders;
+    private List<FtpRemoteFile> _files = new();
+    private List<FtpRemoteFolder> _subfolders = new();
 
     private FtpRemoteFolder()
     {

@@ -13,10 +13,11 @@ public class FtpRemoteFile : IVaultFile
         _manifestFile = file;
         Name = name;
         this.Parent = Parent;
+        Vault = Parent.Vault;
     }
 
     public string Name { get; set; }
-    public string Path { get; set; }
+    public string Path => _manifestFile.Path;
     public IVaultFolder? Parent { get; }
     public IVault Vault { get; private set; }
 
@@ -25,14 +26,7 @@ public class FtpRemoteFile : IVaultFile
     public async ValueTask<byte[]> ReadBytesAsync()
     {
         using var client = ((FtpRemoteVault)Vault).AsyncFtpClient;
-        try
-        {
-            await client.Connect();
-        }
-        catch (FtpException ex)
-        {
-            await Console.Error.WriteLineAsync(ex.StackTrace);
-        }
+        await client.Connect();
         var bytes = await client.DownloadBytes(_manifestFile.Path, default);
         await client.Disconnect();
         return bytes;
@@ -40,7 +34,7 @@ public class FtpRemoteFile : IVaultFile
 
     public async ValueTask<Stream> OpenReadAsync()
     {
-        var client = ((FtpRemoteVault)Vault).AsyncFtpClient;
+        using var client = ((FtpRemoteVault)Vault).AsyncFtpClient;
         await client.Connect();
         var stream = new MemoryStream();
         await client.DownloadStream(stream, _manifestFile.Path);
