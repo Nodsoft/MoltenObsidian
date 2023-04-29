@@ -5,7 +5,7 @@ namespace Nodsoft.MoltenObsidian.Blazor.Services;
 /// <summary>
 /// Provides Blazor routing for an Obsidian vault.
 /// </summary>
-public sealed class VaultRouter
+public sealed class VaultRouter : IVaultRouter
 {
 	private readonly IVault _vault;
 	private readonly Dictionary<string, IVaultEntity> _routes;
