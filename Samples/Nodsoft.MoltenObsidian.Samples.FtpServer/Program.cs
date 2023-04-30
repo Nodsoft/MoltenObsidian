@@ -11,7 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMoltenObsidianBlazorIntegration();
-builder.Services.AddMoltenObsidianFtpVault(_ => new AsyncFtpClient("localhost", new NetworkCredential("clear", "clear01"), 21));
+builder.Services.AddMoltenObsidianFtpVault(_ => new AsyncFtpClient("localhost", "clear", "clear", 21));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

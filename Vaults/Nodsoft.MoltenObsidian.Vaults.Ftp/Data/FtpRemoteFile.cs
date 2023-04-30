@@ -8,37 +8,33 @@ public class FtpRemoteFile : IVaultFile
 {
     private readonly ManifestFile _manifestFile;
 
-    protected FtpRemoteFile(ManifestFile file, string name, IVaultFolder Parent)
+    protected FtpRemoteFile(ManifestFile file, string name, IVaultFolder parent)
     {
         _manifestFile = file;
         Name = name;
-        this.Parent = Parent;
-        Vault = Parent.Vault;
+        Parent = parent;
+        Vault = parent.Vault;
     }
 
-    public string Name { get; set; }
+    public string Name { get; }
     public string Path => _manifestFile.Path;
     public IVaultFolder? Parent { get; }
-    public IVault Vault { get; private set; }
+    public IVault Vault { get; }
 
     public string ContentType { get; }
 
     public async ValueTask<byte[]> ReadBytesAsync()
     {
-        using var client = ((FtpRemoteVault)Vault).AsyncFtpClient;
-        await client.Connect();
+        var client = ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
         var bytes = await client.DownloadBytes(_manifestFile.Path, default);
-        await client.Disconnect();
         return bytes;
     }
 
     public async ValueTask<Stream> OpenReadAsync()
     {
-        using var client = ((FtpRemoteVault)Vault).AsyncFtpClient;
-        await client.Connect();
+        var client = ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
         var stream = new MemoryStream();
         await client.DownloadStream(stream, _manifestFile.Path);
-        await client.Disconnect();
         return stream;
     }
 
