@@ -38,7 +38,7 @@ jobs:
         
           # Vault implementations
           { name: "Filesystem Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.FileSystem/Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" },
-          { name: "HTTP Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.Http/Nodsoft.MoltenObsidian.Vaults.Http.csproj" }
+          { name: "HTTP Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.Http/Nodsoft.MoltenObsidian.Vaults.Http.csproj" },
           { name: "FTP Vault", path: "Vaults/Nodsoft.MoltenObsidian.Vaults.Http/Nodsoft.MoltenObsidian.Vaults.Ftp.csproj" }
         ]
         
