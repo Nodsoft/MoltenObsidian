@@ -25,14 +25,14 @@ public class FtpRemoteFile : IVaultFile
 
     public async ValueTask<byte[]> ReadBytesAsync()
     {
-        var client = ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
+        var client = await ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
         var bytes = await client.DownloadBytes(_manifestFile.Path, default);
         return bytes;
     }
 
     public async ValueTask<Stream> OpenReadAsync()
     {
-        var client = ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
+        var client = await ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
         var stream = new MemoryStream();
         await client.DownloadStream(stream, _manifestFile.Path);
         return stream;
