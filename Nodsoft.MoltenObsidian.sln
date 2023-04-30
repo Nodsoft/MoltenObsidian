@@ -27,6 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vaults", "Vaults", "{F447B3AF-B704-44F4-8385-CA1C98F27A4D}"
 	ProjectSection(SolutionItems) = preProject
 		Vaults\Directory.Build.props = Vaults\Directory.Build.props
+		Vaults\README.md = Vaults\README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nodsoft.MoltenObsidian.Tool", "Nodsoft.MoltenObsidian.Tool\Nodsoft.MoltenObsidian.Tool.csproj", "{0F3380F3-FEA2-46CA-9E0D-4405E22DB8FA}"
