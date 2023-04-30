@@ -13,8 +13,4 @@
       <ProjectReference Include="..\..\Vaults\Nodsoft.MoltenObsidian.Vaults.Ftp\Nodsoft.MoltenObsidian.Vaults.Ftp.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="FluentFTP" Version="45.0.3" />
-    </ItemGroup>
-
 </Project>
