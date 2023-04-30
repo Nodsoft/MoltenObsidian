@@ -18,17 +18,8 @@ public static class VaultDependencyInjectionExtensions
 
     private static async Task<IVault> BuildFtpVaultAsync(Func<IServiceProvider, AsyncFtpClient> ftpClientProvider, IServiceProvider services)
     {
-        using var ftpClient = ftpClientProvider(services);
-        try
-        {
-           await ftpClient.Connect();
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex.StackTrace);
-        }
-        var bytes = await ftpClient.DownloadBytes("moltenobsidian.manifest.json", default)
-                    ?? throw new InvalidOperationException("could not retrieve the vault manifest from the server");
+        var ftpClient = ftpClientProvider(services).EnsureConnected();
+        var bytes = await ftpClient.DownloadBytes("moltenobsidian.manifest.json", default);
         var manifestBytes = bytes.ToRemoteVaultManifest();
         return FtpRemoteVault.FromManifest(manifestBytes, ftpClient);
     }
