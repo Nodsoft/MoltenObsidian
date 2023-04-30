@@ -18,7 +18,7 @@ public static class ObsidianDependencyInjectionExtensions
 	/// <returns>The <see cref="IServiceCollection"/> so that additional calls can be chained.</returns>
 	public static IServiceCollection AddMoltenObsidianBlazorIntegration(this IServiceCollection services)
 	{
-		services.AddSingleton<VaultRouter>();
+		services.AddSingleton<VaultRouterFactory>();
 		return services;
 	}
 }

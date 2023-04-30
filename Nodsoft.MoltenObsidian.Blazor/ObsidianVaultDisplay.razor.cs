@@ -22,7 +22,9 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// <summary>
 	/// The router used to navigate the vault.
 	/// </summary>
-	[Inject] public VaultRouter Router { get; set; } = null!;
+	[Inject] public VaultRouterFactory? RouterFactory { get; set; }
+	
+	public IVaultRouter? Router { get; set; }
 	
 	/// <summary>
 	/// Blazor Navigation manager to navigate to other pages.
@@ -107,17 +109,23 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	private IVaultEntity? _foundEntity;
 	private string _currentPath = ".";
 	private RenderFragment? _display;
-	
+
 	/// <inheritdoc />
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
+		Router ??= RouterFactory?.GetRouter(Vault);
+		
+		if (Router is null)
+		{
+			throw new InvalidOperationException("No router factory was provided, and no router was found for the vault.");
+		}
 		
 		_currentPath = Uri.UnescapeDataString(Navigation.ToBaseRelativePath(Navigation.Uri));
 
 		if (CurrentPath is not null)
 		{
-			_foundEntity = Router.RouteTo(CurrentPath);
+			_foundEntity = Router!.RouteTo(CurrentPath);
 		}
 
 		_display = _foundEntity switch
