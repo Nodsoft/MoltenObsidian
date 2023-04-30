@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using FluentFTP;
 using JetBrains.Annotations;
-using Microsoft.Extensions.DependencyInjection;
 using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
+using Nodsoft.MoltenObsidian.Vaults.Ftp;
 
-namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
+namespace Microsoft.Extensions.DependencyInjection;
 
 [PublicAPI]
 public static class VaultDependencyInjectionExtensions

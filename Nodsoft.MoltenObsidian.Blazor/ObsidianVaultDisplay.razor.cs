@@ -132,7 +132,7 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 		{
 			_ when CurrentPath is null or "" or "/" && await Vault.Root.GetIndexNoteAsync() is { } indexNote => FoundIndexNote(new(indexNote, indexNote.Parent!, Options)),
 			_ when CurrentPath is null or "" or "/" => FoundVaultRoot(new(Vault, Options)),
-			IVaultFolder folder when await folder.GetIndexNoteAsync() is { } indexNote => FoundIndexNote(new FoundIndexNote.FoundIndexNoteRenderContext(indexNote, folder, Options)),
+			IVaultFolder folder when await folder.GetIndexNoteAsync() is { } indexNote => FoundIndexNote(new(indexNote, folder, Options)),
 			IVaultFolder folder => FoundFolder(new(folder, Options)),
 			IVaultNote file => FoundNote(new(file, Options)),
 			_ => NotFound(new(_currentPath, Options))
