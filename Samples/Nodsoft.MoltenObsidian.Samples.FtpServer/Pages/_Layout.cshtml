@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<base href="/" />
+		<link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+		<link href="/Nodsoft.MoltenObsidian.Samples.FtpServer.styles.css" rel="stylesheet" />
+		<link href="/css/site.css" rel="stylesheet" />
+		<component render-mode="Server" type="typeof(HeadOutlet)" />
+	</head>
+	
+	<body>
+		@RenderBody()
+
+		<div id="blazor-error-ui">
+			<environment include="Staging,Production">
+				An error has occurred. This application may no longer respond until reloaded.
+			</environment>
+			<environment include="Development">
+				An unhandled exception has occurred. See browser dev tools for details.
+			</environment>
+			<a class="reload" href="">Reload</a>
+			<a class="dismiss">🗙</a>
+		</div>
+
+		<script src="/_framework/blazor.server.js"></script>
+	</body>
+</html>

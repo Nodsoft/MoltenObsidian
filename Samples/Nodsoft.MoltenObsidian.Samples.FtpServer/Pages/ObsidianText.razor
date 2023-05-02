@@ -1,0 +1,11 @@
+﻿@page "/vault/{*VaultPath}"
+@inject IVault Vault
+
+@VaultPath
+
+<ObsidianVaultDisplay Vault="@Vault" BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath">
+</ObsidianVaultDisplay>
+
+@code {
+    [Parameter] public string VaultPath { get; set; }
+}
