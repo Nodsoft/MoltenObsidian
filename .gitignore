@@ -350,5 +350,5 @@ MigrationBackup/
 .ionide/
 
 .idea/
-
+.fleet/
 Samples/*/Vault/
