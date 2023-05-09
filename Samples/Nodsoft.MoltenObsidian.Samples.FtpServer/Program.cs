@@ -1,8 +1,6 @@
-using System.Net;
 using FluentFTP;
 using Nodsoft.MoltenObsidian.Blazor;
 using Nodsoft.MoltenObsidian.Samples.FtpServer.Data;
-using Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 var builder = WebApplication.CreateBuilder(args);
 

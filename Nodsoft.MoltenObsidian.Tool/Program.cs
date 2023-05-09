@@ -9,7 +9,6 @@ CommandApp app = new();
 app.Configure(static config =>
 {
 	config.SetApplicationName("moltenobsidian");
-	
 
 #if DEBUG
 	config.PropagateExceptions();
