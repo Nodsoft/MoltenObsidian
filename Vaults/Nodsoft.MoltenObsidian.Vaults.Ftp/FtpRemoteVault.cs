@@ -29,7 +29,7 @@ public sealed class FtpRemoteVault : IVault
 
     public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
 
-    public static IVault FromManifest(RemoteVaultManifest? manifest, AsyncFtpClient ftpClient)
+	public static IVault FromManifest(RemoteVaultManifest? manifest, AsyncFtpClient ftpClient)
     {
         FtpRemoteVault vault = new()
         {
@@ -62,7 +62,13 @@ public sealed class FtpRemoteVault : IVault
 
             var file = FtpRemoteFile.FromManifest(manifestFile, fileName, currentFolder);
             ((FtpRemoteFolder)currentFolder).AddFile(file);
+
             vault._files.Add(manifestFile.Path, file);
+
+            if(file.Path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+            {
+				vault._notes.Add(file.Path, (IVaultNote)file);
+            }
         }
 
         return vault;
