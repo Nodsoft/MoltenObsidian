@@ -93,16 +93,24 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
             _ => throw new Exception("error upon creating a vault.")
         };
 
-        foreach (KeyValuePair<string, IVaultNote> pathNotePair in vault.Notes)
+        foreach (KeyValuePair<string, IVaultFile> pathNotePair in vault.Files)
         {
-            string html =  new ObsidianText(Encoding.Default.GetString(await pathNotePair.Value.ReadBytesAsync())).ToHtml();
-            FileInfo file = new(Path.Combine(settings?.OutputPath?.ToString(), pathNotePair.Key.Replace(".md", ".html")));
-            if (!file.Directory.Exists)
+            string path = Path.Combine(settings?.OutputPath?.ToString(), pathNotePair.Key);
+            string fileData = Encoding.Default.GetString(await pathNotePair.Value.ReadBytesAsync());
+            if (path.EndsWith(".md"))
             {
-                file.Directory.Create();
+                fileData =  new ObsidianText(fileData).ToHtml();
+                Path.ChangeExtension(path, ".html");
             }
-            await using FileStream stream = file.Open(FileMode.OpenOrCreate, FileAccess.Write);
-            await stream.WriteAsync(Encoding.UTF8.GetBytes(html));
+            FileInfo fileInfo =  new(path);
+
+            
+            if (!fileInfo.Directory.Exists)
+            {
+                fileInfo.Directory.Create();
+            }
+            await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
+            await stream.WriteAsync(Encoding.UTF8.GetBytes(fileData));
             await stream.FlushAsync();
         }
 
