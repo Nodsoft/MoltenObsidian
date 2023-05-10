@@ -23,8 +23,8 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 
     [CommandOption("--from-url <PATH_TO_MANIFEST>"), Description("Full url to the manifest file for remote vault")]
     public string RemoteManifestUrlString { get; private set; } = string.Empty;
-    public Uri? RemoteManifestUrl { get; private set; }
-    public string UrlScheme { get; private set; }
+    public Uri? RemoteManifestUri { get; private set; }
+    public string? UrlScheme { get; private set; }
 
     [CommandOption("-o|--output-path <OUTPUT_PATH>"), Description("Directory to write the output files to")]
     public string OutputPathString { get; private set; } = string.Empty;
@@ -48,7 +48,7 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 
         if (!string.IsNullOrEmpty(OutputPathString))
         {
-            if((OutputPath = new(OutputPathString)) is not { Exists: true })
+            if((OutputPath = new(OutputPathString)) is { Exists: false })
             {
                 return ValidationResult.Error($"The output path '{OutputPath}' does not exist.");
             }
@@ -65,13 +65,13 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
             {
                 return ValidationResult.Error($"The Url must end in moltenobsidian.manifest.json");
             }
-            RemoteManifestUrl = new Uri(RemoteManifestUrlString);
+            RemoteManifestUri = new Uri(RemoteManifestUrlString);
 
-            if (RemoteManifestUrl.GetLeftPart(UriPartial.Scheme) is not ("ftp://" or "http://" or "https://"))
+            if (RemoteManifestUri.GetLeftPart(UriPartial.Scheme) is not ("ftp://" or "ftps://" or "http://" or "https://"))
             {
                 return ValidationResult.Error($"The url protocol must be http or ftp");
             }
-            UrlScheme = RemoteManifestUrl.GetLeftPart(UriPartial.Scheme);
+            UrlScheme = RemoteManifestUri.GetLeftPart(UriPartial.Scheme);
         }
 
         return ValidationResult.Success();
@@ -84,27 +84,14 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings)
     {
-        IVault vault = FileSystemVault.FromDirectory(settings?.LocalVaultPath);
-
-        if (settings.RemoteManifestUrl is not null)
+        IVault vault = settings.UrlScheme switch
         {
-            vault = settings.UrlScheme switch
-            {
-                "ftp://" or "ftps://" => await ConstructFtpVault(settings),
-                "http://" or "https://" => await ConstructHttpSystemVault(settings),
-                _ => throw new Exception("The Uri is invalid.")
-            };
-        }
-
-        if(settings.LocalVaultPath is not null)
-        {
-            vault = FileSystemVault.FromDirectory(settings?.LocalVaultPath);
-        }
-
-        if(vault is null)
-        {
-            throw new Exception("error upon creating a vault");
-        }
+            "ftp://" or "ftps://" => await ConstructFtpVault(settings),
+            "http://" or "https://" => await ConstructHttpVault(settings),
+            null when settings.RemoteManifestUri is null => FileSystemVault.FromDirectory(settings?.LocalVaultPath),
+            null when settings.RemoteManifestUri is not null => throw new Exception("malformed url to remote vault manifest"),
+            _ => throw new Exception("error upon creating a vault.")
+        };
 
         foreach (KeyValuePair<string, IVaultNote> pathNotePair in vault.Notes)
         {
@@ -122,9 +109,9 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
         return 0;
     }
 
-    private async Task<IVault> ConstructHttpSystemVault(GenerateStaticSiteCommandSettings settings)
+    private async Task<IVault> ConstructHttpVault(GenerateStaticSiteCommandSettings settings)
     {
-        HttpClient client = new() { BaseAddress = settings.RemoteManifestUrl };
+        HttpClient client = new() { BaseAddress = settings.RemoteManifestUri };
         RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json")
 			?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
 
@@ -133,10 +120,11 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 
     private async Task<IVault> ConstructFtpVault(GenerateStaticSiteCommandSettings settings)
     {
-        AsyncFtpClient client = new AsyncFtpClient(settings?.RemoteManifestUrl?.Host, 21);
+        var uri = settings?.RemoteManifestUri;
+        var (user, pass) = uri.UserInfo?.Split(':') is { } info ? info.Length is 2 ? (info[0], info[1]) : (info[0], "") : ("", "");
+        AsyncFtpClient client = new AsyncFtpClient(uri.Host, user, pass, 21);
         await client.EnsureConnected();
-        byte[] bytes = await client.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None) 
-            ?? throw new InvalidOperationException("Could not download manifest.");
+        byte[] bytes = await client.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None);
         RemoteVaultManifest? manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(bytes);
 
         return FtpRemoteVault.FromManifest(manifest, client);
