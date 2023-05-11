@@ -63,7 +63,7 @@ public sealed class FtpRemoteVault : IVault
             var file = FtpRemoteFile.FromManifest(manifestFile, fileName, currentFolder);
             ((FtpRemoteFolder)currentFolder).AddFile(file);
 
-            vault._files.Add(manifestFile.Path, file);
+            vault._files.Add(file.Path, file);
 
             if(file.Path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
             {

@@ -95,12 +95,12 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 
         foreach (KeyValuePair<string, IVaultFile> pathNotePair in vault.Files)
         {
-            string path = Path.Combine(settings?.OutputPath?.ToString(), pathNotePair.Key);
-            string fileData = Encoding.Default.GetString(await pathNotePair.Value.ReadBytesAsync());
+            string path = Path.Combine(settings?.OutputPath?.ToString(), pathNotePair.Key.Replace('/', Path.DirectorySeparatorChar));
+            byte[] fileData = await pathNotePair.Value.ReadBytesAsync();
             if (path.EndsWith(".md"))
             {
-                fileData =  new ObsidianText(fileData).ToHtml();
-                Path.ChangeExtension(path, ".html");
+                fileData =  Encoding.ASCII.GetBytes(new ObsidianText(Encoding.Default.GetString(fileData)).ToHtml());
+                path = $"{path[..^3]}.html";
             }
             FileInfo fileInfo =  new(path);
 
@@ -110,7 +110,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
                 fileInfo.Directory.Create();
             }
             await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
-            await stream.WriteAsync(Encoding.UTF8.GetBytes(fileData));
+            await stream.WriteAsync(fileData);
             await stream.FlushAsync();
         }
 
