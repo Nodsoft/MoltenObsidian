@@ -14,6 +14,9 @@ using System.Text;
 
 namespace Nodsoft.MoltenObsidian.Tool.Commands.SSG;
 
+/// <summary>
+/// Specifies the command line arguments for the <see cref="GenerateStaticSite"/>.
+/// </summary>
 [PublicAPI]
 public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 {
@@ -79,15 +82,19 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 
 }
 
+/// <summary>
+/// ssg command <see cref="GenerateStaticSite"/>.
+/// </summary>
 [UsedImplicitly]
 public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSettings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings)
     {
+        // decide protocol here perhaps move this and Construct ftp/http functions into vault interface? IVault.FromUri(uri)
         IVault vault = settings.UrlScheme switch
         {
-            "ftp://" or "ftps://" => await ConstructFtpVault(settings),
-            "http://" or "https://" => await ConstructHttpVault(settings),
+            "ftp://" or "ftps://" => await ConstructFtpVault(settings.RemoteManifestUri),
+            "http://" or "https://" => await ConstructHttpVault(settings.RemoteManifestUri),
             null when settings.RemoteManifestUri is null => FileSystemVault.FromDirectory(settings?.LocalVaultPath),
             null when settings.RemoteManifestUri is not null => throw new Exception("malformed url to remote vault manifest"),
             _ => throw new Exception("error upon creating a vault.")
@@ -95,15 +102,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 
         foreach (KeyValuePair<string, IVaultFile> pathNotePair in vault.Files)
         {
-            string path = Path.Combine(settings?.OutputPath?.ToString(), pathNotePair.Key.Replace('/', Path.DirectorySeparatorChar));
-            byte[] fileData = await pathNotePair.Value.ReadBytesAsync();
-            if (path.EndsWith(".md"))
-            {
-                fileData =  Encoding.ASCII.GetBytes(new ObsidianText(Encoding.Default.GetString(fileData)).ToHtml());
-                path = $"{path[..^3]}.html";
-            }
-            FileInfo fileInfo =  new(path);
-
+            (FileInfo fileInfo, byte[] fileData) = await CreateOutputFile(settings.OutputPath.ToString(), pathNotePair);
             
             if (!fileInfo.Directory.Exists)
             {
@@ -117,19 +116,50 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
         return 0;
     }
 
-    private async Task<IVault> ConstructHttpVault(GenerateStaticSiteCommandSettings settings)
+    /// <summary>
+    /// creates the output file, if a <see cref="IVaultNote"></see> is encountered convert to html.
+    /// <paramref name="outputPath"/>
+    /// <paramref name="pathNotePair"/>
+    /// </summary>
+    private async Task<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathNotePair)
+	{
+        string path = Path.Combine(outputPath, pathNotePair.Key.Replace('/', Path.DirectorySeparatorChar));
+
+        byte[] fileData = await pathNotePair.Value.ReadBytesAsync();
+        
+        // .md -> .html happens here
+        if (path.EndsWith(".md"))
+        {
+            fileData =  Encoding.ASCII.GetBytes(new ObsidianText(Encoding.Default.GetString(fileData)).ToHtml());
+            path = $"{path[..^3]}.html";
+        }
+
+        FileInfo fileInfo =  new(path);
+
+        return (fileInfo, fileData);
+    }
+
+    /// <summary>
+    /// creates a vault from http url <see cref="HttpRemoteVault"></see>.
+    /// <paramref name="uri"/>
+    /// </summary>
+    private async Task<IVault> ConstructHttpVault(Uri uri)
     {
-        HttpClient client = new() { BaseAddress = settings.RemoteManifestUri };
+        HttpClient client = new() { BaseAddress = uri };
         RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json")
 			?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
 
 		return HttpRemoteVault.FromManifest(manifest, client);
     }
 
-    private async Task<IVault> ConstructFtpVault(GenerateStaticSiteCommandSettings settings)
+    /// <summary>
+    /// creates a vault from ftp url <see cref="FtpRemoteVault"></see>.
+    /// <paramref name="uri"/>
+    /// </summary>
+    private async Task<IVault> ConstructFtpVault(Uri uri)
     {
-        var uri = settings?.RemoteManifestUri;
         var (user, pass) = uri.UserInfo?.Split(':') is { } info ? info.Length is 2 ? (info[0], info[1]) : (info[0], "") : ("", "");
+
         AsyncFtpClient client = new AsyncFtpClient(uri.Host, user, pass, 21);
         await client.EnsureConnected();
         byte[] bytes = await client.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None);
