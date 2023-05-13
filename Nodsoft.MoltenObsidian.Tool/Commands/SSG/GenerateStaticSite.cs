@@ -101,51 +101,59 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSettings>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings)
-    {
-        // decide protocol here perhaps move this and Construct ftp/http functions into vault interface? IVault.FromUri(uri)
-        IVault vault = settings.UrlScheme switch
-        {
-            "ftp://" or "ftps://" => await ConstructFtpVault(settings.RemoteManifestUri),
-            "http://" or "https://" => await ConstructHttpVault(settings.RemoteManifestUri),
-            null when settings.RemoteManifestUri is null => FileSystemVault.FromDirectory(settings?.LocalVaultPath),
-            null when settings.RemoteManifestUri is not null => throw new Exception("malformed url to remote vault manifest"),
-            _ => throw new Exception("error upon creating a vault.")
-        };
+	{
+		IVault vault = await CreateReadVault(settings);
 
-        await AnsiConsole.Status().StartAsync("Generating static assets.", async ctx =>
-        {
-            ctx.Status("Generating static assets.");
-            ctx.Spinner(Spinner.Known.Noise);
-            ctx.SpinnerStyle(Style.Parse("purple bold"));
+		await AnsiConsole.Status().StartAsync("Generating static assets.", async ctx =>
+		{
+			ctx.Status("Generating static assets.");
+			ctx.Spinner(Spinner.Known.Noise);
+			ctx.SpinnerStyle(Style.Parse("purple bold"));
 
-            if (settings.DebugMode)
-            {
-                AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? new[] { "*None*" })}");
+			if (settings.DebugMode)
+			{
+				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? new[] { "*None*" })}");
 				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? new[] { "*None*" })}");
-            }
+			}
 
-            foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
-            {
-                if (IsIgnored(pathFilePair, settings.IgnoredFolders, settings.IgnoredFiles))
-                {
-                    continue;
-                }
+			foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
+			{
+				if (IsIgnored(pathFilePair, settings.IgnoredFolders, settings.IgnoredFiles))
+				{
+					continue;
+				}
 
-                (FileInfo fileInfo, byte[] fileData) = await CreateOutputFile(settings.OutputPath.ToString(), pathFilePair);
-            
-                if (!fileInfo.Directory.Exists)
-                {
-                    fileInfo.Directory.Create();
-                }
+				(FileInfo fileInfo, byte[] fileData) = await CreateOutputFile(settings.OutputPath.ToString(), pathFilePair);
 
-                await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
-                await stream.WriteAsync(fileData);
-                await stream.FlushAsync();
-            }
-        });
+				if (!fileInfo.Directory.Exists)
+				{
+					fileInfo.Directory.Create();
+				}
 
-        return 0;
-    }
+				await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
+				await stream.WriteAsync(fileData);
+				await stream.FlushAsync();
+			}
+		});
+
+		return 0;
+	}
+
+    /// <summary>
+    /// Decide which Type of vault to create
+    /// </summary>
+    /// <param name="settings"><see cref="GenerateStaticSiteCommandSettings"/></param>
+    /// <returns><see cref="IVault"/></returns>
+    /// <exception cref="Exception"></exception>
+	private async Task<IVault> CreateReadVault(GenerateStaticSiteCommandSettings settings) => settings.UrlScheme switch
+	{
+		// todo: perhaps move this and Construct ftp/http functions into vault interface? IVault.FromUri(uri)
+		"ftp://" or "ftps://" => await ConstructFtpVault(settings.RemoteManifestUri),
+		"http://" or "https://" => await ConstructHttpVault(settings.RemoteManifestUri),
+		null when settings.RemoteManifestUri is null => FileSystemVault.FromDirectory(settings?.LocalVaultPath),
+		null when settings.RemoteManifestUri is not null => throw new Exception("malformed url to remote vault manifest"),
+		_ => throw new Exception("error upon creating a vault.")
+	};
 
 	private bool IsIgnored(KeyValuePair<string, IVaultFile> pathFilePair, string[]? ignoredFolders, string[]? ignoredFiles)
 	{
