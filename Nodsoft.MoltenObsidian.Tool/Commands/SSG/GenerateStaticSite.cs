@@ -33,6 +33,18 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
     public string OutputPathString { get; private set; } = string.Empty;
     public DirectoryInfo? OutputPath { get; private set; }
 
+    /// <summary>
+    /// Prints Ignored folders, input and output directory
+    /// </summary>
+    [CommandOption("--debug", IsHidden = true)]
+    public bool DebugMode { get; set;  } = false;
+
+    [CommandOption("--ignored-files"), Description("Ignore files in Vault")]
+    public string[]? IgnoredFiles { get; private set; } = FileSystemVault.DefaultIgnoredFiles.ToArray();
+    
+    [CommandOption("--ignored-folders"), Description("Ignore files in Vault")]
+    public string[]? IgnoredFolders { get; private set; } = FileSystemVault.DefaultIgnoredFolders.ToArray();
+
     public override ValidationResult Validate()
     {
         if (!string.IsNullOrEmpty(LocalVaultPathString) && !string.IsNullOrEmpty(RemoteManifestUrlString))
@@ -100,42 +112,77 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
             _ => throw new Exception("error upon creating a vault.")
         };
 
-        foreach (KeyValuePair<string, IVaultFile> pathNotePair in vault.Files)
+        await AnsiConsole.Status().StartAsync("Generating static assets.", async ctx =>
         {
-            (FileInfo fileInfo, byte[] fileData) = await CreateOutputFile(settings.OutputPath.ToString(), pathNotePair);
-            
-            if (!fileInfo.Directory.Exists)
+            ctx.Status("Generating static assets.");
+            ctx.Spinner(Spinner.Known.Noise);
+            ctx.SpinnerStyle(Style.Parse("purple bold"));
+
+            if (settings.DebugMode)
             {
-                fileInfo.Directory.Create();
+                AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? new[] { "*None*" })}");
+				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? new[] { "*None*" })}");
             }
-            await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
-            await stream.WriteAsync(fileData);
-            await stream.FlushAsync();
-        }
+
+            foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
+            {
+                if (IsIgnored(pathFilePair, settings.IgnoredFolders, settings.IgnoredFiles))
+                {
+                    continue;
+                }
+
+                (FileInfo fileInfo, byte[] fileData) = await CreateOutputFile(settings.OutputPath.ToString(), pathFilePair);
+            
+                if (!fileInfo.Directory.Exists)
+                {
+                    fileInfo.Directory.Create();
+                }
+
+                await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
+                await stream.WriteAsync(fileData);
+                await stream.FlushAsync();
+            }
+        });
 
         return 0;
     }
 
-    /// <summary>
-    /// creates the output file, if a <see cref="IVaultNote"></see> is encountered convert to html.
-    /// <paramref name="outputPath"/>
-    /// <paramref name="pathNotePair"/>
-    /// </summary>
-    private async Task<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathNotePair)
+	private bool IsIgnored(KeyValuePair<string, IVaultFile> pathFilePair, string[]? ignoredFolders, string[]? ignoredFiles)
 	{
-        string path = Path.Combine(outputPath, pathNotePair.Key.Replace('/', Path.DirectorySeparatorChar));
+		if (ignoredFiles.Contains(pathFilePair.Key))
+        {
+            return false;
+        }
 
-        byte[] fileData = await pathNotePair.Value.ReadBytesAsync();
+        if (ignoredFolders.Contains(pathFilePair.Key))
+        {
+            return false;
+        }
+
+        return true;
+	}
+
+	/// <summary>
+	/// Creates the output file, if a <see cref="IVaultNote"></see> is encountered convert to html.
+	/// <paramref name="outputPath"/>
+	/// <paramref name="pathFilePair"/>
+    /// <returns>A new <see cref="FileInfo"/> to be written too and a <see cref="byte[]"/> containing the file data</returns>
+	/// </summary>
+	private async Task<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
+	{
+        string path = Path.Combine(outputPath, pathFilePair.Key.Replace('/', Path.DirectorySeparatorChar));
+        byte[] fileData = await pathFilePair.Value.ReadBytesAsync();
         
         // .md -> .html happens here
         if (path.EndsWith(".md"))
         {
-            fileData =  Encoding.ASCII.GetBytes(new ObsidianText(Encoding.Default.GetString(fileData)).ToHtml());
             path = $"{path[..^3]}.html";
+            
+            string html = new ObsidianText(Encoding.Default.GetString(fileData)).ToHtml();
+            fileData = Encoding.ASCII.GetBytes(html);
         }
 
         FileInfo fileInfo =  new(path);
-
         return (fileInfo, fileData);
     }
 
@@ -158,6 +205,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
     /// </summary>
     private async Task<IVault> ConstructFtpVault(Uri uri)
     {
+        // extracts user and pass from ftp url
         var (user, pass) = uri.UserInfo?.Split(':') is { } info ? info.Length is 2 ? (info[0], info[1]) : (info[0], "") : ("", "");
 
         AsyncFtpClient client = new AsyncFtpClient(uri.Host, user, pass, 21);
