@@ -72,8 +72,11 @@ public sealed class HttpRemoteVault : IVault
 			HttpRemoteFile file = HttpRemoteFile.FromManifest(manifestFile, fileName, currentFolder);
 			((HttpRemoteFolder)currentFolder).AddFile(file);
 			vault._files.Add(manifestFile.Path, file);
-			// Whatever notes
-			// if(file == note) vault._notes.Add(file.Path, file);
+
+			if (file.Path.EndsWith(".md"))
+			{
+				vault._notes.Add(file.Path, (IVaultNote) file);
+			}
 		}
 
 		return vault;
