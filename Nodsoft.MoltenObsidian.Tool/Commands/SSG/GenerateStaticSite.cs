@@ -30,7 +30,7 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
     public string? UrlScheme { get; private set; }
 
     [CommandOption("-o|--output-path <OUTPUT_PATH>"), Description("Directory to write the output files to")]
-    public string OutputPathString { get; private set; } = string.Empty;
+    public string OutputPathString { get; private set; } = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
     public DirectoryInfo? OutputPath { get; private set; }
 
     /// <summary>
@@ -95,7 +95,7 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 }
 
 /// <summary>
-/// ssg command <see cref="GenerateStaticSite"/>.
+/// Provides a command that allows you to generate static vault assets that can be used anywhere <see cref="GenerateStaticSite"/>.
 /// </summary>
 [UsedImplicitly]
 public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSettings>
@@ -118,7 +118,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 
 			foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
 			{
-				if (IsIgnored(pathFilePair, settings.IgnoredFolders, settings.IgnoredFiles))
+				if (IsIgnored(pathFilePair.Key, settings.IgnoredFolders, settings.IgnoredFiles))
 				{
 					continue;
 				}
@@ -145,7 +145,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
     /// <param name="settings"><see cref="GenerateStaticSiteCommandSettings"/></param>
     /// <returns><see cref="IVault"/></returns>
     /// <exception cref="Exception"></exception>
-	private async Task<IVault> CreateReadVault(GenerateStaticSiteCommandSettings settings) => settings.UrlScheme switch
+	private async ValueTask<IVault> CreateReadVault(GenerateStaticSiteCommandSettings settings) => settings.UrlScheme switch
 	{
 		// todo: perhaps move this and Construct ftp/http functions into vault interface? IVault.FromUri(uri)
 		"ftp://" or "ftps://" => await ConstructFtpVault(settings.RemoteManifestUri),
@@ -155,14 +155,14 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 		_ => throw new Exception("error upon creating a vault.")
 	};
 
-	private bool IsIgnored(KeyValuePair<string, IVaultFile> pathFilePair, string[]? ignoredFolders, string[]? ignoredFiles)
+	private bool IsIgnored(string path, string[]? ignoredFolders, string[]? ignoredFiles)
 	{
-		if (ignoredFiles.Contains(pathFilePair.Key))
+		if (ignoredFiles.Contains(path))
         {
             return false;
         }
 
-        if (ignoredFolders.Contains(pathFilePair.Key))
+        if (ignoredFolders.Contains(path))
         {
             return false;
         }
@@ -176,7 +176,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
 	/// <paramref name="pathFilePair"/>
     /// <returns>A new <see cref="FileInfo"/> to be written too and a <see cref="byte[]"/> containing the file data</returns>
 	/// </summary>
-	private async Task<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
+	private async ValueTask<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
 	{
         string path = Path.Combine(outputPath, pathFilePair.Key.Replace('/', Path.DirectorySeparatorChar));
         byte[] fileData = await pathFilePair.Value.ReadBytesAsync();
@@ -198,7 +198,7 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
     /// creates a vault from http url <see cref="HttpRemoteVault"></see>.
     /// <paramref name="uri"/>
     /// </summary>
-    private async Task<IVault> ConstructHttpVault(Uri uri)
+    private async ValueTask<IVault> ConstructHttpVault(Uri uri)
     {
         HttpClient client = new() { BaseAddress = uri };
         RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json")
@@ -211,11 +211,12 @@ public sealed class GenerateStaticSite: AsyncCommand<GenerateStaticSiteCommandSe
     /// creates a vault from ftp url <see cref="FtpRemoteVault"></see>.
     /// <paramref name="uri"/>
     /// </summary>
-    private async Task<IVault> ConstructFtpVault(Uri uri)
+    private async ValueTask<IVault> ConstructFtpVault(Uri uri)
     {
         // extracts user and pass from ftp url
         var (user, pass) = uri.UserInfo?.Split(':') is { } info ? info.Length is 2 ? (info[0], info[1]) : (info[0], "") : ("", "");
 
+        // download manifest and use it to construct the ftpremoteovault
         AsyncFtpClient client = new AsyncFtpClient(uri.Host, user, pass, 21);
         await client.EnsureConnected();
         byte[] bytes = await client.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None);
