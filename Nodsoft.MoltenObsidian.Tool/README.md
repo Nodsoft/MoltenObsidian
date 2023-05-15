@@ -80,3 +80,31 @@ For reference, these are the default exclusions:
 | --- | --- |
 | **Folders** | `.obsidian` `.git` `.vs` `.vscode` `node_modules` |
 | **Files** | `.DS_STORE` |
+
+## Vault export
+
+### Premise 
+Sometimes you would like to use your vault in non-ASP.NET applications.
+This feature allows you to export a vault to static html files to be used where you like.
+
+### Usage
+Export local vault to output directory
+```sh
+moltenobsidian ssg generate --from-folder "/path/to/local/vault -o "/destination/directory"
+```
+
+the `ssg` command also supports ftp or http remote vault exporting
+```sh
+moltenobsidian ssg generate --from-url "https://url/to/remote/vault/moltenobsidian.manifest.json" -o "/destination/directory"
+moltenobsidian ssg generate --from-url "ftp://url/to/remote/vault/moltenobsidian.manifest.json" -o "/destination/directory"
+```
+> NOTE: the `--from-url` argument must point to a manifest not a directory
+
+> NOTE: if the `-o` flag is not specified the command will output to `C:\Users\<UserName>\` (`/home/<UserName>` on linux)
+
+Default ignored file and folders are the same as in `moltenobsidian manifeste generate`
+
+#### Supported Protocol Urls
+- Ftp
+- Https
+- Http
