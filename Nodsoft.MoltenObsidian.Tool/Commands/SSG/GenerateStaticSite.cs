@@ -39,10 +39,10 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
     [CommandOption("--debug", IsHidden = true)]
     public bool DebugMode { get; set;  } = false;
 
-    [CommandOption("--ignored-files"), Description("Ignore files in Vault")]
+    [CommandOption("--ignored-files <IGNONRED_FOLDER>"), Description("Ignore these files when creating the static site.")]
     public string[]? IgnoredFiles { get; private set; } = FileSystemVault.DefaultIgnoredFiles.ToArray();
     
-    [CommandOption("--ignored-folders"), Description("Ignore files in Vault")]
+    [CommandOption("--ignored-folders <IGNORED_FILES>"), Description("Ignore an entire directoroy when creating the static site.")]
     public string[]? IgnoredFolders { get; private set; } = FileSystemVault.DefaultIgnoredFolders.ToArray();
 
     public override ValidationResult Validate()

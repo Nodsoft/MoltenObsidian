@@ -23,7 +23,7 @@ app.Configure(static config =>
 	
 	config.AddBranch("ssg", static generateConfig =>
 	{
-		generateConfig.SetDescription("Export Vaults");
+		generateConfig.SetDescription("Generate static vault assets");
 		generateConfig.AddCommand<GenerateStaticSite>("generate");
 	});
 });
