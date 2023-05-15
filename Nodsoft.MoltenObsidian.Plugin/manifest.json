@@ -1,0 +1,10 @@
+{
+	"id": "moltenobsidian-plugin",
+	"name": "MoltenObsidian",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Obsidian plugin for MoltenObsidian.",
+	"author": "Nodsoft Systems",
+	"authorUrl": "https://github.com/Nodsoft/MoltenObsidian",
+	"isDesktopOnly": false
+}
