@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.SDK">
+<Project Sdk="Microsoft.VisualStudio.JavaScript.SDK/0.5.85-alpha">
   <PropertyGroup Label="Globals">
     <ProjectGuid>57a418c8-0727-4994-95f2-0e3e2a854ad8</ProjectGuid>
   </PropertyGroup>
