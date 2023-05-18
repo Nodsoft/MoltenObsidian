@@ -140,8 +140,6 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
     /// <exception cref="Exception"></exception>
 	private static async ValueTask<IVault> CreateReadVaultAsync(GenerateStaticSiteCommandSettings settings) => settings switch
 	{
-		// todo: perhaps move this and Construct ftp/http functions into vault interface? IVault.FromUri(uri)
-		
 		// Remote Vaults
 		{ RemoteManifestUri: { Scheme: "ftp" or "ftps" } manifestUri } => await ConstructFtpVaultAsync(manifestUri),
 		{ RemoteManifestUri: { Scheme: "http" or "https" } manifestUri } => await ConstructHttpVaultAsync(manifestUri),
@@ -188,7 +186,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
     {
         HttpClient client = new() { BaseAddress = uri };
         
-        RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json")
+        RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>(RemoteVaultManifest.ManifestFileName, CancellationToken.None)
 			?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
 
 		return HttpRemoteVault.FromManifest(manifest, client);
@@ -206,7 +204,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
         AsyncFtpClient client = new(uri.Host, user, pass, 21);
         
         await client.EnsureConnected();
-        byte[] bytes = await client.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None);
+        byte[] bytes = await client.DownloadBytes(RemoteVaultManifest.ManifestFileName, CancellationToken.None);
         RemoteVaultManifest? manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(bytes);
 
         return FtpRemoteVault.FromManifest(manifest, client);
