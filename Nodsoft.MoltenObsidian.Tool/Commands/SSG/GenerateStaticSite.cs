@@ -1,18 +1,10 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using FluentFTP;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.Ftp;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Nodsoft.MoltenObsidian.Manifest;
-using System.Text.Json;
-using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
-using Nodsoft.MoltenObsidian.Vaults.Http;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
-using System.Text;
+using Nodsoft.MoltenObsidian.Tool.Services;
 
 namespace Nodsoft.MoltenObsidian.Tool.Commands.SSG;
 
@@ -92,7 +84,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings)
 	{
-		IVault vault = await CreateReadVaultAsync(settings);
+		IVault vault = await StaticSiteGenerator.CreateReadVaultAsync(settings);
 
 		await AnsiConsole.Status().StartAsync("Generating static assets.", async ctx =>
 		{
@@ -111,12 +103,12 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 			
 			foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
 			{
-				if (IsIgnored(pathFilePair.Key, ignoredFolders, ignoredFiles))
+				if (StaticSiteGenerator.IsIgnored(pathFilePair.Key, ignoredFolders, ignoredFiles))
 				{
 					continue;
 				}
 
-				(FileInfo fileInfo, byte[] fileData) = await CreateOutputFile(settings.OutputPath.ToString(), pathFilePair);
+				(FileInfo fileInfo, byte[] fileData) = await StaticSiteGenerator.CreateOutputFile(settings.OutputPath.ToString(), pathFilePair);
 
 				if (!fileInfo.Directory!.Exists)
 				{
@@ -131,82 +123,4 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 
 		return 0;
 	}
-
-    /// <summary>
-    /// Decide which Type of vault to create
-    /// </summary>
-    /// <param name="settings"><see cref="GenerateStaticSiteCommandSettings"/></param>
-    /// <returns><see cref="IVault"/></returns>
-    /// <exception cref="Exception"></exception>
-	private static async ValueTask<IVault> CreateReadVaultAsync(GenerateStaticSiteCommandSettings settings) => settings switch
-	{
-		// Remote Vaults
-		{ RemoteManifestUri: { Scheme: "ftp" or "ftps" } manifestUri } => await ConstructFtpVaultAsync(manifestUri),
-		{ RemoteManifestUri: { Scheme: "http" or "https" } manifestUri } => await ConstructHttpVaultAsync(manifestUri),
-		
-		// Local Vaults
-		{ LocalVaultPath: { Exists: true } vaultPath } => FileSystemVault.FromDirectory(vaultPath),
-		
-		// Invalid
-		_=> throw new ArgumentException($"Failed to create vault, both {nameof(settings.RemoteManifestUri)} and {nameof(settings.LocalVaultPath)} are null.", nameof(settings))
-	};
-
-    [Pure, MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static bool IsIgnored(string path, IEnumerable<string> ignoredFolders, IEnumerable<string> ignoredFiles) 
-		=> !(ignoredFiles.Contains(path) || ignoredFolders.Contains(path));
-
-	/// <summary>
-	/// Creates the output file, if a <see cref="IVaultNote"></see> is encountered convert to html.
-	/// <paramref name="outputPath"/>
-	/// <paramref name="pathFilePair"/>
-    /// <returns>A new <see cref="FileInfo"/> to be written to and a buffer containing the file data.</returns>
-	/// </summary>
-	private static async ValueTask<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
-	{
-        string path = Path.Combine(outputPath, pathFilePair.Key.Replace('/', Path.DirectorySeparatorChar));
-        byte[] fileData = await pathFilePair.Value.ReadBytesAsync();
-        
-        // .md -> .html happens here
-        if (path.EndsWith(".md"))
-        {
-            path = $"{path[..^3]}.html";
-            
-            string html = new ObsidianText(Encoding.Default.GetString(fileData)).ToHtml();
-            fileData = Encoding.ASCII.GetBytes(html);
-        }
-
-        FileInfo fileInfo =  new(path);
-        return (fileInfo, fileData);
-    }
-
-    /// <summary>
-    /// creates a vault from http url <see cref="HttpRemoteVault" />.
-    /// </summary>
-    private static async ValueTask<IVault> ConstructHttpVaultAsync(Uri uri)
-    {
-        HttpClient client = new() { BaseAddress = uri };
-        
-        RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>(RemoteVaultManifest.ManifestFileName, CancellationToken.None)
-			?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
-
-		return HttpRemoteVault.FromManifest(manifest, client);
-    }
-
-    /// <summary>
-    /// creates a vault from ftp url <see cref="FtpRemoteVault" />.
-    /// </summary>
-    private static async ValueTask<IVault> ConstructFtpVaultAsync(Uri uri)
-    {
-        // extracts user and pass from ftp url
-        (string user, string pass) = uri.UserInfo.Split(':') is { } info ? info.Length is 2 ? (info[0], info[1]) : (info[0], "") : ("", "");
-
-        // download manifest and use it to construct the ftpremotevault
-        AsyncFtpClient client = new(uri.Host, user, pass, 21);
-        
-        await client.EnsureConnected();
-        byte[] bytes = await client.DownloadBytes(RemoteVaultManifest.ManifestFileName, CancellationToken.None);
-        RemoteVaultManifest? manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(bytes);
-
-        return FtpRemoteVault.FromManifest(manifest, client);
-    }
 }
