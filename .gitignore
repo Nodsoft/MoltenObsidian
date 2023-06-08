@@ -352,4 +352,5 @@ MigrationBackup/
 .idea/
 .fleet/
 Samples/*/Vault/
-launchSettings.json
+*launchSettings.json
+*.DS_Store

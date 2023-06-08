@@ -60,12 +60,20 @@ public static class StaticSiteGenerator
         return (fileInfo, fileData);
     }
 
+    /// <summary>
+    /// Converts markdown files to static html files
+    /// </summary>
+    /// <param name="path">The file path of the new file</param>
+    /// <param name="fileData">The file data to modify</param>
     private static void MarkDownToHtml(ref string path, ref byte[] fileData)
     {
         path = $"{path[..^3]}.html";
         ObsidianText text = new ObsidianText(Encoding.Default.GetString(fileData));
-        string frontMatter = new Serializer().Serialize(text.Frontmatter);
-        fileData = Encoding.ASCII.GetBytes(frontMatter + Environment.NewLine + text.ToHtml());
+        string frontMatter = new SerializerBuilder()
+            .WithNewLine(Environment.NewLine).Build()
+            .Serialize(string.Join(Environment.NewLine, text.Frontmatter));
+        string content = string.Join(Environment.NewLine, new string[] { "---", frontMatter, "---", text.ToHtml() });
+        fileData = Encoding.ASCII.GetBytes(content);
     }
 
 
