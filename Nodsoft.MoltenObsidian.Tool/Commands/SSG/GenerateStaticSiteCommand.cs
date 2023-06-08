@@ -12,6 +12,7 @@ namespace Nodsoft.MoltenObsidian.Tool.Commands.SSG;
 /// Specifies the command line arguments for the <see cref="GenerateStaticSite"/>.
 /// </summary>
 [PublicAPI]
+
 public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 {
     [CommandOption("--from-folder <PATH_TO_VAULT>"), Description("Path to the local moltenobsidian vault")]
@@ -23,9 +24,9 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
     public Uri? RemoteManifestUri { get; private set; }
 
     [CommandOption("-o|--output-path <OUTPUT_PATH>"), Description("Directory to write the output files to")]
-    public string OutputPathString { get; private set; } = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+    public string OutputPathString { get; private set; } = string.Empty;
 
-    public DirectoryInfo OutputPath { get; private set; } = null!;
+    public DirectoryInfo? OutputPath { get; private set; }
 
     /// <summary>
     /// Prints Ignored folders, input and output directory
@@ -55,6 +56,8 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
         {
 	        return ValidationResult.Error($"The output path '{OutputPath}' does not exist.");
         }
+        
+        OutputPath ??= new(Environment.CurrentDirectory);
 
         if (!string.IsNullOrEmpty(RemoteManifestUrlString))
         {
@@ -96,6 +99,11 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 			{
 				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? new[] { "*None*" })}");
 				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? new[] { "*None*" })}");
+
+				AnsiConsole.Console.MarkupLine(settings.OutputPath is null
+					? /*lang=markdown*/$"[grey]Output path defaulted to current directory: [/]{Environment.CurrentDirectory}"
+					: /*lang=markdown*/$"[grey]Output path set: [/]{settings.OutputPath}"
+				);
 			}
 
 			string[] ignoredFiles = settings.IgnoredFiles ?? Array.Empty<string>();
@@ -108,7 +116,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 					continue;
 				}
 
-				(FileInfo fileInfo, byte[] fileData) = await StaticSiteGenerator.CreateOutputFile(settings.OutputPath.ToString(), pathFilePair);
+				(FileInfo fileInfo, byte[] fileData) = await StaticSiteGenerator.CreateOutputFile(settings.OutputPath!.ToString(), pathFilePair);
 
 				if (!fileInfo.Directory!.Exists)
 				{
