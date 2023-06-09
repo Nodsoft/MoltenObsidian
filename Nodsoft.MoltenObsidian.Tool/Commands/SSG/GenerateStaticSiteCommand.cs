@@ -123,7 +123,8 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
                     await WriteData(pair);
                 }
 			}
-		});
+            AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"Wrote manifest to [green link]{settings.OutputPath}[/].");
+        });
 
 
 		return 0;
