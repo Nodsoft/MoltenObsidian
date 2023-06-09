@@ -45,19 +45,27 @@ public static class StaticSiteGenerator
 	/// <paramref name="pathFilePair"/>
     /// <returns>A new <see cref="FileInfo"/> to be written to and a buffer containing the file data.</returns>
 	/// </summary>
-	public static async ValueTask<(FileInfo, byte[])> CreateOutputFile(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
+	public static async ValueTask<List<InfoDataPair>> CreateOutputFiles(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
 	{
         string path = Path.Combine(outputPath, pathFilePair.Key.Replace('/', Path.DirectorySeparatorChar));
         byte[] fileData = await pathFilePair.Value.ReadBytesAsync();
+        List<InfoDataPair> outputList = new List<InfoDataPair>();
         
         // convert markdown files to html here
         if (path.EndsWith(".md"))
         {
-            MarkDownToHtml(ref path, ref fileData);
+            (path, fileData, byte[] frontMatterData) = MarkDownToHtml(path, fileData);
+            if (frontMatterData is not { Length: 0 })
+            {
+                FileInfo frontMatterInfo = new(Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path) + ".frontmatter.yaml"));
+                outputList.Add(new(frontMatterInfo, frontMatterData));
+            }
         }
 
         FileInfo fileInfo = new(path);
-        return (fileInfo, fileData);
+        outputList.Add(new(fileInfo, fileData));
+
+        return outputList;
     }
 
     /// <summary>
@@ -65,15 +73,16 @@ public static class StaticSiteGenerator
     /// </summary>
     /// <param name="path">The file path of the new file</param>
     /// <param name="fileData">The file data to modify</param>
-    private static void MarkDownToHtml(ref string path, ref byte[] fileData)
+    private static (string, byte[], byte[]) MarkDownToHtml(string path, byte[] fileData)
     {
-        path = $"{path[..^3]}.html";
+        path = $"{path[..^3]}.html"; // change file name to html
         ObsidianText text = new ObsidianText(Encoding.Default.GetString(fileData));
-        string frontMatter = new SerializerBuilder()
+        byte[] frontMatter = Encoding.ASCII.GetBytes(new SerializerBuilder()
             .WithNewLine(Environment.NewLine).Build()
-            .Serialize(string.Join(Environment.NewLine, text.Frontmatter));
-        string content = string.Join(Environment.NewLine, new string[] { "---", frontMatter, "---", text.ToHtml() });
-        fileData = Encoding.ASCII.GetBytes(content);
+            .Serialize(text.Frontmatter));
+
+        fileData = Encoding.ASCII.GetBytes(text.ToHtml());
+        return (path, fileData, frontMatter);
     }
 
 

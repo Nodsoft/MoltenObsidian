@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vault;
 using Spectre.Console;
@@ -116,19 +116,28 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 					continue;
 				}
 
-				(FileInfo fileInfo, byte[] fileData) = await StaticSiteGenerator.CreateOutputFile(settings.OutputPath!.ToString(), pathFilePair);
+				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFiles(settings.OutputPath!.ToString(), pathFilePair);
 
-				if (!fileInfo.Directory!.Exists)
-				{
-					fileInfo.Directory.Create();
-				}
-
-				await using FileStream stream = fileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
-				await stream.WriteAsync(fileData);
-				await stream.FlushAsync();
+                foreach(InfoDataPair pair in fileData)
+                {
+                    await WriteData(pair);
+                }
 			}
 		});
 
+
 		return 0;
 	}
+
+    private async ValueTask WriteData(InfoDataPair pair)
+    {
+        if (!pair.FileInfo.Directory!.Exists)
+        {
+            pair.FileInfo.Directory.Create();
+        }
+        await using FileStream stream = pair.FileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
+        await stream.WriteAsync(pair.FileData);
+        await stream.FlushAsync();
+
+    }
 }
