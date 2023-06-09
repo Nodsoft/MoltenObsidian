@@ -93,10 +93,7 @@ The `ssg` command also supports exporting remote vaults from HTTP or FTP :
 ```sh  
 moltenobsidian ssg generate --from-url "https://url/to/remote/vault/moltenobsidian.manifest.json" -o "/destination/directory"
 moltenobsidian ssg generate --from-url "ftp://url/to/remote/vault/moltenobsidian.manifest.json" -o "/destination/directory"
-```  
-
-> [!NOTE]
-> The `--from-url` argument must point to a manifest file, not the root directory.
+```
 
 > [!NOTE]
 > If the `-o` flag is not specified, the command will output to the current working directory.

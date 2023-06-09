@@ -91,6 +91,11 @@ public static class StaticSiteGenerator
     /// </summary>
     private static async ValueTask<IVault> ConstructHttpVaultAsync(Uri uri)
     {
+        if (!uri.IsFile)
+        {
+            uri = new(uri, RemoteVaultManifest.ManifestFileName);
+        }
+
         HttpClient client = new() { BaseAddress = uri };
         
         RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>(RemoteVaultManifest.ManifestFileName, CancellationToken.None)

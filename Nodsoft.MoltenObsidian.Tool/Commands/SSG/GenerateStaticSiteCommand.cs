@@ -25,7 +25,6 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 
     [CommandOption("-o|--output-path <OUTPUT_PATH>"), Description("Directory to write the output files to")]
     public string OutputPathString { get; private set; } = string.Empty;
-
     public DirectoryInfo? OutputPath { get; private set; }
 
     /// <summary>
