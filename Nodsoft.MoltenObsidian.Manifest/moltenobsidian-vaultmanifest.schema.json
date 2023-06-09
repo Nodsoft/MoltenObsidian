@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MoltenObsidian Vault Manifest schema",
+    "author": "Nodsoft Systems",
+    "description": "The schema defining a MoltenObsidian vault manifest.",
+    "license": "MIT",
+    "homepage": "https://github.com/Nodsoft/MoltenObsidian",
+    "version": "1",
+    
+    "type": "object",
+
+    "patternProperties": {
+        "^([a-zA-Z]+)$": {
+            "type": "string",
+            "description": "A string property with a case-insensitive name."
+        }
+    },
+
+    "files.associations": {
+        "moltenobsidian.manifest.json": "json"
+    },
+
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of the MoltenObsidian vault."
+        },
+
+        "files": {
+            "type": "array",
+
+            "items": {
+                "type": "object",
+
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "The path of the file."
+                    },
+
+                    "size": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "The size of the file in bytes."
+                    },
+
+                    "hash": {
+                        "type": "string",
+                        "description": "The hash of the file."
+                    },
+
+                    "contentType": {
+                        "pattern": "^([a-z]+\\/([a-z\\+]+))$",
+                        "type": "string",
+                        "description": "The content type of the file."
+                    },
+
+                    "metadata": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "description": "Additional metadata for the file."
+                    }
+                },
+
+                "required": [
+                    "path"
+                ],
+
+                "description": "An object representing a file in the vault."
+            }
+        }
+    },
+    
+    "required": [
+        "files"
+    ]
+}
