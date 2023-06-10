@@ -45,56 +45,47 @@ public static class StaticSiteGenerator
 
 	/// <summary>
 	/// Creates the output file, if a <see cref="IVaultNote"></see> is encountered convert to html.
-	/// <paramref name="outputPath"/>
-	/// <paramref name="pathFilePair"/>
+	/// <paramref name="outputDir"/>
+	/// <paramref name="inputFile"/>
     /// <returns>A new <see cref="FileInfo"/> to be written to and a buffer containing the file data.</returns>
 	/// </summary>
-	public static async ValueTask<List<InfoDataPair>> CreateOutputFiles(string outputPath, KeyValuePair<string, IVaultFile> pathFilePair)
+	public static async ValueTask<List<InfoDataPair>> CreateOutputFiles(string outputDir, KeyValuePair<string, IVaultFile> inputFile)
 	{
-        string path = Path.Combine(outputPath, pathFilePair.Key.Replace('/', Path.DirectorySeparatorChar));
-        byte[] fileData = await pathFilePair.Value.ReadBytesAsync();
+        // hack same directory seperator on all OS's
+        inputFile = new KeyValuePair<string, IVaultFile>(inputFile.Key.Replace('/', Path.DirectorySeparatorChar), inputFile.Value);
+        // save extension for later
+        string extension = Path.GetExtension(inputFile.Key);
+        // outputDir + new file name, without extension for easy processing
+        string path = Path.Combine(outputDir, $"{inputFile.Key[..^Path.GetExtension(inputFile.Key).Length]}");
         List<InfoDataPair> outputList = new List<InfoDataPair>();
         
-        // convert markdown files to html here
-        if (path.EndsWith(".md"))
+        // convert markdown files to html if they are notes
+        if (inputFile.Value is IVaultNote file)
         {
-            (path, fileData, byte[]? frontMatterData) = MarkDownToHtml(path, fileData);
-            
-            if (frontMatterData is { Length: not 0 })
+            ObsidianText text = await file.ReadDocumentAsync();
+
+            // add frontmatter if it is there
+            if (text.Frontmatter is { Count: not 0})
             {
-	            // So we've got some extra frontmatter data to write out. We'll need to create a new file for it.
-	            // Get the original file path, remove the extension, and add .yaml to the end.
-	            FileInfo frontMatterFile = new($"{path[..^Path.GetExtension(path).Length]}.yaml");
-	            
-	            // Add the frontmatter file to the output list.
-	            outputList.Add(new(frontMatterFile, frontMatterData));
+	            FileInfo frontMatterFile = new(path + ".yaml");
+                byte[] frontMatterData = Encoding.ASCII.GetBytes(YamlSerializer.Serialize(text.Frontmatter));
+                outputList.Add(new(frontMatterFile,frontMatterData));
             }
+
+            // .md -> .html here
+            FileInfo htmlFile = new(path + ".html");
+            byte[] htmlData = Encoding.UTF8.GetBytes(text.ToHtml());
+            outputList.Add(new(htmlFile, htmlData));
+
+            return outputList;
         }
 
-        FileInfo fileInfo = new(path);
-        outputList.Add(new(fileInfo, fileData));
+        // all other filetypes
+        byte[] newFileData = await inputFile.Value.ReadBytesAsync();
+        FileInfo newFileInfo = new(path + extension);
+        outputList.Add(new(newFileInfo, newFileData));
 
         return outputList;
-    }
-
-    /// <summary>
-    /// Converts markdown files to static html files
-    /// </summary>
-    /// <param name="path">The file path of the new file</param>
-    /// <param name="fileData">The file data to modify</param>
-    private static (string, byte[], byte[]?) MarkDownToHtml(string path, byte[] fileData)
-    {
-        path = $"{path[..^3]}.html"; // change file name to html
-        ObsidianText text = new ObsidianText(Encoding.Default.GetString(fileData));
-        fileData = Encoding.ASCII.GetBytes(text.ToHtml());
-
-        if (text.Frontmatter is { Count: not 0 })
-        {
-	        byte[] frontMatter = Encoding.ASCII.GetBytes(YamlSerializer.Serialize(text.Frontmatter));
-	        return (path, fileData, frontMatter);
-        }
-        
-        return (path, fileData, null);
     }
 
 
