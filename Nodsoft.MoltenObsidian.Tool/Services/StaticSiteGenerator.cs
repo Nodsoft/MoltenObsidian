@@ -56,7 +56,7 @@ public static class StaticSiteGenerator
         // save extension for later
         string extension = Path.GetExtension(inputFile.Key);
         // outputDir + new file name, without extension for easy processing
-        string path = Path.Combine(outputDir, $"{inputFile.Key[..^Path.GetExtension(inputFile.Key).Length]}");
+        string path = Path.Combine(outputDir, inputFile.Key[..^extension.Length]);
         List<InfoDataPair> outputList = new List<InfoDataPair>();
         
         // convert markdown files to html if they are notes
