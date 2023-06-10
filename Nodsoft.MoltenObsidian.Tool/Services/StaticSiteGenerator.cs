@@ -73,7 +73,7 @@ public static class StaticSiteGenerator
                     new(new(path + ".html"), Encoding.ASCII.GetBytes((await ((IVaultNote)note.Value).ReadDocumentAsync()).ToHtml()))
                 },
             // all other files
-            (_, IVaultFile) vaultFile =>
+            (_, _) vaultFile =>
                 new()
                 {
                     new(new(path + extension), await vaultFile.Value.ReadBytesAsync())
