@@ -117,11 +117,14 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 
 				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFiles(settings.OutputPath!.ToString(), pathFilePair);
 
-                foreach(InfoDataPair pair in fileData)
-                {
-                    await WriteData(pair);
-                }
+                // foreach((FileInfo file, byte[] data) in fileData)
+                // {
+                //     await WriteDataAsync(file, data);
+                // }
+                
+                await Task.WhenAll(fileData.Select(WriteDataAsync));
 			}
+			
             AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"Wrote manifest to [green link]{settings.OutputPath}[/].");
         });
 
@@ -129,15 +132,15 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 		return 0;
 	}
 
-    private async ValueTask WriteData(InfoDataPair pair)
+    private static async Task WriteDataAsync(InfoDataPair pair)
     {
-        if (!pair.FileInfo.Directory!.Exists)
-        {
-            pair.FileInfo.Directory.Create();
-        }
-        await using FileStream stream = pair.FileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
-        await stream.WriteAsync(pair.FileData);
-        await stream.FlushAsync();
+	    if (!pair.FileInfo.Directory!.Exists)
+	    {
+		    pair.FileInfo.Directory.Create();
+	    }
+	    await using FileStream stream = pair.FileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
+	    await stream.WriteAsync(pair.FileData);
+	    await stream.FlushAsync();
 
     }
 }

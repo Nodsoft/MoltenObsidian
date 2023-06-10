@@ -16,6 +16,10 @@ namespace Nodsoft.MoltenObsidian.Tool.Services;
 
 public static class StaticSiteGenerator
 {
+	private static ISerializer YamlSerializer { get; } = new SerializerBuilder()
+		.WithNewLine(Environment.NewLine)
+		.Build();
+	
     /// <summary>
     /// Decide which Type of vault to create
     /// </summary>
@@ -54,11 +58,16 @@ public static class StaticSiteGenerator
         // convert markdown files to html here
         if (path.EndsWith(".md"))
         {
-            (path, fileData, byte[] frontMatterData) = MarkDownToHtml(path, fileData);
-            if (frontMatterData is not { Length: 0 })
+            (path, fileData, byte[]? frontMatterData) = MarkDownToHtml(path, fileData);
+            
+            if (frontMatterData is { Length: not 0 })
             {
-                FileInfo frontMatterInfo = new(Path.Combine(outputPath, Path.GetFileNameWithoutExtension(path) + ".frontmatter.yaml"));
-                outputList.Add(new(frontMatterInfo, frontMatterData));
+	            // So we've got some extra frontmatter data to write out. We'll need to create a new file for it.
+	            // Get the original file path, remove the extension, and add .yaml to the end.
+	            FileInfo frontMatterFile = new($"{path[..^Path.GetExtension(path).Length]}.yaml");
+	            
+	            // Add the frontmatter file to the output list.
+	            outputList.Add(new(frontMatterFile, frontMatterData));
             }
         }
 
@@ -73,16 +82,19 @@ public static class StaticSiteGenerator
     /// </summary>
     /// <param name="path">The file path of the new file</param>
     /// <param name="fileData">The file data to modify</param>
-    private static (string, byte[], byte[]) MarkDownToHtml(string path, byte[] fileData)
+    private static (string, byte[], byte[]?) MarkDownToHtml(string path, byte[] fileData)
     {
         path = $"{path[..^3]}.html"; // change file name to html
         ObsidianText text = new ObsidianText(Encoding.Default.GetString(fileData));
-        byte[] frontMatter = Encoding.ASCII.GetBytes(new SerializerBuilder()
-            .WithNewLine(Environment.NewLine).Build()
-            .Serialize(text.Frontmatter));
-
         fileData = Encoding.ASCII.GetBytes(text.ToHtml());
-        return (path, fileData, frontMatter);
+
+        if (text.Frontmatter is { Count: not 0 })
+        {
+	        byte[] frontMatter = Encoding.ASCII.GetBytes(YamlSerializer.Serialize(text.Frontmatter));
+	        return (path, fileData, frontMatter);
+        }
+        
+        return (path, fileData, null);
     }
 
 
