@@ -52,43 +52,35 @@ public static class StaticSiteGenerator
     public static async ValueTask<List<InfoDataPair>> CreateOutputFiles(string outputDir, KeyValuePair<string, IVaultFile> inputFile)
     {
         // hack same directory seperator on all OS's
-        inputFile = new KeyValuePair<string, IVaultFile>(inputFile.Key.Replace('/', Path.DirectorySeparatorChar), inputFile.Value);
+        inputFile = new(inputFile.Key.Replace('/', Path.DirectorySeparatorChar), inputFile.Value);
         // save extension for later
         string extension = Path.GetExtension(inputFile.Key);
         // outputDir + new file name, without extension for easy processing
         string path = Path.Combine(outputDir, inputFile.Key[..^extension.Length]);
-        List<InfoDataPair> outputList = new List<InfoDataPair>();
 
-        return inputFile switch
+        if (inputFile.Value is IVaultNote note && await note.ReadDocumentAsync() is var text)
         {
-            // .md -> .html conversion here
-            (_, IVaultNote) note when await HasFrontMatter((IVaultNote)note.Value) => await HasFrontMatter((IVaultNote) note.Value)
-            ?   new() {
-                    // frontmatter
-                    new(new(path + ".yaml"), Encoding.ASCII.GetBytes(YamlSerializer.Serialize((await ((IVaultNote) note.Value).ReadDocumentAsync()).Frontmatter))),
-                    // html
-                    new(new(path + ".html"), Encoding.ASCII.GetBytes((await ((IVaultNote)note.Value).ReadDocumentAsync()).ToHtml()))
-                }
-            :   new()
+            // It's a note. Convert to html and save frontmatter if any.
+            return text.Frontmatter is { Count: not 0 }
+                ? new()
                 {
-                    new(new(path + ".html"), Encoding.ASCII.GetBytes((await ((IVaultNote)note.Value).ReadDocumentAsync()).ToHtml()))
-                },
-            // all other files
-            (_, _) vaultFile =>
-            new()
-            {
-                new(new(path + extension), await vaultFile.Value.ReadBytesAsync())
-            }
-         };
+                    // frontmatter
+                    new(new($"{path}.yaml"), Encoding.ASCII.GetBytes(YamlSerializer.Serialize(text.Frontmatter))),
+                    // html
+                    new(new($"{path}.html"), Encoding.ASCII.GetBytes(text.ToHtml()))
+                }
+                : new()
+                {
+                    new(new($"{path}.html"), Encoding.ASCII.GetBytes(text.ToHtml()))
+                };
+        }
+        
+        // Otherwise it's a file. Save it.
+        return new()
+        {
+            new(new($"{path}{extension}"), await inputFile.Value.ReadBytesAsync())
+        };
     }
-
-    [Pure, MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static async ValueTask<bool> HasFrontMatter(IVaultNote file)
-    {
-        ObsidianText text = await file.ReadDocumentAsync();
-        return text.Frontmatter is { Count: not 0 };
-    }
-
 
     /// <summary>
     /// creates a vault from http url <see cref="HttpRemoteVault" />.
