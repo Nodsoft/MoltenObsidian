@@ -115,7 +115,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 					continue;
 				}
 
-				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFiles(settings.OutputPath!.ToString(), pathFilePair);
+				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(settings.OutputPath!.ToString(), pathFilePair);
 
                 // foreach((FileInfo file, byte[] data) in fileData)
                 // {

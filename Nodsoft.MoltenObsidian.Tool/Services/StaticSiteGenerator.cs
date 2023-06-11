@@ -49,7 +49,7 @@ public static class StaticSiteGenerator
     /// <paramref name="inputFile"/>
     /// <returns>A new <see cref="FileInfo"/> to be written to and a buffer containing the file data.</returns>
     /// </summary>
-    public static async ValueTask<List<InfoDataPair>> CreateOutputFiles(string outputDir, KeyValuePair<string, IVaultFile> inputFile)
+    public static async ValueTask<List<InfoDataPair>> CreateOutputFilesAsync(string outputDir, KeyValuePair<string, IVaultFile> inputFile)
     {
         // hack same directory seperator on all OS's
         inputFile = new(inputFile.Key.Replace('/', Path.DirectorySeparatorChar), inputFile.Value);
