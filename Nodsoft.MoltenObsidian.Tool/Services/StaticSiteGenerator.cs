@@ -62,22 +62,23 @@ public static class StaticSiteGenerator
         return inputFile switch
         {
             // .md -> .html conversion here
-            (_, IVaultNote) note when await HasFrontMatter((IVaultNote)note.Value) =>
-                new() {
+            (_, IVaultNote) note when await HasFrontMatter((IVaultNote)note.Value) => await HasFrontMatter((IVaultNote) note.Value)
+            ?   new() {
+                    // frontmatter
                     new(new(path + ".yaml"), Encoding.ASCII.GetBytes(YamlSerializer.Serialize((await ((IVaultNote) note.Value).ReadDocumentAsync()).Frontmatter))),
+                    // html
                     new(new(path + ".html"), Encoding.ASCII.GetBytes((await ((IVaultNote)note.Value).ReadDocumentAsync()).ToHtml()))
-                },
-            (_, IVaultNote) note when !await HasFrontMatter((IVaultNote)note.Value) =>
-                new()
+                }
+            :   new()
                 {
                     new(new(path + ".html"), Encoding.ASCII.GetBytes((await ((IVaultNote)note.Value).ReadDocumentAsync()).ToHtml()))
                 },
             // all other files
             (_, _) vaultFile =>
-                new()
-                {
-                    new(new(path + extension), await vaultFile.Value.ReadBytesAsync())
-                }
+            new()
+            {
+                new(new(path + extension), await vaultFile.Value.ReadBytesAsync())
+            }
          };
     }
 
