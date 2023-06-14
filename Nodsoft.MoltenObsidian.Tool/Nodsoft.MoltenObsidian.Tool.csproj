@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -16,13 +16,15 @@
 
 	<ItemGroup>
 	  <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-	  <PackageReference Include="Spectre.Console.Cli" Version="0.45.0" />
+	  <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
 	  <PackageReference Include="Throw" Version="1.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
+	  <ProjectReference Include="..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
 	  <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
+	  <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Ftp\Nodsoft.MoltenObsidian.Vaults.Ftp.csproj" />
+	  <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
 	</ItemGroup>
 
 </Project>

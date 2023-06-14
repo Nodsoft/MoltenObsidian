@@ -5,15 +5,18 @@
 /// </summary>
 public class RemoteVaultManifest
 {
+	/// <summary>
+	/// Default name for a MoltenObsidian vault manifest file.
+	/// </summary>
 	public const string ManifestFileName = "moltenobsidian.manifest.json";
 	
 	/// <summary>
 	/// The name of the vault.
 	/// </summary>
-	public string Name { get; init; }
+	public string Name { get; init; } = string.Empty;
 
 	/// <summary>
 	/// The relative paths of the files contained in the vault.
 	/// </summary>
-	public IReadOnlyList<ManifestFile> Files { get; init; }
+	public IReadOnlyList<ManifestFile> Files { get; init; } = Array.Empty<ManifestFile>();
 }

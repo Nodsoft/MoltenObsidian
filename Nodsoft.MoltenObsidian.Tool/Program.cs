@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Nodsoft.MoltenObsidian.Tool.Commands.Manifest;
+using Nodsoft.MoltenObsidian.Tool.Commands.SSG;
 using Spectre.Console.Cli;
 
 CommandApp app = new();
@@ -8,7 +9,6 @@ CommandApp app = new();
 app.Configure(static config =>
 {
 	config.SetApplicationName("moltenobsidian");
-	
 
 #if DEBUG
 	config.PropagateExceptions();
@@ -19,6 +19,12 @@ app.Configure(static config =>
 	{
 		manifestConfig.SetDescription("Manage manifests");
 		manifestConfig.AddCommand<GenerateManifestCommand>("generate");
+	});
+	
+	config.AddBranch("ssg", static generateConfig =>
+	{
+		generateConfig.SetDescription("Generate static vault assets");
+		generateConfig.AddCommand<GenerateStaticSite>("generate");
 	});
 });
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Tool.Services;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
@@ -153,7 +154,9 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 
 			await JsonSerializer.SerializeAsync(stream, manifest, new JsonSerializerOptions
 			{
-				WriteIndented = settings.DebugMode // If debug mode is enabled, write the manifest with indentation.
+				WriteIndented = settings.DebugMode, // If debug mode is enabled, write the manifest with indentation.
+				PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Use camelCase for property names.
+				DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Don't write null values.
 			});
 		});
 		
