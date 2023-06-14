@@ -350,5 +350,7 @@ MigrationBackup/
 .ionide/
 
 .idea/
-
+.fleet/
 Samples/*/Vault/
+*launchSettings.json
+*.DS_Store
