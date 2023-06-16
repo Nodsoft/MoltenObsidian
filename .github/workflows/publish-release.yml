@@ -5,9 +5,9 @@ permissions:
 
 on:
   # Push events to matching v*, i.e. v1.0, v20.15.10
-  create: 
-    ref_type: tag
-    ref: 'v*'
+    push:
+      tags:
+      - "v*"
 
 jobs:
   release:

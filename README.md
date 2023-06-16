@@ -1,3 +1,5 @@
+<img align="right" src="icon.png" alt="logo" width="256"/>
+
 # Molten Obsidian
 
 **.NET 6+ Library for [Obsidian](https://obsidian.md)-flavoured Markdown parsing for Blazor with Vault mapping support.**
