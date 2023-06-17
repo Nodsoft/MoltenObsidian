@@ -13,15 +13,14 @@
 		<Authors>Sakura Akeno Isayeki</Authors>
 		<Title>Molten Obsidian</Title>
 		<Product>Molten Obsidian</Product>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/Nodsoft/MoltenObsidian</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Nodsoft/MoltenObsidian</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<CommonPackageTags>obsidian, moltenobsidian, vault, markdown, html, extensions</CommonPackageTags>
 		<PackageTags>$(CommonPackageTags)</PackageTags> <!-- Default package tags -->
 
-		<ReadmeFile>README.md</ReadmeFile>
-		<LicenseFile>LICENSE</LicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 
 		<!-- Generate XML documentation -->
@@ -37,9 +36,9 @@
 	<ItemGroup Label="PackageInfoFiles">
 		<!-- Import the Readme at build props level if there is none in the project -->
 
-		<None Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
-		<None Include="$(MSBuildThisFileDirectory)\LICENSE" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
-		<None Include="$(MSBuildThisFileDirectory)\icon.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<None Condition="!Exists('README.md')" Include="$(_DirectoryBuildPropsBasePath)\README.md" Pack="true" PackagePath="/" />
+		<None Include="$(MSBuildThisFileDirectory)\LICENSE" Pack="true" PackagePath="/" />
+		<None Include="$(MSBuildThisFileDirectory)\icon.png" Pack="true" PackagePath="/" />
 	</ItemGroup>
 	
 </Project>

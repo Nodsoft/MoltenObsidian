@@ -29,4 +29,7 @@
 		<ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
 	</ItemGroup>
 
+	<ItemGroup Label="PackageInfoFiles">
+		<None Include="README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
 </Project>
