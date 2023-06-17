@@ -3,12 +3,11 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net7.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
 		
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>moltenobsidian</ToolCommandName>
 		<Description>Utilitary CLI tool for Molten Obsidian, used for Vault manipulation purposes.</Description>
+		<PackageTags>$(CommonPackageTags), cli, tool, ssg, manifest</PackageTags>
 		
 		<!-- Override: No documentation is needed for a CLI tool. Spectre already does it for us. -->
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>

@@ -1,4 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<Description>Remote HTTP Vault provider for Molten Obsidian</Description>
+		<PackageTags>$(CommonPackageTags), http</PackageTags>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
 	</ItemGroup>
