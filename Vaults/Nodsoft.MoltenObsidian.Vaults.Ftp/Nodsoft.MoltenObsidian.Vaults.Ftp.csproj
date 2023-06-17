@@ -1,10 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
-    </ItemGroup>
+    <PropertyGroup>
+        <Description>Remote FTP Vault provider for Molten Obsidian</Description>
+        <PackageTags>$(CommonPackageTags), ftp</PackageTags>
+        <Authors>Spencer Naugler</Authors>
+    </PropertyGroup>
     
     <ItemGroup>
+        <ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
+
         <PackageReference Include="FluentFTP" Version="46.0.2" />
     </ItemGroup>
 

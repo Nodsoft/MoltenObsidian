@@ -2,7 +2,8 @@
 
 	<PropertyGroup>
 		<LangVersion>preview</LangVersion>
-
+		<PackageTags>$(CommonPackageTags), manifest</PackageTags>
+		
 		<Description>Implementation for Molten Obsidian vault Manifest, used for vault implementations where structure scanning is not possible.</Description>
 	</PropertyGroup>
 

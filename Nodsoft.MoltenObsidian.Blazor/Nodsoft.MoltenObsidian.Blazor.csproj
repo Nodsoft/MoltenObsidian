@@ -1,15 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
+	<PropertyGroup>
+		<Description>Blazor integration for Molten Obsidian</Description>
+		<PackageTags>$(CommonPackageTags), blazor</PackageTags>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
+		
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.18" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 	</ItemGroup>
 
 </Project>
