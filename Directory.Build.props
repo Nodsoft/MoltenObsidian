@@ -34,15 +34,12 @@
 		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" Condition="!Exists('packages.config')" PrivateAssets="all" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(PackageAssetsImported) != 'true'">
+	<ItemGroup Label="PackageInfoFiles">
 		<!-- Import the Readme at build props level if there is none in the project -->
 
-		<None Condition="Exists('README.md') == false" Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
-		<None Include="$(_DirectoryBuildPropsBasePath)\LICENSE" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
-		<None Include="$(_DirectoryBuildPropsBasePath)\icon.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<None Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<None Include="$(MSBuildThisFileDirectory)\LICENSE" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<None Include="$(MSBuildThisFileDirectory)\icon.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
 	</ItemGroup>
-
-	<PropertyGroup Condition="$(PackageAssetsImported) != 'true'">
-		<PackageAssetsImported>true</PackageAssetsImported>
-	</PropertyGroup>
+	
 </Project>
