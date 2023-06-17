@@ -2,6 +2,7 @@
 
 namespace Nodsoft.MoltenObsidian.Manifest;
 
+
 /// <summary>
 /// Represents a vault file within a manifest.
 /// </summary>
