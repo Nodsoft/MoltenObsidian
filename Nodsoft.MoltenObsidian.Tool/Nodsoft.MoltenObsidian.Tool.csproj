@@ -2,6 +2,9 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
+		
+		<!--suppress MsbuildTargetFrameworkTagInspection, CheckTagEmptyBody -->
+		<TargetFrameworks></TargetFrameworks>
 		<TargetFramework>net7.0</TargetFramework>
 		
 		<PackAsTool>true</PackAsTool>

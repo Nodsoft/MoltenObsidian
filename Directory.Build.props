@@ -23,8 +23,6 @@
 		<ReadmeFile Condition="Exists('README.md')">README.md</ReadmeFile>
 		<PackageIcon Condition="Exists('icon.png')">icon.png</PackageIcon>
 
-		
-		
 		<!-- Generate XML documentation -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
