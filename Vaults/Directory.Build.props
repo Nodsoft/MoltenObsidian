@@ -7,10 +7,11 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="$(PackageAssetsImported) != 'true'">
-		<Content Condition="Exists('README.md') == false" Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" />
-		<Content Include="$(_DirectoryBuildPropsBasePath)\..\icon.png" CopyToOutputDirectory="PreserveNewest" />
+		<Content Condition="Exists('README.md') == false" Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<Content Condition="Exists('LICENSE') == false" Include="$(_DirectoryBuildPropsBasePath)\LICENSE" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<Content Include="$(_DirectoryBuildPropsBasePath)\..\icon.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
 	</ItemGroup>
-	
+
 	<PropertyGroup Condition="$(PackageAssetsImported) != 'true'">
 		<PackageAssetsImported>true</PackageAssetsImported>
 	</PropertyGroup>

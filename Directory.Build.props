@@ -19,8 +19,9 @@
 		<RepositoryType>Git</RepositoryType>
 		<CommonPackageTags>obsidian, moltenobsidian, vault, markdown, html, extensions</CommonPackageTags>
 		<PackageTags>$(CommonPackageTags)</PackageTags> <!-- Default package tags -->
-		
+
 		<ReadmeFile Condition="Exists('README.md')">README.md</ReadmeFile>
+		<LicenseFile Condition="Exists('LICENSE')">LICENSE</LicenseFile>
 		<PackageIcon Condition="Exists('icon.png')">icon.png</PackageIcon>
 
 		<!-- Generate XML documentation -->
@@ -28,18 +29,19 @@
 	</PropertyGroup>
 
 
-	<ItemGroup>		
+	<ItemGroup>
 		<!-- Nerdbank.GitVersioning -->
 		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" Condition="!Exists('packages.config')" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(PackageAssetsImported) != 'true'">
 		<!-- Import the Readme at build props level if there is none in the project -->
-		
-		<None Condition="Exists('README.md') == false" Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" />
-		<None Include="$(_DirectoryBuildPropsBasePath)\icon.png" CopyToOutputDirectory="PreserveNewest" />
+
+		<None Condition="Exists('README.md') == false" Include="$(_DirectoryBuildPropsBasePath)\README.md" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<None Condition="Exists('LICENSE') == false" Include="$(_DirectoryBuildPropsBasePath)\LICENSE" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
+		<None Include="$(_DirectoryBuildPropsBasePath)\icon.png" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="/" />
 	</ItemGroup>
-	
+
 	<PropertyGroup Condition="$(PackageAssetsImported) != 'true'">
 		<PackageAssetsImported>true</PackageAssetsImported>
 	</PropertyGroup>

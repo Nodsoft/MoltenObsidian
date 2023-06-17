@@ -2,31 +2,31 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		
+
 		<!--suppress MsbuildTargetFrameworkTagInspection, CheckTagEmptyBody -->
 		<TargetFrameworks></TargetFrameworks>
 		<TargetFramework>net7.0</TargetFramework>
-		
+
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>moltenobsidian</ToolCommandName>
 		<Description>Utilitary CLI tool for Molten Obsidian, used for Vault manipulation purposes.</Description>
 		<PackageTags>$(CommonPackageTags), cli, tool, ssg, manifest</PackageTags>
-		
+
 		<!-- Override: No documentation is needed for a CLI tool. Spectre already does it for us. -->
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-	  <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
-	  <PackageReference Include="Throw" Version="1.3.1" />
+		<PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
+		<PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+		<PackageReference Include="Throw" Version="1.3.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
-	  <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
-	  <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Ftp\Nodsoft.MoltenObsidian.Vaults.Ftp.csproj" />
-	  <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
+		<ProjectReference Include="..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
+		<ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
+		<ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Ftp\Nodsoft.MoltenObsidian.Vaults.Ftp.csproj" />
+		<ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
 	</ItemGroup>
 
 </Project>
