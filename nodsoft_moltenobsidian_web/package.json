@@ -10,6 +10,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^2.10.1"
+    "astro": "^2.10.1",
+    "bootstrap-icons": "^1.10.5",
+    "sass": "^1.64.2"
   }
 }

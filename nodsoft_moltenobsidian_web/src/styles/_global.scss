@@ -1,0 +1,95 @@
+@use "variables" as *;
+@use "mixins" as *;
+@import url("https://fonts.googleapis.com/css2?family=Nunito");
+
+
+html {
+  font-family: Nunito, system-ui, sans-serif;
+  background: #13151A;
+  background-size: 224px;
+}
+
+code {
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+  Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+main {
+  margin: auto;
+  padding: 1rem;
+  width: 800px;
+  max-width: calc(100% - 2rem);
+  color: white;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.astro-a {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translatex(-50%);
+  width: 220px;
+  height: auto;
+  z-index: -1;
+}
+
+h1 {
+  @include font-styles(4rem);
+}
+
+h2 {
+  @include font-styles(3.5rem);
+}
+
+h3 {
+  @include font-styles(3rem);
+}
+
+h4 {
+  @include font-styles(2.5rem);
+}
+
+h5 {
+  @include font-styles(2rem);
+}
+
+h6 {
+  @include font-styles(1.5rem);
+}
+
+.text-gradient {
+  background-image: $accent-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 400%;
+  background-position: 0%;
+}
+
+.instructions {
+  margin-bottom: 2rem;
+  border: 1px solid rgba($accent-light, 0.25);
+  background: linear-gradient(rgba($accent-dark, 0.66), rgba($accent-dark, 0.33));
+  padding: 1.5rem;
+  border-radius: 8px;
+
+  & code {
+    font-size: 0.8em;
+    font-weight: bold;
+    background: rgba($accent-light, 0.12);
+    color: $accent-light;
+    border-radius: 4px;
+    padding: 0.3em 0.4em;
+  }
+
+  & strong {
+    color: $accent-light
+  }
+}
+
+.link-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+  gap: 2rem;
+  padding: 0;
+}

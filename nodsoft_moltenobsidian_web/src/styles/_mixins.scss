@@ -1,0 +1,7 @@
+@mixin font-styles($size, $weight: 700, $line-height: 1, $align: center, $margin-bottom: 1em) {
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $line-height;
+  text-align: $align;
+  margin-bottom: $margin-bottom;
+}

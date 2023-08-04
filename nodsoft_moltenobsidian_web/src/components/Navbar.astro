@@ -1,0 +1,27 @@
+---
+import "./Navbar.astro.scss"
+import NavLink from './NavLink.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<header>
+	<nav>
+		<div style="display: flex; align-items: center;">
+			<h2 class="navbar-brand">
+				<a href="/">{SITE_TITLE}</a>
+			</h2>
+
+			<div class="internal-links">
+				<NavLink href="/">Home</NavLink>
+				<NavLink href="/vault">Vault</NavLink>
+			</div>
+		</div>
+		
+		<!--<div class="social-links">-->
+		<!--	-->
+		<!--</div>-->
+	</nav>
+</header>
+<style>
+
+</style>
