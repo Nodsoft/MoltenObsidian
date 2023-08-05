@@ -1,4 +1,5 @@
-﻿using Nodsoft.MoltenObsidian.Converter;
+﻿using System.Text;
+using Nodsoft.MoltenObsidian.Converter;
 using Nodsoft.MoltenObsidian.Vault;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -100,7 +101,9 @@ public readonly record struct ObsidianText
 		// We need to find the first line with three dashes, and then the next line with three dashes.
 		// The content between the two lines is the front matter.
 		// If there is no front matter, the content is the whole file.
-		string[] lines = obsidianMarkdown.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+		
+		string[] lines = SplitByNewline(obsidianMarkdown);
+//		string[] lines = obsidianMarkdown.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 		TrimBom(ref lines[0]);
 		
 		int firstLine = Array.FindIndex(lines, _LineDelimiterPredicate);
@@ -134,5 +137,40 @@ public readonly record struct ObsidianText
 		{
 			text = text[1..];
 		}
+	}
+	
+	/// <summary>
+	/// Splits the specified string by newlines, handling first \r\n, then \r, then \n.
+	/// </summary>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public static string[] SplitByNewline(ReadOnlySpan<char> input)
+	{
+		var result = new List<string>();
+
+		int previousIndex = 0;
+		for (int i = 0; i < input.Length; i++)
+		{
+			if (input[i] is '\n' || (input[i] is '\r' && (i == input.Length - 1 || input[i + 1] is not '\n')))
+			{
+				result.Add(input[previousIndex..i].ToString());
+
+				previousIndex = i + 1;
+			}
+			else if (input[i] is '\r' && i < input.Length - 1 && input[i + 1] is '\n')
+			{
+				result.Add(input[previousIndex..i].ToString());
+
+				previousIndex = i + 2;
+				i++;
+			}
+		}
+
+		if (previousIndex < input.Length)
+		{
+			result.Add(input[previousIndex..].ToString());
+		}
+
+		return result.ToArray();
 	}
 }
