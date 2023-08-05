@@ -96,12 +96,12 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 
 			if (settings.DebugMode)
 			{
-				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? new[] { "*None*" })}");
-				AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? new[] { "*None*" })}");
+				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? new[] { "*None*" })}");
+				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? new[] { "*None*" })}");
 
 				AnsiConsole.Console.MarkupLine(settings.OutputPath is null
-					? /*lang=markdown*/$"[grey]Output path defaulted to current directory: [/]{Environment.CurrentDirectory}"
-					: /*lang=markdown*/$"[grey]Output path set: [/]{settings.OutputPath}"
+					? /*lang=md*/$"[grey]Output path defaulted to current directory: [/]{Environment.CurrentDirectory}"
+					: /*lang=md*/$"[grey]Output path set: [/]{settings.OutputPath}"
 				);
 			}
 
@@ -116,18 +116,11 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 				}
 
 				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(settings.OutputPath!.ToString(), pathFilePair);
-
-                // foreach((FileInfo file, byte[] data) in fileData)
-                // {
-                //     await WriteDataAsync(file, data);
-                // }
-                
                 await Task.WhenAll(fileData.Select(WriteDataAsync));
 			}
 			
-            AnsiConsole.Console.MarkupLine(/*lang=markdown*/$"Wrote manifest to [green link]{settings.OutputPath}[/].");
+            AnsiConsole.Console.MarkupLine(/*lang=md*/$"Wrote static files to [green link]{settings.OutputPath}[/].");
         });
-
 
 		return 0;
 	}
@@ -138,7 +131,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 	    {
 		    pair.FileInfo.Directory.Create();
 	    }
-	    await using FileStream stream = pair.FileInfo.Open(FileMode.OpenOrCreate, FileAccess.Write);
+	    await using FileStream stream = pair.FileInfo.Open(FileMode.Create, FileAccess.Write);
 	    await stream.WriteAsync(pair.FileData);
 	    await stream.FlushAsync();
 
