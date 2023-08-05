@@ -97,14 +97,12 @@ public readonly record struct ObsidianText
 	/// <returns>A tuple containing the YAML front matter and the remaining Obsidian Markdown content.</returns>
 	private static (string? frontMatter, string content) SplitYamlFrontMatter(string obsidianMarkdown)
 	{
-		// The front matter is a YAML document at the beginning of the file, delimited by three dashes.
-		static bool _LineDelimiterPredicate(string line) => line is "---";
-		
 		// We need to find the first line with three dashes, and then the next line with three dashes.
 		// The content between the two lines is the front matter.
 		// If there is no front matter, the content is the whole file.
 		string[] lines = obsidianMarkdown.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
+		TrimBom(ref lines[0]);
+		
 		int firstLine = Array.FindIndex(lines, _LineDelimiterPredicate);
 		int secondLine = Array.FindIndex(lines, firstLine + 1, _LineDelimiterPredicate);
 
@@ -117,6 +115,9 @@ public readonly record struct ObsidianText
 		string content = string.Join(Environment.NewLine, lines[(secondLine + 1)..]);
 
 		return (frontMatter, content);
+
+		// The front matter is a YAML document at the beginning of the file, delimited by three dashes.
+		static bool _LineDelimiterPredicate(string line) => line is "---";
 	}
 
 	/// <summary>
@@ -126,4 +127,12 @@ public readonly record struct ObsidianText
 	/// <returns>A dictionary of key-value pairs.</returns>
 	/// <exception cref="YamlException">Thrown when the YAML front matter is invalid.</exception>
 	public static Dictionary<string, object> ParseYamlFrontMatter(string frontMatter) => _yamlDeserializer.Deserialize<Dictionary<string, object>>(frontMatter);
+	
+	private static void TrimBom(scoped ref string text)
+	{
+		if (text.Length is not 0 && text[0] is '\uFEFF')
+		{
+			text = text[1..];
+		}
+	}
 }
