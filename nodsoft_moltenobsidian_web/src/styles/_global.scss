@@ -1,20 +1,20 @@
 @use "variables" as *;
 @use "mixins" as *;
-@import url("https://fonts.googleapis.com/css2?family=Nunito");
 
+@import url("//fonts.googleapis.com/css2?family=Nunito");
 
-html {
+html, .html {
   font-family: Nunito, system-ui, sans-serif;
   background: #13151A;
   background-size: 224px;
 }
 
-code {
+code, .code {
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
   Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
-main {
+main, .main {
   margin: auto;
   padding: 1rem;
   width: 800px;
@@ -32,6 +32,10 @@ main {
   width: 220px;
   height: auto;
   z-index: -1;
+}
+
+.center {
+  text-align: center;
 }
 
 h1 {
