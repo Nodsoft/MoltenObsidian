@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
-using Nodsoft.MoltenObsidian.Tool.Services;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Manifest;
 using Spectre.Console;
