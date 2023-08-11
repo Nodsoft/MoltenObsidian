@@ -8,16 +8,30 @@ import fs from 'node:fs/promises';
 
 export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
 
+export function toRelativeVaultPath(path) {
+    return `../assets/vault/${path}`;
+}
+
 export async function getStaticPaths() {
     const paths = [];
-
+    
     for (const path of manifestClient.routingTable.keys()) {
-        const ssgPath = new URL(`../assets/vault/${manifestClient.getAssetPath(path, true)}`, import.meta.url);
+        const ssgPath = new URL(toRelativeVaultPath(manifestClient.getAssetPath(path)), import.meta.url);
+        const frontMatterPath = new URL(manifestClient.getFrontMatterFilePath(toRelativeVaultPath(manifestClient.getAssetPath(path))), import.meta.url);
+        
         const content = await fs.readFile(ssgPath, 'utf-8');
-
+        const frontMatter =  VaultManifestClient.getFrontMatter(await fs.readFile(frontMatterPath, 'utf-8'));
+        
+        console.log(frontMatter);
+        
+        if (frontMatter.obsidian?.publish === false || frontMatter.moltenobsidian?.publish === false) continue;
+        
         paths.push({
             params: {path: path},
-            props: {content: content}
+            props: {
+                content: content,
+                ...frontMatter
+            }
         });
     }
 
@@ -25,13 +39,13 @@ export async function getStaticPaths() {
 }
 
 const { path } = Astro.params;
-const { content } = Astro.props;
+const { content, cssclasses } = Astro.props;
 ---
 
 <Layout>
     <h1>Path: {path ?? "undefined"}</h1>
     
-    <article>
+    <article class:list={cssclasses}>
         <Fragment set:html={content} />
     </article>
 </Layout>

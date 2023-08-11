@@ -6,12 +6,11 @@
 	"scripts": {
 		"build": "tsc"
 	},
-	
 	"devDependencies": {
 		"typescript": "^5.1.6"
 	},
-	
 	"dependencies": {
-		"@types/mime-types": "^2.1.1"
+		"@types/mime-types": "^2.1.1",
+		"yaml": "^2.3.1"
 	}
 }

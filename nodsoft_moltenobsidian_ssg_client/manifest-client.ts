@@ -1,4 +1,5 @@
 import {VaultFile, VaultManifest} from 'vault-manifest'
+import YAML from 'yaml'
 
 /**
  * Represents a client for resolving a MoltenObsidian vault's assets from its manifest.
@@ -27,7 +28,7 @@ export class VaultManifestClient {
     public readonly Manifest: VaultManifest
   ) { }
   
-  get routingTable() {
+  public get routingTable() {
     if (!this._routingTable) {
       this._routingTable = this.buildRoutingTable();
     }
@@ -51,15 +52,23 @@ export class VaultManifestClient {
     return routingTable;
   }
   
-  getAssetPath(path: string, ssg = false) {
+  getAssetPath(path: string) {
     if (path.startsWith('/')) {
       path = path.substring(1);
     }
-    
-    if (ssg) {
-      return this.routingTable.get(path)?.path.replace(/\.md$/, '.html');
+
+    return this.routingTable.get(path)?.path.replace(/\.md$/, '.html');
+  }
+
+  public static getFrontMatter(file: string | BinaryData) {
+    if (typeof file !== 'string') {
+      file = new TextDecoder().decode(file);
     }
     
-    return this.routingTable.get(path)?.path;
+    return YAML.parse(file);
+  }
+  
+  public getFrontMatterFilePath(path: string) {
+    return path.replace(/\.md$|\.html$/, '.yaml');
   }
 }
