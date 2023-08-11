@@ -1,4 +1,5 @@
-﻿using Nodsoft.MoltenObsidian.Converter;
+﻿using System.Text;
+using Nodsoft.MoltenObsidian.Converter;
 using Nodsoft.MoltenObsidian.Vault;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -97,14 +98,14 @@ public readonly record struct ObsidianText
 	/// <returns>A tuple containing the YAML front matter and the remaining Obsidian Markdown content.</returns>
 	private static (string? frontMatter, string content) SplitYamlFrontMatter(string obsidianMarkdown)
 	{
-		// The front matter is a YAML document at the beginning of the file, delimited by three dashes.
-		static bool _LineDelimiterPredicate(string line) => line is "---";
-		
 		// We need to find the first line with three dashes, and then the next line with three dashes.
 		// The content between the two lines is the front matter.
 		// If there is no front matter, the content is the whole file.
-		string[] lines = obsidianMarkdown.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-
+		
+		string[] lines = SplitByNewline(obsidianMarkdown);
+//		string[] lines = obsidianMarkdown.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+		TrimBom(ref lines[0]);
+		
 		int firstLine = Array.FindIndex(lines, _LineDelimiterPredicate);
 		int secondLine = Array.FindIndex(lines, firstLine + 1, _LineDelimiterPredicate);
 
@@ -117,6 +118,9 @@ public readonly record struct ObsidianText
 		string content = string.Join(Environment.NewLine, lines[(secondLine + 1)..]);
 
 		return (frontMatter, content);
+
+		// The front matter is a YAML document at the beginning of the file, delimited by three dashes.
+		static bool _LineDelimiterPredicate(string line) => line is "---";
 	}
 
 	/// <summary>
@@ -126,4 +130,47 @@ public readonly record struct ObsidianText
 	/// <returns>A dictionary of key-value pairs.</returns>
 	/// <exception cref="YamlException">Thrown when the YAML front matter is invalid.</exception>
 	public static Dictionary<string, object> ParseYamlFrontMatter(string frontMatter) => _yamlDeserializer.Deserialize<Dictionary<string, object>>(frontMatter);
+	
+	private static void TrimBom(scoped ref string text)
+	{
+		if (text.Length is not 0 && text[0] is '\uFEFF')
+		{
+			text = text[1..];
+		}
+	}
+	
+	/// <summary>
+	/// Splits the specified string by newlines, handling first \r\n, then \r, then \n.
+	/// </summary>
+	/// <param name="input"></param>
+	/// <returns></returns>
+	public static string[] SplitByNewline(ReadOnlySpan<char> input)
+	{
+		var result = new List<string>();
+
+		int previousIndex = 0;
+		for (int i = 0; i < input.Length; i++)
+		{
+			if (input[i] is '\n' || (input[i] is '\r' && (i == input.Length - 1 || input[i + 1] is not '\n')))
+			{
+				result.Add(input[previousIndex..i].ToString());
+
+				previousIndex = i + 1;
+			}
+			else if (input[i] is '\r' && i < input.Length - 1 && input[i + 1] is '\n')
+			{
+				result.Add(input[previousIndex..i].ToString());
+
+				previousIndex = i + 2;
+				i++;
+			}
+		}
+
+		if (previousIndex < input.Length)
+		{
+			result.Add(input[previousIndex..].ToString());
+		}
+
+		return result.ToArray();
+	}
 }
