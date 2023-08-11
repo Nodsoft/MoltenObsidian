@@ -6,24 +6,15 @@ import {VaultFile, VaultManifest} from 'vault-manifest'
  * @public
  */
 export class VaultManifestClient {
-  public static fromManifest(manifest: VaultManifest): VaultManifestClient {
+  protected _routingTable: Map<string, VaultFile> | undefined;
+  
+  public static fromManifest(manifest: VaultManifest) {
     return new VaultManifestClient(manifest);
   }
 
-  public static async fromPath(path: string | URL): Promise<VaultManifestClient> {
-    // Check if the path is a string
-    if (typeof path === 'string') {
-      // Check if the path is an absolute URL
-      if (path.startsWith('http://') || path.startsWith('https://')) {
-        path = new URL(path);
-      } else {
-        // Assume the path is a relative path, from base URL (defined in <base> tag)
-        path = new URL(path, document.baseURI ?? window.location.href);
-      }
-    }
-        
+  public static async fromPath(path: string | URL) {
     // Fetch the manifest from the URL
-    const response = await fetch(path.toString());
+    const response = await fetch(path);
     if (!response.ok) {
       throw new Error(`Failed to fetch manifest from ${path.toString()}: ${response.statusText}`);
     }
@@ -35,4 +26,40 @@ export class VaultManifestClient {
   protected constructor(
     public readonly Manifest: VaultManifest
   ) { }
+  
+  get routingTable() {
+    if (!this._routingTable) {
+      this._routingTable = this.buildRoutingTable();
+    }
+    
+    return this._routingTable;
+  }
+  
+  private buildRoutingTable() {
+    const routingTable = new Map<string, VaultFile>();
+    for (const file of this.Manifest.files) {
+      // If markdown, add to routing table
+      if (file.path.endsWith('.md')) {
+        const mdRegex = /\.md$/;
+        routingTable.set(file.path.replace(mdRegex, ''), file);
+        routingTable.set(file.path.replace(mdRegex, '.html'), file);
+      }
+
+      routingTable.set(file.path, file);
+    }
+    
+    return routingTable;
+  }
+  
+  getAssetPath(path: string, ssg = false) {
+    if (path.startsWith('/')) {
+      path = path.substring(1);
+    }
+    
+    if (ssg) {
+      return this.routingTable.get(path)?.path.replace(/\.md$/, '.html');
+    }
+    
+    return this.routingTable.get(path)?.path;
+  }
 }

@@ -11,6 +11,9 @@ dependencies:
   bootstrap-icons:
     specifier: ^1.10.5
     version: 1.10.5
+  moltenobsidian-ssg-client:
+    specifier: link:..\nodsoft_moltenobsidian_ssg_client
+    version: link:../nodsoft_moltenobsidian_ssg_client
   sass:
     specifier: ^1.64.2
     version: 1.64.2

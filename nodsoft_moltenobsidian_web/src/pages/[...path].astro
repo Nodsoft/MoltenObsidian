@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { VaultManifestClient } from 'moltenobsidian-ssg-client/manifest-client';
+import { VaultManifest, VaultFile } from "moltenobsidian-ssg-client/vault-manifest";
+import manifest from '../assets/vault/moltenobsidian.manifest.json';
+import fs from 'node:fs/promises';
+
+
+export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
+
+export async function getStaticPaths() {
+    const paths = [];
+
+    for (const path of manifestClient.routingTable.keys()) {
+        const ssgPath = new URL(`../assets/vault/${manifestClient.getAssetPath(path, true)}`, import.meta.url);
+        const content = await fs.readFile(ssgPath, 'utf-8');
+
+        paths.push({
+            params: {path: path},
+            props: {content: content}
+        });
+    }
+
+    return paths;
+}
+
+const { path } = Astro.params;
+const { content } = Astro.props;
+---
+
+<Layout>
+    <h1>Path: {path ?? "undefined"}</h1>
+    
+    <article>
+        <Fragment set:html={content} />
+    </article>
+</Layout>
