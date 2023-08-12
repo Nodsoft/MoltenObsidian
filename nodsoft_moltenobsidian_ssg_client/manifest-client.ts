@@ -38,8 +38,19 @@ export class VaultManifestClient {
   
   private buildRoutingTable() {
     const routingTable = new Map<string, VaultFile>();
+    
     for (const file of this.Manifest.files) {
       // If markdown, add to routing table
+      console.log(file.path.split('/'));
+      
+      const fileName = file.path.split('/').pop();
+      
+      if (fileName?.toLowerCase() === 'index.md' || fileName?.toLowerCase() === 'readme.md') {
+        console.log(file.path.replace(/index\.md|readme\.md$/i, ''))
+        
+        routingTable.set(file.path.replace(/index\.md|readme\.md$/i, '') ?? '/', file);
+      }
+      
       if (file.path.endsWith('.md')) {
         const mdRegex = /\.md$/;
         routingTable.set(file.path.replace(mdRegex, ''), file);

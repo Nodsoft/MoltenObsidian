@@ -15,7 +15,7 @@ export function toRelativeVaultPath(path) {
 export async function getStaticPaths() {
     const paths = [];
     
-    for (const path of manifestClient.routingTable.keys()) {
+    for (const path of manifestClient.routingTable.keys()) {        
         const ssgPath = new URL(toRelativeVaultPath(manifestClient.getAssetPath(path)), import.meta.url);
         const frontMatterPath = new URL(manifestClient.getFrontMatterFilePath(toRelativeVaultPath(manifestClient.getAssetPath(path))), import.meta.url);
         
@@ -27,7 +27,7 @@ export async function getStaticPaths() {
         if (frontMatter.obsidian?.publish === false || frontMatter.moltenobsidian?.publish === false) continue;
         
         paths.push({
-            params: {path: path},
+            params: {path: path === '' ? undefined : path},
             props: {
                 content: content,
                 ...frontMatter
@@ -35,6 +35,7 @@ export async function getStaticPaths() {
         });
     }
 
+    console.log(paths);
     return paths;
 }
 
@@ -43,7 +44,8 @@ const { content, cssclasses } = Astro.props;
 ---
 
 <Layout>
-    <h1>Path: {path ?? "undefined"}</h1>
+    <code>Path: {path ?? "undefined"}</code>
+    <hr style="margin: 3rem;" />
     
     <article class:list={cssclasses}>
         <Fragment set:html={content} />
