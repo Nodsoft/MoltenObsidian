@@ -5,32 +5,32 @@ aside > nav {
   padding-bottom: 0.2rem;
 
   a {
-    color: #d7d7d7;
     border-radius: 4px;
-    display: flex;
-    align-items: center;
     transition: background-color 0.3s;
 
     padding: 0.3rem 1rem 0.3rem 1rem;
+
+    &:not(.vault-folder-title) {
+      &.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        color: white !important;
+      }
+
+      &:hover, &:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white !important;
+      }
+    }
     
-    &:active {
-      background-color: rgba(255, 255, 255, 0.25);
-      color: white !important;
-    }
+    &.vault- {
+      &folder-title {
+        // set bold font
+        font-weight: 600;
+      }
 
-    &:hover, &:focus {
-      background-color: rgba(255, 255, 255, 0.21);
-      color: white !important;
-    }
-
-    .vault-folder-title {
-      // set bold font
-      font-weight: 600;
-    }
-
-    .vault-item-title {
-      // set color as primary
-      color: var($accent-light) !important;
+      &item-title {
+        color: $accent-light
+      }
     }
   }
 }

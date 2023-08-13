@@ -20,7 +20,7 @@ export interface VaultManifest {
  * Represents a file in a MoltenObsidian vault manifest
  * @interface
  */
-export interface VaultFile {
+export type VaultFile = {
   /**
    * The path of the file.
    * @type {string}
@@ -47,4 +47,13 @@ export interface VaultFile {
    * @example "text/markdown"
    */
   contentType: string | null;
+
+  /**
+   * Additional metadata about the file.
+   */
+  [key: string]: any;
+}
+
+export type VaultFileMetadata = { 
+  [key: string extends VaultFile ? never : string]: any;
 }

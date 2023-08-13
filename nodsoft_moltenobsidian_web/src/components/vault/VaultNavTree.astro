@@ -1,0 +1,33 @@
+---
+import { LeafNode } from "../../vault-utils";
+import NavLink from "../NavLink.astro";
+
+interface Props {
+  tree: LeafNode;
+  isRoot?: boolean | null;
+}
+
+function sortFoldersFirst(a: LeafNode, b: LeafNode) {
+  if (a.type === "folder" && b.type === "folder") {
+    return a.name.localeCompare(b.name);
+  } else if (a.type === "folder") {
+    return -1;
+  } else if (b.type === "folder") {
+    return 1;
+  } else {
+    return a.name.localeCompare(b.name);
+  }
+}
+
+const { isRoot= true, tree, } = Astro.props;
+---
+
+<div id={tree.name} class="nav-category">
+    { isRoot === true ? undefined : <NavLink href={tree.path} class="vault-folder-title">{tree.name}</NavLink> }
+  
+    {tree.children.sort(sortFoldersFirst).map((child) => (
+      child.type === "folder" 
+        ? <Astro.self tree={child} isRoot="false" />
+        : <NavLink href={child.path.replace(/\.md$/i, '')} class="vault-item-title">{child.name.replace(/\.md$/i, '')}</NavLink>
+    ))}
+</div>

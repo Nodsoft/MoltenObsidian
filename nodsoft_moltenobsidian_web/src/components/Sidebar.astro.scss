@@ -25,7 +25,7 @@ aside {
     color: white;
     padding-left: 2rem;
   }
-  
+
   nav {
     display: flex;
     flex-direction: column;
@@ -40,7 +40,7 @@ aside {
       color: white;
       opacity: 0.8;
 
-      &.active {
+      .active {
         text-decoration: none;
         //border-bottom-color: var(--accent);
       }
@@ -53,8 +53,19 @@ aside {
   font-size: 1.5rem;
 }
 
-.internal-links {
+
+.nav-category {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  
+
+  &:not([id=""]) {
+    margin-bottom: 0.3rem;
+
+    > *:not(.vault-folder-title) {
+      margin-left: 1rem;
+    }
+  }
 }
+

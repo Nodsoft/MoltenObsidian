@@ -41,34 +41,39 @@ export class VaultManifestClient {
     
     for (const file of this.Manifest.files) {
       // If markdown, add to routing table
-      console.log(file.path.split('/'));
-      
-      const fileName = file.path.split('/').pop();
-      
-      if (fileName?.toLowerCase() === 'index.md' || fileName?.toLowerCase() === 'readme.md') {
-        console.log(file.path.replace(/index\.md|readme\.md$/i, ''))
-        
-        routingTable.set(file.path.replace(/index\.md|readme\.md$/i, '') ?? '/', file);
+      if (!file.path.endsWith('.md')) {
+        continue;
       }
       
-      if (file.path.endsWith('.md')) {
+      // Exclusion cases
+      if ((file.moltenobsidian?.publish ?? file.publish) == false) {
+        continue;
+      }
+      
+      const indexFileRegex = /(\/?index\.md|readme\.md)$/ig;
+      if (file.path.match(indexFileRegex)) {
+        console.log(file.path, file.path.replace(indexFileRegex, ''));
+        routingTable.set(file.path.replace(indexFileRegex, ''), file);
+      }
+      else if (file.path.endsWith('.md')) {
         const mdRegex = /\.md$/;
         routingTable.set(file.path.replace(mdRegex, ''), file);
-        routingTable.set(file.path.replace(mdRegex, '.html'), file);
+        // routingTable.set(file.path.replace(mdRegex, '.html'), file);
       }
 
-      routingTable.set(file.path, file);
+      // routingTable.set(file.path, file);
     }
     
     return routingTable;
   }
   
-  getAssetPath(path: string) {
+  getSsgPath(file: { path: string }) {
+    let path = file.path;
     if (path.startsWith('/')) {
       path = path.substring(1);
     }
 
-    return this.routingTable.get(path)?.path.replace(/\.md$/, '.html');
+    return path.replace(/\.md$/, '.html');
   }
 
   public static getFrontMatter(file: string | BinaryData) {

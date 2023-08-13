@@ -4,7 +4,7 @@
 @import url("//fonts.googleapis.com/css2?family=Nunito");
 
 :root {
-  background: $background radial-gradient(ellipse farthest-corner at 0 140%, $accent 0%, transparent 70%) no-repeat fixed left top;
+  background: $background radial-gradient(ellipse farthest-corner at 0 140%, $accent-dark 0%, transparent 70%) no-repeat fixed left top;
   background-size: 20%, 100%;
 }
 
@@ -99,6 +99,6 @@ h6 {
   background-image: $accent-gradient;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-size: 400%;
-  background-position: 0%;
+  background-size: 300%;
+  background-position: 0;
 }

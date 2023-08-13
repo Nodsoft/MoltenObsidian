@@ -2,6 +2,15 @@
 import "./Sidebar.astro.scss"
 import NavLink from './NavLink.astro';
 import { SITE_TITLE } from '../consts';
+import VaultNavTree from "./vault/VaultNavTree.astro";
+import { buildVaultTree } from "../vault-utils";
+import manifest from '../assets/vault/moltenobsidian.manifest.json';
+import { VaultManifestClient } from "moltenobsidian-ssg-client/manifest-client";
+import { VaultManifest } from "moltenobsidian-ssg-client/vault-manifest";
+
+export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
+
+
 ---
 
 <aside>
@@ -10,9 +19,6 @@ import { SITE_TITLE } from '../consts';
 	</h2>
 	
 	<nav>
-			<div class="internal-links">
-				<NavLink href="/">Home</NavLink>
-				<NavLink href="/vault">Vault</NavLink>
-			</div>
+		<VaultNavTree tree={buildVaultTree(manifestClient.routingTable)} />
 	</nav>
 </aside>
