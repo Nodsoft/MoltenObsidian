@@ -20,10 +20,21 @@ aside {
     display: none;
   }
 
-  .navbar-brand > a {
-    text-decoration: none;
-    color: white;
-    padding-left: 2rem;
+  .navbar-brand {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    
+    img {
+      // Fit to parent
+      width: 4rem;
+    }
+    
+    a {
+      text-decoration: none;
+      color: white;
+    }
   }
 
   nav {
