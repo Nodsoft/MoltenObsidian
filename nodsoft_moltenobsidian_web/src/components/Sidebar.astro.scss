@@ -40,7 +40,8 @@ aside {
   nav {
     display: flex;
     flex-direction: column;
-
+    overflow-y: auto;
+    
     a {
       padding: 0.5rem;
       //color: var(--black);
@@ -80,3 +81,29 @@ aside {
   }
 }
 
+
+footer {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-top: auto;
+  flex-shrink: 0;
+  
+  color: white;
+  opacity: 0.8;
+  
+  nav {
+    ul {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      padding: 0;
+    }
+    
+    a {
+      color: white;
+      opacity: 0.8;
+      text-decoration-line: underline;
+      padding: 0;
+    }
+  }
+}

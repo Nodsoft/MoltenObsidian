@@ -22,4 +22,29 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 	<nav>
 		<VaultNavTree tree={buildVaultTree(manifestClient.routingTable)} />
 	</nav>
+	
+	<footer>
+		<hr style="opacity: 0.2; margin-bottom: 2rem;" />
+		
+		<div class="lead" style="display: flex; align-items: center; gap: 0.5rem">
+			<b>MoltenObsidian</b>
+			<span class="badge">SSG</span>
+		</div>
+		
+		<small>
+			That's right. Everything you read here is powered by MoltenObsidian SSG,
+			using <a rel="external" target="_blank" href="https://astro.build">Astro</a>.
+		</small>
+		
+		
+		<nav>
+			<ul>
+				<li><a target="_blank" rel="external" href="https://github.com/Nodsoft/MoltenObsidian">GitHub</a></li>
+			</ul>
+		</nav>
+		
+		<small>
+			© 2022-2023 Nodsoft Systems, MIT License
+		</small>
+	</footer>
 </aside>

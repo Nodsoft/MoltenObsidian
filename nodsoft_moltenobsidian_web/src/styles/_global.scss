@@ -8,6 +8,14 @@
   background-size: 20%, 100%;
 }
 
+
+html, .html {
+  font-family: Nunito, system-ui, sans-serif;
+  height: 100%;
+  color: white;
+}
+
+
 ::-webkit-scrollbar {
   width: 1rem;
   
@@ -31,10 +39,7 @@
   }
 }
 
-html, .html {
-  font-family: Nunito, system-ui, sans-serif;
-  height: 100%;
-}
+
 
 body {
   height: 100%;
@@ -57,14 +62,12 @@ main, .main {
   overflow-y: auto;
 }
 
-.astro-a {
-  position: absolute;
-  top: -32px;
-  left: 50%;
-  transform: translatex(-50%);
-  width: 220px;
-  height: auto;
-  z-index: -1;
+a {
+    color: $accent;
+    
+    &:hover {
+        color: $accent-light;
+    }
 }
 
 .center {
@@ -101,4 +104,18 @@ h6 {
   -webkit-text-fill-color: transparent;
   background-size: 300%;
   background-position: 0;
+}
+
+.badge {
+  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.lead {
+  font-size: 1.3rem;
+  font-weight: 300;
 }
