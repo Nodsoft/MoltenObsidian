@@ -1,0 +1,60 @@
+@use "../styles/variables" as *;
+
+header {
+  margin: 0;
+  padding: 0 1em;
+}
+
+aside {
+  @media (min-width: 720px) {
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    width: 20rem;
+    overflow: auto;
+  }
+
+  @media (max-width: 720px) {
+    display: none;
+  }
+
+  .navbar-brand > a {
+    text-decoration: none;
+    color: white;
+    padding-left: 2rem;
+  }
+  
+  nav {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      padding: 0.5rem;
+      //color: var(--black);
+      border-bottom: 4px solid transparent;
+      text-decoration: none;
+
+      border-radius: 8px;
+      color: white;
+      opacity: 0.8;
+
+      &.active {
+        text-decoration: none;
+        //border-bottom-color: var(--accent);
+      }
+    }
+  }
+}
+
+
+.navbar-brand {
+  font-size: 1.5rem;
+}
+
+.internal-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}

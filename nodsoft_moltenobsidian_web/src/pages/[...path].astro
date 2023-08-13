@@ -1,16 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { toRelativeVaultPath } from '../vault-utils';
 import { VaultManifestClient } from 'moltenobsidian-ssg-client/manifest-client';
-import { VaultManifest, VaultFile } from "moltenobsidian-ssg-client/vault-manifest";
+import { VaultManifest, VaultFile } from 'moltenobsidian-ssg-client/vault-manifest';
 import manifest from '../assets/vault/moltenobsidian.manifest.json';
 import fs from 'node:fs/promises';
 
 
 export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
 
-export function toRelativeVaultPath(path) {
-    return `../assets/vault/${path}`;
-}
+
 
 export async function getStaticPaths() {
     const paths = [];

@@ -2,3 +2,12 @@ $accent: #883AEB;
 $accent-light: #E0CCFA;
 $accent-dark: #310A65;
 $accent-gradient: linear-gradient(45deg, $accent, $accent-light 30%, white 60%);
+
+$background: #13151A;
+
+.bg-dark-acrylic {
+  background-color: rgba($background, .6);
+
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+}

@@ -1,9 +1,8 @@
 ---
 import "../styles/_global.scss"
 import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Navbar.astro";
+import Sidebar from "../components/Sidebar.astro";
 import { SITE_TITLE } from "../consts";
-
 
 interface Props {
 	title: string;
@@ -28,7 +27,7 @@ const baseHeadTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
 	</head>
 	
 	<body>
-		<Header />
+		<Sidebar />
 		
 		<main>
 			<slot />

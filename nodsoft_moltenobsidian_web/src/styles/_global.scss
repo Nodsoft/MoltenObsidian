@@ -3,10 +3,43 @@
 
 @import url("//fonts.googleapis.com/css2?family=Nunito");
 
+:root {
+  background: $background radial-gradient(ellipse farthest-corner at 0 140%, $accent 0%, transparent 70%) no-repeat fixed left top;
+  background-size: 20%, 100%;
+}
+
+::-webkit-scrollbar {
+  width: 1rem;
+  
+  @mixin scrollbar-common {
+    border-radius: 0.8rem;
+    transition: background-color 0.3s;
+  }
+
+  &-track {
+    @include scrollbar-common;
+    background: rgba(black, 0.2)
+  }
+
+  &-thumb {
+    @include scrollbar-common;
+    background-color: $accent-dark;
+    
+    &:hover {
+      background-color: $accent;
+    }
+  }
+}
+
 html, .html {
   font-family: Nunito, system-ui, sans-serif;
-  background: #13151A;
-  background-size: 224px;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
 }
 
 code, .code {
@@ -15,13 +48,13 @@ code, .code {
 }
 
 main, .main {
-  margin: auto;
+  flex: 1;
   padding: 1rem;
-  width: 800px;
   max-width: calc(100% - 2rem);
   color: white;
   font-size: 20px;
   line-height: 1.6;
+  overflow-y: auto;
 }
 
 .astro-a {
@@ -68,32 +101,4 @@ h6 {
   -webkit-text-fill-color: transparent;
   background-size: 400%;
   background-position: 0%;
-}
-
-.instructions {
-  margin-bottom: 2rem;
-  border: 1px solid rgba($accent-light, 0.25);
-  background: linear-gradient(rgba($accent-dark, 0.66), rgba($accent-dark, 0.33));
-  padding: 1.5rem;
-  border-radius: 8px;
-
-  & code {
-    font-size: 0.8em;
-    font-weight: bold;
-    background: rgba($accent-light, 0.12);
-    color: $accent-light;
-    border-radius: 4px;
-    padding: 0.3em 0.4em;
-  }
-
-  & strong {
-    color: $accent-light
-  }
-}
-
-.link-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-  gap: 2rem;
-  padding: 0;
 }
