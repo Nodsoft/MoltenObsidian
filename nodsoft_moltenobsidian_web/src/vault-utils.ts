@@ -68,6 +68,7 @@ export type LeafNode = {
   name: string,
   path: string,
   type: 'file' | 'folder',
+  order?: number,
   children?: LeafNode[]
 }
 
@@ -100,6 +101,12 @@ export function buildVaultTree(files: Array<VaultFile> | Map<string, VaultFile>)
           children: []
         };
 
+        // If order is set, add it to the folder's current order score
+        if (item.order) {
+          folderNode.order = (folderNode.order ?? 0) + item.order;
+        }
+        
+        // Add the folder to the parent folder        
         parentFolder.children!.push(folderNode);
       }
 
@@ -111,6 +118,7 @@ export function buildVaultTree(files: Array<VaultFile> | Map<string, VaultFile>)
     parentFolder.children!.push({
       name: filename,
       path: item.path.replace(/\/?index\.md|readme\.md$/i, ''),
+      order: item.order,
       type: 'file'
     });
   }

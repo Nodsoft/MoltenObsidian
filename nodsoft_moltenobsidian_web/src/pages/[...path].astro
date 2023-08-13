@@ -39,11 +39,8 @@ const { path } = Astro.params;
 const { content, cssclasses } = Astro.props;
 ---
 
-<Layout>
-    <code>Path: {path ?? "undefined"}</code>
-    <hr style="margin: 3rem;" />
-    
-    <article class:list={cssclasses}>
+<Layout>    
+    <article style="margin-top: 4rem; margin-bottom: 4rem;" class:list={cssclasses}>
         <Fragment set:html={content} />
     </article>
 </Layout>
