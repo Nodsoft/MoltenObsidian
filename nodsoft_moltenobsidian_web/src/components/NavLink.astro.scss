@@ -26,6 +26,11 @@ aside > nav {
       &folder-title {
         // set bold font
         font-weight: 600;
+        
+        // Temp fix : Disable
+        pointer-events: none;
+        cursor: default;
+        text-decoration: none;
       }
 
       &item-title {
