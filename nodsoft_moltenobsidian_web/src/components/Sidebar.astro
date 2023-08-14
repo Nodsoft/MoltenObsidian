@@ -13,10 +13,14 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 
 ---
 
-<aside>
+<aside class="collapsed">
 	<h2 class="navbar-brand">
 		<img src="/android-chrome-192x192.png" alt="MoltenObsidian Logo" />
-		<a href="/">{SITE_TITLE}</a>
+		<a style="flex-grow: 1;" href="/">{SITE_TITLE}</a>
+		<button class="sidebar-toggler" onclick="toggleSidebar">
+			<span class="sidebar-toggler-icon"></span>
+		</button>
+		
 	</h2>
 	
 	<nav>
@@ -48,3 +52,13 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 		</small>
 	</footer>
 </aside>
+
+<script>
+	// Sidebar toggler
+	function toggleSidebar() {
+		document.querySelector('aside').classList.toggle('collapsed');
+	}
+	
+	// register button click handler
+	document.querySelector('.sidebar-toggler').addEventListener('click', toggleSidebar);
+</script>

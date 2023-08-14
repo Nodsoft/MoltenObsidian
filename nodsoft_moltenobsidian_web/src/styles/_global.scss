@@ -1,6 +1,8 @@
 @use "variables" as *;
 @use "mixins" as *;
 
+@import "./responsive";
+
 @import url("//fonts.googleapis.com/css2?family=Nunito");
 
 :root {
@@ -104,6 +106,10 @@ h6 {
   -webkit-text-fill-color: transparent;
   background-size: 300%;
   background-position: 0;
+}
+
+.bg-dark-acrylic {
+  @include bg-acrylic($background);
 }
 
 .badge {

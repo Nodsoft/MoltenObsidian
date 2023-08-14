@@ -1,0 +1,15 @@
+@use "variables" as *;
+
+@each $breakpoint, $value in $breakpoints {
+  .flex-row-#{$breakpoint} {
+    @media (max-width: $value) {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: $value) {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+}

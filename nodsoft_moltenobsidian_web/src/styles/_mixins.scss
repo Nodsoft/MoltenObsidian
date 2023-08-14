@@ -4,3 +4,10 @@
   line-height: $line-height;
   margin-bottom: $margin-bottom;
 }
+
+@mixin bg-acrylic($background) {
+  background-color: rgba($background, .6);
+
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+}
