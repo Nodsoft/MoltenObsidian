@@ -9,11 +9,11 @@ interface Props {
 
 function sortFoldersFirst(a: LeafNode, b: LeafNode) {
   // Short circuit: "order" property
-  if (a.order !== undefined && b.order !== undefined) {
-    return a.order - b.order;
-  } else if (a.order !== undefined) {
+  if (a.order && b.order) {
+    return b.order - a.order;
+  } else if (a.order) {
     return -1;
-  } else if (b.order !== undefined) {
+  } else if (b.order) {
     return 1;
   }
   

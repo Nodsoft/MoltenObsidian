@@ -21,18 +21,18 @@ html, .html {
 ::-webkit-scrollbar {
   width: 1rem;
   
-  @mixin scrollbar-common {
+  @mixin scrollbar-common() {
     border-radius: 0.8rem;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
   }
 
   &-track {
-    @include scrollbar-common;
+    @include scrollbar-common();
     background: rgba(black, 0.2)
   }
 
   &-thumb {
-    @include scrollbar-common;
+    @include scrollbar-common();
     background-color: $accent-dark;
     
     &:hover {

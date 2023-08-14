@@ -20,8 +20,8 @@ aside {
 
   @media (max-width: map-get($breakpoints, 'lg')) {
     position: fixed;
-    height: 100vh;
-    width: 100vw;
+    height: calc(100vh - 2rem);
+    width: calc(100vw - 2rem);
     z-index: 100;
     @include bg-acrylic($background);
     transition: visibility 0s, opacity 0.5s linear;
@@ -117,6 +117,8 @@ footer {
   opacity: 0.8;
   
   nav {
+    margin-top: 1rem;
+    
     ul {
       display: flex;
       flex-direction: row;
@@ -140,7 +142,7 @@ footer {
   
   color: rgba(white, .6);
   padding: 0.25rem 0.75rem;
-  margin-right: 2.5rem;
+  margin-right: 1rem;
   font-size: 1.25rem;
   line-height: 1;
   background-color: transparent;
