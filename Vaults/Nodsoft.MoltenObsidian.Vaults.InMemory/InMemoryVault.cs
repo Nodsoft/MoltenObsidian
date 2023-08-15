@@ -86,14 +86,14 @@ public sealed class InMemoryVault: IVault
 
     private static void LoadCache(InMemoryVault vault)
     {
-        foreach (var folder in Folders)
+        foreach (var folder in vault.Folders)
         {
             vault.Cache.Set(folder.Key, folder.Value);
         }
 
-        foreach (var file in Files)
+        foreach (var file in vault.Files)
         {
-            vault.Cache.Set(file.Key, file.Value)
+            vault.Cache.Set(file.Key, file.Value);
         }
     }
 }
