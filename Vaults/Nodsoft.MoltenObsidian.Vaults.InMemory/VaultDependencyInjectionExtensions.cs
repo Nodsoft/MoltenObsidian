@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class VaultDependencyInjectionExtensions
 {
 
-	private static readonly MemoryCacheOptions DefaultCacheOptions = new MemoryCacheOptions();
+	private static readonly MemoryCacheOptions DefaultCacheOptions = new();
 
 	private static readonly MemoryCacheEntryOptions DefaultEntryCacheOptions = new MemoryCacheEntryOptions()
 		.AddExpirationToken(new CancellationChangeToken(CancellationToken.None))

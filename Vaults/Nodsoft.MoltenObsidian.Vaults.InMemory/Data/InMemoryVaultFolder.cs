@@ -2,14 +2,20 @@ using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
-public class InMemoryVaultFolder : IVaultFolder
+internal sealed class InMemoryVaultFolder : InMemoryVaultEntityBase, IVaultFolder
 {
-    public string Name { get; }
-    public string Path { get; }
-    public IVaultFolder? Parent { get; }
-    public IVault Vault { get; }
-    public IReadOnlyList<IVaultFolder> Subfolders { get; }
-    public IReadOnlyList<IVaultFile> Files { get; }
+    internal DirectoryInfo PhysicalDirectoryInfo { get; }
     
-    public GetFolders()
+    private readonly InMemoryVaultFolder[] _subfolders;
+    private readonly InMemoryVaultFile[] _files;
+
+    internal InMemoryVaultFolder(DirectoryInfo entity, IVaultFolder? parent, IVault vault) : base(entity, parent, vault)
+    {
+        PhysicalDirectoryInfo = entity;
+        _subfolders = entity.GetDirectories().Select(d => new InMemoryVaultFolder(d, this, vault)).ToArray();
+        _files = entity.GetFiles().Select(f => InMemoryVaultFile.Create(f, this, vault)).ToArray();
+    }
+
+    public IReadOnlyList<IVaultFolder> Subfolders => _subfolders;
+    public IReadOnlyList<IVaultFile> Files => _files;
 }
