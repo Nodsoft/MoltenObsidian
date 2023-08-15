@@ -13,13 +13,19 @@ public static class VaultDependencyInjectionExtensions
     private static async Task<IVault> BuildFtpVaultAsync(Func<IServiceProvider, AsyncFtpClient> ftpClientProvider, IServiceProvider services)
     {
         AsyncFtpClient ftpClient = await ftpClientProvider(services).EnsureConnected();
-        byte[] bytes = await ftpClient.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None) 
+        byte[] bytes = await ftpClient.DownloadBytes(RemoteVaultManifest.ManifestFileName, CancellationToken.None) 
             ?? throw new InvalidOperationException("Could not download manifest.");
         RemoteVaultManifest? manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(bytes);
 
         return FtpRemoteVault.FromManifest(manifest, ftpClient);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="serviceCollection"></param>
+    /// <param name="ftpClientProvider"></param>
+    /// <returns></returns>
     public static IServiceCollection AddMoltenObsidianFtpVault(this IServiceCollection serviceCollection, Func<IServiceProvider, AsyncFtpClient> ftpClientProvider)
     {
         serviceCollection.AddSingleton<IVault>(services => new TaskFactory()
