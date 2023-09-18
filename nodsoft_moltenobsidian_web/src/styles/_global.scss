@@ -42,27 +42,35 @@ html, .html {
 }
 
 
-
 body {
   height: 100%;
   margin: 0;
   display: flex;
 }
 
-code, .code {
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-  Bitstream Vera Sans Mono, Courier New, monospace;
-}
 
 main, .main {
   flex: 1;
   padding: 1rem;
   max-width: calc(100% - 2rem);
   color: white;
-  font-size: 20px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.5;
   overflow-y: auto;
 }
+
+main {
+  > article {
+    @import "content";
+  }
+}
+
+
+code, .code {
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+  Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
 
 a {
     color: $accent;
@@ -77,27 +85,27 @@ a {
 }
 
 h1 {
-  @include font-styles(4rem);
+  @include font-styles(4em);
 }
 
 h2 {
-  @include font-styles(3.5rem);
+  @include font-styles(3.5em);
 }
 
 h3 {
-  @include font-styles(3rem);
+  @include font-styles(3em);
 }
 
 h4 {
-  @include font-styles(2.5rem);
+  @include font-styles(2.5em);
 }
 
 h5 {
-  @include font-styles(2rem);
+  @include font-styles(2em);
 }
 
 h6 {
-  @include font-styles(1.5rem);
+  @include font-styles(1.5em);
 }
 
 .text-gradient {
@@ -113,15 +121,15 @@ h6 {
 }
 
 .badge {
-  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+  padding: 0.2em 0.5em 0.2em 0.5em;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 0.7em;
   font-weight: 600;
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
 .lead {
-  font-size: 1.3rem;
+  font-size: 1.3em;
   font-weight: 300;
 }
