@@ -35,13 +35,15 @@ public sealed class ObsidianHtmlConverter
 	/// <param name="markdown">The Markdown to convert.</param>
 	/// <returns>The converted Markdown, in HTML format.</returns>
 	// ReSharper disable once RedundantNameQualifier
-	public string Convert(string markdown) => Markdig.Markdown.ToHtml(markdown, _pipeline);
+	public string Convert(string markdown) => Markdown.ToHtml(markdown, _pipeline);
 	
-	/// <inheritdoc cref="Convert(string)" />
+	/// <summary>
+	/// Converts Obsidian-flavoured Markdown to HTML.
+	/// </summary>
+	/// <param name="markdown">The Markdown to convert.</param>
 	/// <param name="currentFile">The current file whose contents are being converted.</param>
-	// ReSharper disable once RedundantNameQualifier
 	public string Convert(string markdown, IVaultNote currentFile)
-		=> Markdig.Markdown.ToHtml(markdown, _pipeline, new()
+		=> Markdown.ToHtml(markdown, _pipeline, new()
 			{
 				Properties =
 				{
