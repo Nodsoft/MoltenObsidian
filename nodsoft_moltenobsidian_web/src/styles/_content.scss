@@ -6,3 +6,23 @@
   font-size: 20px;
   line-height: 1.6;
 }
+
+pre {
+  @include code-font();
+  padding: 1em;
+  background-color: rgba(white, 0.05);
+  border-radius: 0.5em;
+}
+
+:not(pre) code {
+  @include code-font();
+  
+  color: #e83e8c;
+  background-color: rgba(white, 0.03);
+  padding: 0.25em 0.5em;
+  border-radius: 0.3em;
+}
+
+@include code-block-syntax("csharp") {
+  @import "syntax/csharp";
+}

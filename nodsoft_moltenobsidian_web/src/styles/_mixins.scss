@@ -11,3 +11,14 @@
   -webkit-backdrop-filter: blur(50px);
   backdrop-filter: blur(50px);
 }
+
+@mixin code-font() {
+  font-family: monospace;
+  font-size: 90%;
+}
+
+@mixin code-block-syntax($lang) {
+.lang-#{$lang} .#{$lang} pre {
+    @content;
+  }
+}
