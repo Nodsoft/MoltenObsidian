@@ -60,7 +60,7 @@ main, .main {
 }
 
 main {
-  > article {
+  article {
     @import "content";
   }
 }
