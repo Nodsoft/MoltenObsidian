@@ -1,5 +1,5 @@
 ---
-import { LeafNode } from "../../vault-utils";
+import { LeafNode, ciEquals } from "../../vault-utils";
 import NavLink from "../NavLink.astro";
 
 interface Props {
@@ -32,11 +32,13 @@ const { isRoot= true, tree, } = Astro.props;
 ---
 
 <div id={tree.name} class="nav-category">
-    { isRoot === true ? undefined : <NavLink href={tree.path} class="vault-folder-title">{tree.name}</NavLink> }
+    { isRoot === true ? undefined : <NavLink href={tree.children.some(child => child.isIndex) ? tree.path : false} class="vault-folder-title">{tree.name}</NavLink> }
   
     {tree.children.sort(sortFoldersFirst).map((child) => (
       child.type === "folder" 
         ? <Astro.self tree={child} isRoot="false" />
-        : <NavLink href={child.path.replace(/\.md$/i, '')} class="vault-item-title">{child.name.replace(/\.md$/i, '')}</NavLink>
+        : <NavLink href={child.path.replace(/\.md$/i, '')} class="vault-item-title" data-index-note={child.isIndex}>
+            {child.name.replace(/\.md$/i, '')} 
+        </NavLink>
     ))}
 </div>

@@ -69,7 +69,8 @@ export type LeafNode = {
   path: string,
   type: 'file' | 'folder',
   order?: number,
-  children?: LeafNode[]
+  children?: LeafNode[],
+  isIndex?: boolean // True if this node is an index file
 }
 
 export function buildVaultTree(files: Array<VaultFile> | Map<string, VaultFile>) {  
@@ -94,9 +95,11 @@ export function buildVaultTree(files: Array<VaultFile> | Map<string, VaultFile>)
       
       // If not found, create it
       if (!folderNode) {
+        const folderPath = `${parentFolder.path}/${folder}`;
+        
         folderNode = {
           name: folder.replace(/\.md$/i, ''),
-          path: `${parentFolder.path}/${folder}`,
+          path: folderPath.startsWith('/') ? folderPath.substring(1) : folderPath, // Remove leading slash (if any)
           type: 'folder',
           children: []
         };
@@ -119,9 +122,14 @@ export function buildVaultTree(files: Array<VaultFile> | Map<string, VaultFile>)
       name: filename,
       path: item.path.replace(/\/?index\.md|readme\.md$/i, ''),
       order: item.order,
-      type: 'file'
+      type: 'file',
+      isIndex: (ciEquals(filename, 'index.md') || ciEquals(filename, 'readme.md'))
     });
   }
   
   return tree;
+}
+
+export function ciEquals(a: string, b: string): a is typeof b {
+  return a.localeCompare(b, "en", {sensitivity: 'accent'}) === 0;
 }
