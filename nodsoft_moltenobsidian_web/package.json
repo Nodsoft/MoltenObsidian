@@ -11,9 +11,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^3.0.3",
-    "bootstrap-icons": "^1.10.5",
+    "astro": "^3.5.5",
+    "bootstrap-icons": "^1.11.1",
     "moltenobsidian-ssg-client": "link:..\\nodsoft_moltenobsidian_ssg_client",
-    "sass": "^1.64.2"
+    "sass": "^1.69.5"
   }
 }
