@@ -10,7 +10,7 @@ aside > nav {
 
     padding: 0.3rem 1rem 0.3rem 1rem;
 
-    &:not(.vault-folder-title) {
+    &[href] {
       &.active {
         background-color: rgba(255, 255, 255, 0.25);
         color: white !important;
@@ -26,15 +26,19 @@ aside > nav {
       &folder-title {
         // set bold font
         font-weight: 600;
-        
-        // Temp fix : Disable
-        pointer-events: none;
-        cursor: default;
-        text-decoration: none;
       }
 
-      &item-title {
-        color: $accent-light
+      &item-title, &folder-title {
+        color: $accent-light;
+        
+        // No href
+        &:not([href]) {
+          color: unset;
+
+          pointer-events: none;
+          cursor: default;
+          text-decoration: none;
+        }
       }
     }
   }

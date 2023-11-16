@@ -103,6 +103,10 @@ aside {
 
     > *:not(.vault-folder-title) {
       margin-left: 1rem;
+      
+      &[data-index-note] {
+        display: none;
+      }
     }
   }
 }
