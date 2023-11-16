@@ -1,4 +1,6 @@
 ---
+import AstroConfig from "../../astro.config.mjs";
+
 interface Props {
 	title: string;
 	description: string;
@@ -8,6 +10,7 @@ interface Props {
 // const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { title, description} = Astro.props;
+const { base } = AstroConfig
 ---
 
 <!-- Global Metadata -->
@@ -27,7 +30,7 @@ const { title, description} = Astro.props;
 
 <!-- Primary Meta Tags -->
 <title>{title}</title>
-<base href="/" />
+<base href={base ?? "/"} />
 <meta name="title" content={title} />
 <meta name="description" content={description} />
 
