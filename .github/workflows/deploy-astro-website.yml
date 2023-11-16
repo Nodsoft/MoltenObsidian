@@ -38,6 +38,12 @@ jobs:
           --output-path "nodsoft_moltenobsidian_web/src/assets/vault" \
           --ignored-files ".gitignore"
         
+      - name: Restore child dependencies
+        run: |
+          npm -i -g pnpm
+          cd "nodsoft_moltenobsidian_ssg_client"
+          pnpm i -p
+        
       - name: Install, build, and upload
         uses: withastro/action@v1
         with:
