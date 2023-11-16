@@ -5,6 +5,7 @@ $symbols-color: (
         "identifier": #9cdcfe,
         "literal": #dcdcaa,
         "string": #ce9178,
+        "stringCSharpVerbatim": #ce9178,
         "number": #b5cea8,
         "comment": #6a9955,
         "punctuation": #d4d4d4,
@@ -30,5 +31,3 @@ $symbols-color: (
     color: $color;
   }
 }
-
-//body > main > article > div:nth-child(4) > div > pre > span:nth-child(1)
