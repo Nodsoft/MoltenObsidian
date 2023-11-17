@@ -1,6 +1,8 @@
 ---
 import "./Sidebar.astro.scss"
 import NavLink from './NavLink.astro';
+import { Image } from 'astro:assets';
+import logo from '../../public/android-chrome-192x192.png'
 import { SITE_TITLE } from '../consts';
 import VaultNavTree from "./vault/VaultNavTree.astro";
 import { buildVaultTree } from "../vault-utils";
@@ -15,7 +17,7 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 
 <aside class="collapsed">
 	<h2 class="navbar-brand">
-		<img src="/android-chrome-192x192.png" alt="MoltenObsidian Logo" />
+		<Image src={logo} alt="MoltenObsidian Logo" />
 		<a style="flex-grow: 1;" href="/">{SITE_TITLE}</a>
 		<button class="sidebar-toggler" onclick="toggleSidebar">
 			<span class="sidebar-toggler-icon"></span>

@@ -5,7 +5,7 @@ order: 10
 ---
 
 <div class="flex-row-xxl" style="align-items: center;">
-	<img src="/icon.png" alt="MoltenObsidian icon" style="height: 400px" />
+	<img src="icon.png" alt="MoltenObsidian icon" style="height: 400px" />
 	
 	<div>
 			<h1 class="text-gradient" style="margin: initial">MoltenObsidian</h1>
