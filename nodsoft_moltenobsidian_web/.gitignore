@@ -21,4 +21,4 @@ pnpm-debug.log*
 .DS_Store
 
 # Vault output
-src/assets/vault/*
+public/vault/*

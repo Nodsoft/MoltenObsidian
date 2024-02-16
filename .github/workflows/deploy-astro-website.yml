@@ -20,7 +20,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Setup MoltenObsidian
         uses: nodsoft/setup-moltenobsidian@main
@@ -29,13 +29,13 @@ jobs:
         run: moltenobsidian manifest generate "nodsoft_moltenobsidian_web/vault"
         
       - name: Create output directory (recursive)
-        run: mkdir -p "nodsoft_moltenobsidian_web/src/assets/vault"
+        run: mkdir -p "nodsoft_moltenobsidian_web/public/vault"
         
       - name: Generate SSG assets
         run: |
           moltenobsidian ssg generate \
           --from-folder "nodsoft_moltenobsidian_web/vault" \
-          --output-path "nodsoft_moltenobsidian_web/src/assets/vault" \
+          --output-path "nodsoft_moltenobsidian_web/public/vault" \
           --ignored-files ".gitignore"
         
       - name: Install PNPM

@@ -1,7 +1,7 @@
 import type { VaultFile } from "moltenobsidian-ssg-client/vault-manifest";
 
 export function toRelativeVaultPath(path: string) {
-  return `../assets/vault/${path}`;
+  return `../../public/vault/${path}`;
 }
 
 export class VaultNote {
