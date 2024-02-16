@@ -28,15 +28,22 @@ function sortFoldersFirst(a: LeafNode, b: LeafNode) {
   }
 }
 
-const { isRoot= true, tree, } = Astro.props;
+const { isRoot= true, tree, level = 1 } = Astro.props;
 ---
 
-<div id={tree.name} class="nav-category">
-    { isRoot === true ? undefined : <NavLink href={tree.children.some(child => child.isIndex) ? tree.path : false} class="vault-folder-title">{tree.name}</NavLink> }
+<div id={tree.name ?? '_root'} 
+     class="nav-category" 
+     role="group" 
+     aria-label={tree.name && tree.name !== '' ? tree.name : 'root'}
+     aria-expanded="true"
+>
+    { isRoot === true 
+      ? undefined 
+      : <NavLink href={tree.children.some(child => child.isIndex) ? tree.path : false} class="vault-folder-title">{tree.name}</NavLink> }
   
     {tree.children.sort(sortFoldersFirst).map((child) => (
       child.type === "folder" 
-        ? <Astro.self tree={child} isRoot="false" />
+        ? <Astro.self tree={child} isRoot="false" level={level+1} />
         : <NavLink href={child.path.replace(/\.md$/i, '')} class="vault-item-title" data-index-note={child.isIndex}>
             {child.name.replace(/\.md$/i, '')} 
         </NavLink>
