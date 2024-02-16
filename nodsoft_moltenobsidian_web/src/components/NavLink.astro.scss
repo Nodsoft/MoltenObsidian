@@ -1,0 +1,45 @@
+@use "../styles/variables" as *;
+
+nav > .vault-nav {
+  font-size: 0.9rem;
+  padding-bottom: 0.2rem;
+
+  a {
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    padding: 0.3rem 1rem 0.3rem 1rem;
+
+    &[href] {
+      &.active {
+        background-color: rgba(255, 255, 255, 0.25);
+        color: white !important;
+      }
+
+      &:hover, &:focus {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white !important;
+      }
+    }
+    
+    &.vault- {
+      &folder-title {
+        // set bold font
+        font-weight: 600;
+      }
+
+      &item-title, &folder-title {
+        color: $accent-light;
+        
+        // No href
+        &:not([href]) {
+          color: unset;
+
+          pointer-events: none;
+          cursor: default;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}

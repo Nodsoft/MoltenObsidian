@@ -1,0 +1,33 @@
+---
+import "../styles/_global.scss"
+import BaseHead from "../components/BaseHead.astro";
+import Sidebar from "../components/Sidebar.astro";
+import { SITE_TITLE } from "../consts";
+
+interface Props {
+	title: string;
+	description: string;
+}
+
+const { title, description } = Astro.props;
+
+const baseHeadTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<!--suppress HtmlRequiredTitleElement, included in BaseHead -->
+	<head>
+		<BaseHead title={baseHeadTitle} description={description} />
+	</head>
+	
+	<body class="flex-row-lg">
+		<Sidebar />
+		
+		<main>
+			<slot />
+		</main>
+	</body>
+</html>
+
+<style is:global />
