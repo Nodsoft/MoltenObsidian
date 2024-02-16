@@ -1,0 +1,20 @@
+{
+  "name": "nodsoft_moltenobsidian_web",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.4.0",
+    "bootstrap-icons": "^1.11.3",
+    "moltenobsidian-ssg-client": "link:..\\nodsoft_moltenobsidian_ssg_client",
+    "sass": "^1.71.0",
+    "sharp": "^0.33.2"
+  }
+}

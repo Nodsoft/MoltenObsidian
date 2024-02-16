@@ -1,0 +1,51 @@
+---
+import { LeafNode, ciEquals } from "../../vault-utils";
+import NavLink from "../NavLink.astro";
+
+interface Props {
+  tree: LeafNode;
+  isRoot?: boolean | null;
+}
+
+function sortFoldersFirst(a: LeafNode, b: LeafNode) {
+  // Short circuit: "order" property
+  if (a.order && b.order) {
+    return b.order - a.order;
+  } else if (a.order) {
+    return -1;
+  } else if (b.order) {
+    return 1;
+  }
+  
+  if (a.type === "folder" && b.type === "folder") {
+    return a.name.localeCompare(b.name);
+  } else if (a.type === "folder") {
+    return -1;
+  } else if (b.type === "folder") {
+    return 1;
+  } else {
+    return a.name.localeCompare(b.name);
+  }
+}
+
+const { isRoot= true, tree, level = 1 } = Astro.props;
+---
+
+<div id={tree.name ?? '_root'} 
+     class="nav-category" 
+     role="group" 
+     aria-label={tree.name && tree.name !== '' ? tree.name : 'root'}
+     aria-expanded="true"
+>
+    { isRoot === true 
+      ? undefined 
+      : <NavLink href={tree.children.some(child => child.isIndex) ? tree.path : false} class="vault-folder-title">{tree.name}</NavLink> }
+  
+    {tree.children.sort(sortFoldersFirst).map((child) => (
+      child.type === "folder" 
+        ? <Astro.self tree={child} isRoot="false" level={level+1} />
+        : <NavLink href={child.path.replace(/\.md$/i, '')} class="vault-item-title" data-index-note={child.isIndex}>
+            {child.name.replace(/\.md$/i, '')} 
+        </NavLink>
+    ))}
+</div>
