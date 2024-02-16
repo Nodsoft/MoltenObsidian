@@ -5,9 +5,12 @@ permissions:
 
 
 on:
-  - push
-  - pull_request
-  - workflow_call
+  push:
+    paths-ignore: 
+      - 'nodsoft_moltenobsidian_web/**'
+      - 'nodsoft_moltenobsidian_ssg_client/**'
+  pull_request:
+  workflow_call:
 
 jobs:
   build:

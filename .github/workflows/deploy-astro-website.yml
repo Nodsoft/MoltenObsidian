@@ -5,6 +5,10 @@ on:
   # Using a different branch name? Replace `main` with your branch’s name
   push:
     branches: [ main, feature/web ]
+    paths: 
+      - 'nodsoft_moltenobsidian_web/**'
+      - 'nodsoft_moltenobsidian_ssg_client/**'
+      - '.github/workflows/deploy-astro-website.yml'
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
 
