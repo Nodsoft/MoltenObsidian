@@ -12,11 +12,16 @@
 
 
 html, .html {
+  font-size: 16px;
+  
+  @media (max-device-width: map-get($breakpoints, "lg")) {
+    font-size: 14px
+  }
+  
   font-family: Nunito, system-ui, sans-serif;
   height: 100%;
   color: white;
 }
-
 
 ::-webkit-scrollbar {
   width: 1rem;
@@ -106,6 +111,32 @@ h5 {
 
 h6 {
   @include font-styles(1.5em);
+}
+
+@media (max-device-width: map-get($breakpoints, "md")) {
+  h1 {
+    @include font-styles(3em);
+  }
+  
+  h2 {
+    @include font-styles(2.5em);
+  }
+  
+  h3 {
+    @include font-styles(2em);
+  }
+  
+  h4 {
+    @include font-styles(1.5em);
+  }
+  
+  h5 {
+    @include font-styles(1.25em);
+  }
+  
+  h6 {
+    @include font-styles(1em);
+  }
 }
 
 .text-gradient {

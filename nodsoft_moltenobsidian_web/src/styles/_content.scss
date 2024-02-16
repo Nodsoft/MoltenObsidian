@@ -12,6 +12,7 @@ pre {
   padding: 1em;
   background-color: rgba(white, 0.05);
   border-radius: 0.5em;
+  white-space: pre-wrap;
 }
 
 :not(pre) code {
