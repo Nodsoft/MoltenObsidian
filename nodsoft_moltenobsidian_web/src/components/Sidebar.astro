@@ -14,12 +14,12 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 
 ---
 
-<nav class="collapsed" aria-label="sidebar">
+<nav id="sidebar" class="collapsed" aria-label="sidebar">
 	<div class="navbar-brand">
 		<Image src={logo} alt="MoltenObsidian Logo" />
 		<a style="flex-grow: 1;" href="">{SITE_TITLE}</a>
       
-		<button type="button" class="sidebar-toggler" onclick="toggleSidebar">
+		<button type="button" class="sidebar-toggler">
 			<span aria-hidden="true" class="sidebar-toggler-icon"></span>
 		</button>
 	</div>
@@ -53,7 +53,7 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 <script>
 	// Sidebar toggler
 	function toggleSidebar() {
-		document.querySelector('.sidebar').classList.toggle('collapsed');
+		document.querySelector('#sidebar').classList.toggle('collapsed');
 	}
 	
 	// register button click handler
