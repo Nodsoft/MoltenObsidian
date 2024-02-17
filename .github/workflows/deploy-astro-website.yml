@@ -30,30 +30,32 @@ jobs:
         uses: nodsoft/setup-moltenobsidian@main
         
       - name: Generate Vault manifest
-        run: moltenobsidian manifest generate "nodsoft_moltenobsidian_web/vault"
+        working-directory: "nodsoft_moltenobsidian_web"
+        run: moltenobsidian manifest generate "vault"
         
       - name: Create output directory (recursive)
-        run: mkdir -p "nodsoft_moltenobsidian_web/public/vault"
+        working-directory: "nodsoft_moltenobsidian_web"
+        run: mkdir -p "public/vault"
         
       - name: Generate SSG assets
+        working-directory: "nodsoft_moltenobsidian_web"
         run: |
           moltenobsidian ssg generate \
-          --from-folder "nodsoft_moltenobsidian_web/vault" \
-          --output-path "nodsoft_moltenobsidian_web/public/vault" \
+          --from-folder "vault" \
+          --output-path "public/vault" \
           --ignored-files ".gitignore"
         
       - name: Install PNPM
         run: npm install -g pnpm
         
       - name: Install dependencies
-        run: |
-          cd "nodsoft_moltenobsidian_ssg_client"
-          pnpm recursive install --prod
+        working-directory: "nodsoft_moltenobsidian_ssg_client"
+        run: pnpm recursive install --prod
         
       - name: Install, build, and upload
         uses: withastro/action@v1
         with:
-          path: nodsoft_moltenobsidian_web # The root location of your Astro project inside the repository. (optional)
+          path: './nodsoft_moltenobsidian_web' # The root location of your Astro project inside the repository. (optional)
           # node-version: 18 # The specific version of Node that should be used to build your site. Defaults to 18. (optional)
           package-manager: pnpm@latest # The Node package manager that should be used to install dependencies and build your site. Automatically detected based on your lockfile. (optional)
 

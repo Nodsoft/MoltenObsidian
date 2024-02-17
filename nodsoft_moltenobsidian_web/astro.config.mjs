@@ -4,6 +4,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
     site: 'https://nodsoft.github.io',
     base: '/MoltenObsidian/',
-    root: './nodsoft_moltenobsidian_web',
     output: 'static'
 });
