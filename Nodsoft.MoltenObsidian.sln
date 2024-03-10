@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
@@ -46,6 +46,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Samples.FtpWasm", "Samples\Nodsoft.MoltenObsidian.Samples.FtpWasm\Nodsoft.MoltenObsidian.Samples.FtpWasm.csproj", "{8A07D494-0B1E-4378-A2CE-0AE03AECA8AB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Tests", "Nodsoft.MoltenObsidian.Tests\Nodsoft.MoltenObsidian.Tests.csproj", "{3E4FDD56-A7D6-4432-A984-F71E638CE833}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.WasmContainer", "Nodsoft.MoltenObsidian.WasmContainer\Nodsoft.MoltenObsidian.WasmContainer.csproj", "{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{3E4FDD56-A7D6-4432-A984-F71E638CE833}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E4FDD56-A7D6-4432-A984-F71E638CE833}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E4FDD56-A7D6-4432-A984-F71E638CE833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
