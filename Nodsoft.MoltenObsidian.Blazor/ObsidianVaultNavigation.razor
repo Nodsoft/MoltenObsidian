@@ -1,0 +1,56 @@
+@using Nodsoft.MoltenObsidian.Vault
+
+<nav @attributes="@NavigationAttributes">
+    <div @attributes="LevelAttributes">
+        @FolderNavigationTree(Vault.Root, isRoot: true)
+    </div>
+</nav>
+
+@code {
+    [Parameter, EditorRequired] public IVault Vault { get; set; }
+
+    [Parameter] public Dictionary<string, object> NavigationAttributes { get; set; } = [];
+    [Parameter] public Dictionary<string, object> LevelAttributes { get; set; } = [];
+    [Parameter] public Dictionary<string, object> FolderIndexAttributes { get; set; } = [];
+    [Parameter] public Dictionary<string, object> FolderAttributes { get; set; } = [];
+    [Parameter] public Dictionary<string, object> NoteAttributes { get; set; } = [];
+    
+    private @RenderFragment FolderNavigationTree(IVaultFolder folder, bool isRoot = false) => __builder =>
+    {
+        // Merge all subfolders and files into a single list.
+        IOrderedEnumerable<KeyValuePair<string, IVaultEntity>> items = folder.Subfolders
+            .Where(f => !isRoot || f.Name != ".obsidian")
+            .Cast<IVaultEntity>()
+            .Concat(folder.Files)
+            .Select(x => new KeyValuePair<string, IVaultEntity>(x.Path, x))
+            .OrderBy(x => x.Key);
+
+        // Display the list.
+        foreach (KeyValuePair<string, IVaultEntity> item in items)
+        {
+            if (item.Value is IVaultFolder subfolder)
+            {
+                <div @key="@subfolder.Path" @attributes="@LevelAttributes">
+                    @if (subfolder.Files.Any(f 
+                        => f.Name.Equals("index.md", StringComparison.OrdinalIgnoreCase) 
+                        || f.Name.Equals("README.md", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        <a href="@subfolder.Path/" @attributes="FolderIndexAttributes">@subfolder.Name</a>
+                    }
+                    else
+                    {
+                        <span @attributes="FolderAttributes">@subfolder.Name</span>
+                    }
+                    
+                    @FolderNavigationTree(subfolder)
+                </div>
+            }
+            else if (item.Value is IVaultNote file)
+            {
+                // The file's path should be filtered to remove the file's extension (".md").
+                <a href="@(file.Path[..^3])" @attributes="@NoteAttributes">@file.Name[..^3]</a>
+            }
+        }
+    };
+
+}
