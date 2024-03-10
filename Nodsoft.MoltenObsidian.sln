@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.Samples.FtpWasm", "Samples\Nodsoft.MoltenObsidian.Samples.FtpWasm\Nodsoft.MoltenObsidian.Samples.FtpWasm.csproj", "{8A07D494-0B1E-4378-A2CE-0AE03AECA8AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nodsoft.MoltenObsidian.WasmContainer", "Nodsoft.MoltenObsidian.WasmContainer\Nodsoft.MoltenObsidian.WasmContainer.csproj", "{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{8A07D494-0B1E-4378-A2CE-0AE03AECA8AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A07D494-0B1E-4378-A2CE-0AE03AECA8AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A07D494-0B1E-4378-A2CE-0AE03AECA8AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91EA45EB-BD5A-4812-8800-FB5D9E4D467C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
