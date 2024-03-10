@@ -20,6 +20,7 @@
 		<PackageTags>$(CommonPackageTags)</PackageTags> <!-- Default package tags -->
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 
