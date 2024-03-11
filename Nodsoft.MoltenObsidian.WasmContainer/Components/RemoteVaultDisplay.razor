@@ -1,0 +1,34 @@
+@inject HttpClient HttpClient
+@inject IJSInProcessRuntime JS
+
+<ObsidianVaultDisplay Vault="@_vault" BasePath="@BaseSlug" CurrentPath="@_currentPath" />
+
+@code {
+    /// <summary>
+    /// The base slug of the vault, offset from the Host.
+    /// </summary>
+    [Parameter, EditorRequired] public string BaseSlug { get; set; } = null!;
+    
+    /// <summary>
+    /// The URI of the vault to display.
+    /// </summary>
+    [Parameter, EditorRequired] public string VaultUri { get; set; } = null!;
+
+    private IVault? _vault;
+    private string _currentPath = "";
+    
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(VaultUri);
+
+        HttpClient.BaseAddress = new(VaultUri);
+        RemoteVaultManifest manifest = await HttpClient.GetFromJsonAsync<RemoteVaultManifest>(VaultUri) 
+                                       ?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
+        
+        _vault = HttpRemoteVault.FromManifest(manifest, HttpClient);
+        _currentPath = await GetCurrentUriAsync();
+    }
+    
+    private async ValueTask<string> GetCurrentUriAsync() => await JS.InvokeAsync<string>("eval", /*lang=js*/"window.location.pathname");
+}

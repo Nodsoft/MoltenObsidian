@@ -1,0 +1,25 @@
+@inject HttpClient HttpClient
+
+<ObsidianVaultNavigation Vault="@_vault"/>
+
+@code {
+    /// <summary>
+    /// The URI of the vault to connect to.
+    /// </summary>
+    [Parameter] public string VaultUri { get; set; } = null!;
+
+    private IVault? _vault;
+
+    
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(VaultUri);
+
+        HttpClient.BaseAddress = new(VaultUri);
+        RemoteVaultManifest manifest = await HttpClient.GetFromJsonAsync<RemoteVaultManifest>(VaultUri) 
+            ?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
+        
+        _vault = HttpRemoteVault.FromManifest(manifest, HttpClient);
+    }
+}
