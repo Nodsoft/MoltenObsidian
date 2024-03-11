@@ -1,7 +1,9 @@
 @using Nodsoft.MoltenObsidian.Vault
+@using Attributes = Dictionary<string, object>;
 
-<nav @attributes="@NavigationAttributes">
-    <div @attributes="LevelAttributes">
+
+<nav @attributes="@NavigationAttributes(Vault)">
+    <div @attributes="@LevelAttributes(Vault.Root)">
         @FolderNavigationTree(Vault.Root, isRoot: true)
     </div>
 </nav>
@@ -9,11 +11,13 @@
 @code {
     [Parameter, EditorRequired] public IVault Vault { get; set; }
 
-    [Parameter] public Dictionary<string, object> NavigationAttributes { get; set; } = [];
-    [Parameter] public Dictionary<string, object> LevelAttributes { get; set; } = [];
-    [Parameter] public Dictionary<string, object> FolderIndexAttributes { get; set; } = [];
-    [Parameter] public Dictionary<string, object> FolderAttributes { get; set; } = [];
-    [Parameter] public Dictionary<string, object> NoteAttributes { get; set; } = [];
+    private static Attributes GetEmptyAttributes(object _) => [];
+
+    [Parameter] public Func<IVault, Attributes> NavigationAttributes { get; set; } = GetEmptyAttributes;
+    [Parameter] public Func<IVaultEntity, Attributes> LevelAttributes { get; set; } = GetEmptyAttributes;
+    [Parameter] public Func<IVaultFolder, Attributes> FolderIndexAttributes { get; set; } = GetEmptyAttributes;
+    [Parameter] public Func<IVaultFolder, Attributes> FolderAttributes { get; set; } = GetEmptyAttributes;
+    [Parameter] public Func<IVaultNote, Attributes> NoteAttributes { get; set; } = GetEmptyAttributes;
     
     private @RenderFragment FolderNavigationTree(IVaultFolder folder, bool isRoot = false) => __builder =>
     {
@@ -30,16 +34,16 @@
         {
             if (item.Value is IVaultFolder subfolder)
             {
-                <div @key="@subfolder.Path" @attributes="@LevelAttributes">
+                <div @key="@subfolder.Path" @attributes="@LevelAttributes(subfolder)">
                     @if (subfolder.Files.Any(f 
                         => f.Name.Equals("index.md", StringComparison.OrdinalIgnoreCase) 
                         || f.Name.Equals("README.md", StringComparison.OrdinalIgnoreCase)))
                     {
-                        <a href="@subfolder.Path/" @attributes="FolderIndexAttributes">@subfolder.Name</a>
+                        <a href="@subfolder.Path/" @attributes="@FolderIndexAttributes(subfolder)">@subfolder.Name</a>
                     }
                     else
                     {
-                        <span @attributes="FolderAttributes">@subfolder.Name</span>
+                        <div @attributes="@FolderAttributes(subfolder)">@subfolder.Name</div>
                     }
                     
                     @FolderNavigationTree(subfolder)
@@ -48,7 +52,7 @@
             else if (item.Value is IVaultNote file)
             {
                 // The file's path should be filtered to remove the file's extension (".md").
-                <a href="@(file.Path[..^3])" @attributes="@NoteAttributes">@file.Name[..^3]</a>
+                <a href="@(file.Path[..^3])" @attributes="@NoteAttributes(file)">@file.Name[..^3]</a>
             }
         }
     };
