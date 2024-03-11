@@ -1,0 +1,48 @@
+@use "mixins" as *;
+@use "variables" as *;
+
+
+&.landing {
+  @media (min-device-width: map-get($breakpoints, "xl")) {
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  
+  @media (max-device-width: map-get($breakpoints, "xxl")) {
+    .flex-row-xxl {
+      text-align: center;
+    }
+  }
+}
+
+pre {
+  @include code-font();
+  padding: 1em;
+  background-color: rgba(white, 0.05);
+  border-radius: 0.5em;
+  white-space: pre-wrap;
+}
+
+:not(pre) code {
+  @include code-font();
+  
+  color: #e83e8c;
+  text-decoration-color: #e83e8c;
+  background-color: rgba(white, 0.03);
+  padding: 0.25em 0.5em;
+  border-radius: 0.3em;
+}
+
+table, .table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  
+  th, td {
+    padding: 0.5em 1em;
+    border: 1px solid rgba(white, 0.1);
+  }
+}
+
+@include code-block-syntax("csharp") {
+  @import "syntax/csharp";
+}

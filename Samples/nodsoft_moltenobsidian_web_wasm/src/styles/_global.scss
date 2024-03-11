@@ -1,0 +1,166 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+@import "./responsive";
+
+@import url("//fonts.googleapis.com/css2?family=Nunito");
+
+:root {
+  background: $background radial-gradient(ellipse farthest-corner at 0 140%, $accent-dark 0%, transparent 70%) no-repeat fixed left top;
+  background-size: 20%, 100%;
+}
+
+
+html, .html {
+  font-size: 16px;
+  
+  @media (max-device-width: map-get($breakpoints, "md")) {
+    font-size: 14px
+  }
+  
+  font-family: Nunito, system-ui, sans-serif;
+  height: 100%;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 1rem;
+  
+  @mixin scrollbar-common() {
+    border-radius: 0.8rem;
+    transition: all 0.3s;
+  }
+
+  &-track {
+    @include scrollbar-common();
+    background: rgba(black, 0.2)
+  }
+
+  &-thumb {
+    @include scrollbar-common();
+    background-color: $accent-dark;
+    
+    &:hover {
+      background-color: $accent;
+    }
+  }
+}
+
+
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+}
+
+
+main {
+  article {
+    @import "content";
+  }
+  
+  &, .main {
+    flex: 1;
+    padding: 1rem;
+    max-width: calc(100% - 2rem);
+    color: white;
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-y: auto;
+  }
+}
+
+
+code, .code {
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+  Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+
+a {
+    color: $accent;
+    
+    &:hover {
+        color: $accent-light;
+    }
+}
+
+.center {
+  text-align: center;
+}
+
+h1 {
+  @include font-styles(4em);
+}
+
+h2 {
+  @include font-styles(3.5em);
+}
+
+h3 {
+  @include font-styles(3em);
+}
+
+h4 {
+  @include font-styles(2.5em);
+}
+
+h5 {
+  @include font-styles(2em);
+}
+
+h6 {
+  @include font-styles(1.5em);
+}
+
+@media (max-device-width: map-get($breakpoints, "md")) {
+  h1 {
+    @include font-styles(3em);
+  }
+  
+  h2 {
+    @include font-styles(2.5em);
+  }
+  
+  h3 {
+    @include font-styles(2em);
+  }
+  
+  h4 {
+    @include font-styles(1.5em);
+  }
+  
+  h5 {
+    @include font-styles(1.25em);
+  }
+  
+  h6 {
+    @include font-styles(1em);
+  }
+}
+
+.text-gradient {
+  background-image: $accent-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 300%;
+  background-position: 0;
+}
+
+.bg-dark-acrylic {
+  @include bg-acrylic($background);
+}
+
+.badge {
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  border-radius: 4px;
+  font-size: 0.7em;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.lead {
+  font-size: 1.3em;
+  font-weight: 300;
+}

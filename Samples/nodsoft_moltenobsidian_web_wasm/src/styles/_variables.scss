@@ -1,0 +1,21 @@
+// Responsive breakpoints
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+
+$accent: #883AEB;
+$accent-light: #E0CCFA;
+$accent-dark: #310A65;
+$accent-gradient: linear-gradient(45deg, $accent, $accent-light 30%, white 60%);
+
+$background: #13151A;
+
+$supported-syntaxes: (
+  csharp
+);

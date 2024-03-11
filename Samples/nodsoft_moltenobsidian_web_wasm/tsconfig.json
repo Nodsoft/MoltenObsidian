@@ -1,0 +1,10 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "baseUrl": "src",
+  "esModuleInterop": true,
+  "resolveJsonModule": true,
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true
+  }
+}

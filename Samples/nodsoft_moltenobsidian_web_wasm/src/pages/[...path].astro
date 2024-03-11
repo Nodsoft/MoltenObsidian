@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { cast, toRelativeVaultPath } from '../vault-utils';
+import { VaultManifestClient } from 'moltenobsidian-ssg-client/manifest-client';
+import { VaultManifest, VaultFile, VaultFileMetadata } from 'moltenobsidian-ssg-client/vault-manifest';
+import manifest from '../../public/vault/moltenobsidian.manifest.json';
+import fs from 'node:fs/promises';
+import * as console from "console";
+
+
+export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
+
+
+
+export async function getStaticPaths() {    
+    const paths = [];
+    
+    for (const [path, file] of manifestClient.routingTable) {
+        const ssgPath = new URL(toRelativeVaultPath(manifestClient.getSsgPath(file)), import.meta.url);
+        const content = await fs.readFile(ssgPath, 'utf-8');
+        const frontMatter =  file as VaultFileMetadata ?? {};
+        
+        if (frontMatter.moltenobsidian?.publish === false || frontMatter.obsidian?.publish === false) continue;
+        
+        paths.push({
+            params: {path: path === '' ? undefined : path},
+            props: {
+                content: content,
+                ...frontMatter
+            },
+            routing: manifestClient.routingTable
+        });
+    }
+    
+    return paths;
+}
+
+const { path } = Astro.params;
+const { content, cssclasses } = Astro.props;
+---
+
+<Layout>    
+    <article style="margin-top: 4rem; margin-bottom: 4rem;" class:list={cssclasses}>
+        <Fragment set:html={content} />
+    </article>
+</Layout>

@@ -1,0 +1,61 @@
+---
+import "./Sidebar.astro.scss"
+import NavLink from './NavLink.astro';
+import { Image } from 'astro:assets';
+import logo from '../../public/android-chrome-192x192.png'
+import { SITE_TITLE } from '../consts';
+import VaultNavTree from "./vault/VaultNavTree.astro";
+import { buildVaultTree } from "../vault-utils";
+import manifest from '../../public/vault/moltenobsidian.manifest.json';
+import { VaultManifestClient } from "moltenobsidian-ssg-client/manifest-client";
+import { VaultManifest } from "moltenobsidian-ssg-client/vault-manifest";
+
+export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
+
+---
+
+<nav id="sidebar" class="collapsed" aria-label="sidebar">
+	<div class="navbar-brand">
+		<Image src={logo} alt="MoltenObsidian Logo" />
+		<a style="flex-grow: 1;" href="">{SITE_TITLE}</a>
+      
+		<button type="button" class="sidebar-toggler">
+			<span aria-hidden="true" class="sidebar-toggler-icon"></span>
+		</button>
+	</div>
+	
+	<div role="presentation" class="vault-nav" aria-label="Vault navigation">
+		<VaultNavTree tree={buildVaultTree(manifestClient.routingTable)} />
+	</div>
+	
+	<footer role="contentinfo" aria-label="footer">
+		<hr aria-hidden="true" style="opacity: 0.2; margin-bottom: 2rem;" />
+		
+		<div class="lead" style="display: flex; align-items: center; gap: 0.5rem">
+			<b>MoltenObsidian</b>
+			<span class="badge">SSG</span>
+		</div>
+		
+		<small>
+			That's right. Everything you read here is powered by MoltenObsidian SSG,
+			using <a rel="external" target="_blank" href="https://astro.build">Astro</a>.
+		</small>
+      
+			<ul aria-label="links">
+				<li><a target="_blank" rel="external" href="https://github.com/Nodsoft/MoltenObsidian">GitHub</a></li>
+        <li><a target="_blank" rel="external" href="https://www.nuget.org/packages/Nodsoft.MoltenObsidian">NuGet</a></li>
+			</ul>
+		
+		<small aria-description="copyright">© 2022-2023 Nodsoft Systems, MIT License</small>
+	</footer>
+</nav>
+
+<script>
+	// Sidebar toggler
+	function toggleSidebar() {
+		document.querySelector('#sidebar').classList.toggle('collapsed');
+	}
+	
+	// register button click handler
+	document.querySelector('.sidebar-toggler').addEventListener('click', toggleSidebar);
+</script>
