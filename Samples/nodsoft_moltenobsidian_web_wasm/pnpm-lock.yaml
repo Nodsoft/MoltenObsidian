@@ -12,8 +12,8 @@ dependencies:
     specifier: ^1.11.3
     version: 1.11.3
   moltenobsidian-ssg-client:
-    specifier: link:..\nodsoft_moltenobsidian_ssg_client
-    version: link:../nodsoft_moltenobsidian_ssg_client
+    specifier: link:..\..\nodsoft_moltenobsidian_ssg_client
+    version: link:../../nodsoft_moltenobsidian_ssg_client
   sass:
     specifier: ^1.71.0
     version: 1.71.0

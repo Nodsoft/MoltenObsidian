@@ -1,35 +1,21 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { cast, toRelativeVaultPath } from '../vault-utils';
-import { VaultManifestClient } from 'moltenobsidian-ssg-client/manifest-client';
-import { VaultManifest, VaultFile, VaultFileMetadata } from 'moltenobsidian-ssg-client/vault-manifest';
-import manifest from '../../public/vault/moltenobsidian.manifest.json';
-import fs from 'node:fs/promises';
-import * as console from "console";
+import Layout from "../layouts/Layout.astro";
+import { Blazor } from "../../../../Nodsoft.MoltenObsidian.WasmContainer/bin/Release/net8.0/wwwroot/_framework/blazor.webassembly.js"
+import type { VaultManifest } from "moltenobsidian-ssg-client/vault-manifest";
+import { VaultManifestClient } from "moltenobsidian-ssg-client/manifest-client";
+import * as console from "node:console";
 
+export const vaultBaseUri = "https://nodsoft.github.io/MoltenObsidian/vault/";
+export const vaultManifestUri = vaultBaseUri + "moltenobsidian.manifest.json";
 
-export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
-
-
-
-export async function getStaticPaths() {    
-    const paths = [];
+export async function getStaticPaths() {
+    const manifest: VaultManifest = await (await fetch(vaultManifestUri)).json();    
+    const paths = []
     
-    for (const [path, file] of manifestClient.routingTable) {
-        const ssgPath = new URL(toRelativeVaultPath(manifestClient.getSsgPath(file)), import.meta.url);
-        const content = await fs.readFile(ssgPath, 'utf-8');
-        const frontMatter =  file as VaultFileMetadata ?? {};
-        
-        if (frontMatter.moltenobsidian?.publish === false || frontMatter.obsidian?.publish === false) continue;
-        
-        paths.push({
-            params: {path: path === '' ? undefined : path},
-            props: {
-                content: content,
-                ...frontMatter
-            },
-            routing: manifestClient.routingTable
-        });
+    const manifestClient = new VaultManifestClient(manifest)
+    
+    for (const [navPath, { remotePath }] of manifestClient.routingTable) {
+        paths.push({ params: { path: navPath === '' ? undefined : navPath }, props: { remotePath } });
     }
     
     return paths;
@@ -38,9 +24,23 @@ export async function getStaticPaths() {
 const { path } = Astro.params;
 const { content, cssclasses } = Astro.props;
 ---
-
 <Layout>    
-    <article style="margin-top: 4rem; margin-bottom: 4rem;" class:list={cssclasses}>
+    <article style="margin-top: 4rem; margin-bottom: 4rem;" client:load class:list={cssclasses}>
         <Fragment set:html={content} />
     </article>
 </Layout>
+
+<script client:load autostart="false" src="http://localhost:8088/_framework/blazor.webassembly.js"></script>
+<!--<script client:load autostart="false" src="file://C:/Source/MoltenObsidian/Nodsoft.MoltenObsidian.WasmContainer/bin/Release/net8.0/publish/wwwroot/_framework/blazor.webassembly.js"></script>-->
+<script src="../../public/blazorBootstrapper.js"></script>
+
+<script>
+    // window.initializeComponent = (name, parameters) => {
+    //     console.log({ name: name, parameters: parameters });
+    // }
+    
+    Blazor.start().then(() => {
+        Blazor.rootComponents.add(document.getElementsByTagName('article'), "moltenobsidian-display-remote", { })
+    }).catch((e) => console.error(e))
+</script>
+
