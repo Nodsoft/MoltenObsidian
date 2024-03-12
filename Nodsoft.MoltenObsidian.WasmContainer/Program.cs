@@ -4,14 +4,16 @@ using Nodsoft.MoltenObsidian.WasmContainer.Components;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 
+builder.RootComponents.Add<RemoteVaultDisplay>(".moltenobsidian-content");
 builder.RootComponents.RegisterForJavaScript<RemoteVaultDisplay>(
     identifier: "moltenobsidian-display-remote",
-    javaScriptInitializer: "initializeComponent"
+    javaScriptInitializer: "initializeRemoteVaultDisplay"
 );
 
+builder.RootComponents.Add<RemoteVaultNavigation>(".moltenobsidian-nav");
 builder.RootComponents.RegisterForJavaScript<RemoteVaultNavigation>(
     identifier: "moltenobsidian-nav-remote",
-    javaScriptInitializer: "initializeComponent"
+    javaScriptInitializer: "initializeRemoteVaultNavigation"
 );
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

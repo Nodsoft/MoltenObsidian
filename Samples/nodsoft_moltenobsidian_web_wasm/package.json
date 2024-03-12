@@ -13,7 +13,7 @@
   "dependencies": {
     "astro": "^4.4.0",
     "bootstrap-icons": "^1.11.3",
-    "moltenobsidian-ssg-client": "link:..\\nodsoft_moltenobsidian_ssg_client",
+    "moltenobsidian-ssg-client": "link:..\\..\\nodsoft_moltenobsidian_ssg_client",
     "sass": "^1.71.0",
     "sharp": "^0.33.2"
   }
