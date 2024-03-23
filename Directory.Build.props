@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -15,11 +15,12 @@
 		<Product>Molten Obsidian</Product>
 		<PackageProjectUrl>https://github.com/Nodsoft/MoltenObsidian</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Nodsoft/MoltenObsidian</RepositoryUrl>
-		<RepositoryType>Git</RepositoryType>
+		<RepositoryType>git</RepositoryType>
 		<CommonPackageTags>obsidian, moltenobsidian, vault, markdown, html, extensions</CommonPackageTags>
 		<PackageTags>$(CommonPackageTags)</PackageTags> <!-- Default package tags -->
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>icon.png</PackageIcon>
 
