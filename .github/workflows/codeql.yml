@@ -14,17 +14,18 @@ on:
   workflow_dispatch:
 
 jobs:
-#  build: 
-#    uses: Nodsoft/workflows/.github/workflows/build-dotnet.yml@main
-#    with:
-#      dotnet-version: 8.0
-#      project-file: "Nodsoft.MoltenObsidian.sln"
-#      configuration: "Release"
-#      artifact-name: "build-artifact"
-#      use-nbgv: true
+  build: 
+    uses: Nodsoft/workflows/.github/workflows/build-dotnet.yml@main
+    with:
+      dotnet-version: 8.0
+      project-file: "Nodsoft.MoltenObsidian.sln"
+      configuration: "Release"
+      artifact-name: "build-artifact"
+      use-nbgv: true
   
   analyze:
     name: Analyze
+    needs: build
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
     #   - https://gh.io/supported-runners-and-hardware-resources
@@ -60,6 +61,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          
           # If you wish to specify custom queries, you can do so here or in a config file.
           # By default, queries listed here will override any specified in a config file.
           # Prefix the list here with "+" to use these queries and those in the config file.
@@ -72,8 +74,8 @@ jobs:
       
       # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
       # If this step fails, then you should remove it and run the build manually (see below)
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+#      - name: Autobuild
+#        uses: github/codeql-action/autobuild@v3
       
       # ℹ️ Command-line programs to run using the OS shell.
       # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
@@ -85,11 +87,11 @@ jobs:
       #     echo "Run, Build Application using script"
       #     ./location_of_script_within_repo/buildscript.sh
 
-#      - name: Import build artifacts
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: ${{ needs.build.outputs.artifact-name }}
-#          path: build-artifact
+      - name: Import build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+          path: build-artifact
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
