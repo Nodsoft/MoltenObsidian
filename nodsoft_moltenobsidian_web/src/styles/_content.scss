@@ -43,6 +43,45 @@ table, .table {
   }
 }
 
+// Callouts / Alerts
+.markdown-alert {
+  @mixin callout-color($name, $color) {
+    background-color: rgba($color, 0.1);
+
+    &-title {
+      color: $color;
+
+      svg {
+        fill: $color;
+      }
+    }
+  }
+
+  background-color: rgba(white, 0.025);
+  background-blend-mode: lighten;
+  padding: 1.5em;
+  border-radius: 0.5em;
+  margin: 1em 0;
+
+  &-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: bold;
+  }
+
+  p:first-child {
+    margin-block-start: 0;
+  }
+
+  p:last-child {
+    margin-block-end: 0;
+  }
+
+  // Colors
+  @include callout-color("info", rgb(0, 122, 255));
+}
+
 @include code-block-syntax("csharp") {
   @import "syntax/csharp";
 }
