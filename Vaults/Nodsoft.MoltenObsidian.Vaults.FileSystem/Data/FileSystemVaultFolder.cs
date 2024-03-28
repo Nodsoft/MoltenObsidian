@@ -38,6 +38,13 @@ internal sealed class FileSystemVaultFolder : FileSystemVaultEntityBase, IVaultF
 		return new(entity, parent, vault);
 	}
 
+	/// <summary>
+	/// Deletes a folder and its contents from the file system.
+	/// </summary>
+	/// <exception cref="DirectoryNotFoundException">The specified directory does not exist.</exception>
+	/// <exception cref="IOException">An I/O error occurred while deleting the directory.</exception>
+	internal void DeleteFolder() => PhysicalDirectoryInfo.Delete(true);
+
 	public IReadOnlyList<IVaultFolder> Subfolders => _subfolders;
 
 	public IReadOnlyList<IVaultFile> Files => _files;

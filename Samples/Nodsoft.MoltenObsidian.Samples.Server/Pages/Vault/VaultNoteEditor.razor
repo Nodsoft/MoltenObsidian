@@ -37,7 +37,7 @@
 
     private async Task SaveAsync()
     {
-        await Vault.CreateFileAsync(EditPath, Encoding.UTF8.GetBytes(_editModel.Content));
+        await Vault.WriteFileAsync(EditPath, Encoding.UTF8.GetBytes(_editModel.Content));
     }
     
     public class VaultFileModel

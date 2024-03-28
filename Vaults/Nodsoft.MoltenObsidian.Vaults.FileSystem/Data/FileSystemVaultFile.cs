@@ -44,14 +44,21 @@ internal class FileSystemVaultFile : FileSystemVaultEntityBase, IVaultFile
 	/// <param name="parent">The parent folder of the file to create.</param>
 	/// <param name="vault">The vault that the file belongs to.</param>
 	/// <returns>The newly created <see cref="FileSystemVaultFile"/> instance.</returns>
-	public static FileSystemVaultFile CreateFile(string path, ReadOnlySpan<byte> content, IVaultFolder parent, FileSystemVault vault)
+	public static async ValueTask<FileSystemVaultFile> WriteFileAsync(string path, ReadOnlyMemory<byte> content, IVaultFolder parent, FileSystemVault vault)
 	{
 		string fullPath = System.IO.Path.Join(((FileSystemVaultFolder)vault.Root).PhysicalDirectoryInfo.FullName, path);
 		
-		using FileStream fileStream = File.Create(fullPath);
-		fileStream.Write(content);
-		fileStream.Flush();
+		await using FileStream fs = File.Open(fullPath, FileMode.Create, FileAccess.Write);
+		await fs.WriteAsync(content);
+		fs.Flush();
 		
-		return Create(new(fullPath), parent, vault);
+		return parent.Files.FirstOrDefault(f => f.Path == path) as FileSystemVaultFile 
+		    ?? Create(new(fullPath), parent, vault);
 	}
+
+	/// <summary>
+	/// Deletes a file from the file system.
+	/// </summary>
+	/// <exception cref="FileNotFoundException">The specified file does not exist.</exception>
+	public void DeleteFile() => File.Delete(FullPath);
 }

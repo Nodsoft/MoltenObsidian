@@ -25,10 +25,7 @@ public sealed class FileSystemVault : IWritableVault
 	public IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.GetValueOrDefault(path);
 
 	/// <inheritdoc />
-	public IVaultFile? GetFile(string path)
-		=> Files.TryGetValue(Path.HasExtension(path) ? path : Path.ChangeExtension(path, ".md"), out IVaultFile? file)
-			? file
-			: null;
+	public IVaultFile? GetFile(string path) => Files.GetValueOrDefault(Path.HasExtension(path) ? path : Path.ChangeExtension(path, ".md"));
 
 	public IReadOnlyDictionary<string, IVaultFile> Files => _files;
 
@@ -165,7 +162,42 @@ public sealed class FileSystemVault : IWritableVault
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<IVaultFile> CreateFileAsync(string path, byte[] content)
+	public async ValueTask<IVaultFile> WriteFileAsync(string path, byte[] content)
+	{
+		// Small step: Strip the leading slash if present
+		if (path.StartsWith('/'))
+		{
+			path = path[1..];
+		}
+		
+		// First checks : Is this a valid path?
+		if (path is null or "")
+		{
+			throw new ArgumentException("The specified path is invalid.", nameof(path));
+		}
+		
+		// Does the parent folder exist? If not, create it.
+		// Luckily, we can use the CreateFolderAsync method for this.
+		IVaultFolder parent = path.Contains('/') ? await CreateFolderAsync(path[..path.LastIndexOf('/')]) : Root;
+		
+		// Write to file
+		return await FileSystemVaultFile.WriteFileAsync(path, content, parent, this);
+	}
+
+	/// <inheritdoc />
+	public async ValueTask<IVaultNote> WriteNoteAsync(string path, byte[] content)
+	{
+		// This is just a wrapper around CreateFileAsync with a check for the extension.
+		if (!path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+		{
+			throw new ArgumentException("The specified path does not point to a Markdown file.", nameof(path));
+		}
+		
+		return (IVaultNote)await WriteFileAsync(path, content);
+	}
+
+	/// <inheritdoc />
+	public ValueTask DeleteFolderAsync(string path)
 	{
 		// Small step: Strip the leading slash if present
 		if (path.StartsWith('/'))
@@ -179,29 +211,52 @@ public sealed class FileSystemVault : IWritableVault
 			throw new ArgumentException("The specified path is invalid.", nameof(path));
 		}
 
-		// Second checks : Does the file already exist?
-		if (Files.TryGetValue(path, out IVaultFile? existing))
+		// Second checks : Does the folder exist?
+		if (!Folders.TryGetValue(path, out IVaultFolder? folder))
 		{
-			return existing;
+			throw new DirectoryNotFoundException("The specified directory does not exist.");
 		}
 		
-		// Does the parent folder exist? If not, create it.
-		// Luckily, we can use the CreateFolderAsync method for this.
-		IVaultFolder parent = path.Contains('/') ? await CreateFolderAsync(path[..path.LastIndexOf('/')]) : Root;
-		
-		// Create the file
-		return FileSystemVaultFile.CreateFile(path, content, parent, this);
+		// Delete the folder
+		((FileSystemVaultFolder)folder).DeleteFolder();
+		return new();
 	}
-
+	
 	/// <inheritdoc />
-	public async ValueTask<IVaultNote> CreateNoteAsync(string path, byte[] content)
+	public ValueTask DeleteFileAsync(string path)
 	{
-		// This is just a wrapper around CreateFileAsync with a check for the extension.
+		// Small step: Strip the leading slash if present
+		if (path.StartsWith('/'))
+		{
+			path = path[1..];
+		}
+		
+		// First checks : Is this a valid path?
+		if (path is null or "")
+		{
+			throw new ArgumentException("The specified path is invalid.", nameof(path));
+		}
+
+		// Second checks : Does the file exist?
+		if (!Files.TryGetValue(path, out IVaultFile? file))
+		{
+			throw new FileNotFoundException("The specified file does not exist.");
+		}
+		
+		// Delete the file
+		((FileSystemVaultFile)file).DeleteFile();
+		return new();
+	}
+	
+	/// <inheritdoc />
+	public ValueTask DeleteNoteAsync(string path)
+	{
+		// This is just a wrapper around DeleteFileAsync with a check for the extension.
 		if (!path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
 		{
 			throw new ArgumentException("The specified path does not point to a Markdown file.", nameof(path));
 		}
 		
-		return (IVaultNote)await CreateFileAsync(path, content);
+		return DeleteFileAsync(path);
 	}
 }
