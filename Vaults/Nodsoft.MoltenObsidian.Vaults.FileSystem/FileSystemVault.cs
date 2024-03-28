@@ -8,32 +8,42 @@ namespace Nodsoft.MoltenObsidian.Vaults.FileSystem;
 /// <summary>
 /// Provides a filesystem based implementation of the <see cref="IVault"/> interface.
 /// </summary>
-public sealed class FileSystemVault : IVault
+public sealed class FileSystemVault : IWritableVault
 {
-	private FileSystemVault() { }
-	
-	public string Name { get; private set; } = null!;
-	public IVaultFolder Root { get; private set; } = null!;
-	
-	public IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.TryGetValue(path, out IVaultFolder? folder) ? folder : null;
+	private readonly Dictionary<string, IVaultFile> _files;
+	private readonly Dictionary<string, IVaultFolder> _folders;
+	private readonly Dictionary<string, IVaultNote> _notes;
 
+
+	/// <inheritdoc />
+	public string Name { get; }
+
+	/// <inheritdoc />
+	public IVaultFolder Root { get; }
+
+	/// <inheritdoc />
+	public IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.GetValueOrDefault(path);
+
+	/// <inheritdoc />
 	public IVaultFile? GetFile(string path)
 		=> Files.TryGetValue(Path.HasExtension(path) ? path : Path.ChangeExtension(path, ".md"), out IVaultFile? file)
 			? file
 			: null;
 
-	public IReadOnlyDictionary<string, IVaultFile> Files { get; private set; } = null!;
-	public IReadOnlyDictionary<string, IVaultFolder> Folders { get; private set; } = null!;
-	public IReadOnlyDictionary<string, IVaultNote> Notes { get; private set; } = null!;
+	public IReadOnlyDictionary<string, IVaultFile> Files => _files;
 
-	
+	public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
+
+	public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
+
+
 	public static IEnumerable<string> DefaultIgnoredFolders { get; } = new[] { ".obsidian", ".git", ".vs", ".vscode", "node_modules" };
 	public static IEnumerable<string> DefaultIgnoredFiles { get; } = new[] { ".DS_Store" };
 
 	/// <summary>
 	/// Creates a new <see cref="FileSystemVault"/> instance from the specified path.
 	/// </summary>
-	/// <param name="directory">The path to the vault directory.</param>
+	/// <param name="directoryInfo">The path to the vault directory.</param>
 	/// <returns>A new <see cref="FileSystemVault"/> instance.</returns>
 	/// <exception cref="DirectoryNotFoundException">The specified directory does not exist.</exception>
 	/// <exception cref="IOException">An I/O error occurred while reading the vault directory.</exception>
@@ -54,45 +64,144 @@ public sealed class FileSystemVault : IVault
 	public static FileSystemVault FromDirectory(DirectoryInfo directory, 
 		IEnumerable<string> excludedFolders,
 		IEnumerable<string> excludedFiles
+	) => new(directory, excludedFolders, excludedFiles);
+
+	private FileSystemVault(
+		DirectoryInfo directory,
+		IEnumerable<string> excludedFolders,
+		IEnumerable<string> excludedFiles
 	) {
 		// First make sure the directory exists
 		if (!directory.Exists)
 		{
 			throw new DirectoryNotFoundException("The specified directory does not exist.");
 		}
-		
-		FileSystemVault vault = new();
-		vault.Root = new FileSystemVaultFolder(directory, null, vault);
-		vault.Name = directory.Name;
-		
+
+		Name = directory.Name;
+		Root = new FileSystemVaultFolder(directory, null, this);
+
 		// Now we need to load all the files and folders
-		vault.Folders = new Dictionary<string, IVaultFolder>(
-			vault.Root.GetFolders(SearchOption.AllDirectories)
-				// Take into account any exclusions
-				.Where(folder =>
-					{
-						string[] segments = folder.Key.Split("/");
-						return !segments.Any(excludedFolders.Contains);
-					}
-				));
-		
+		_folders = new(Root
+			.GetFolders(SearchOption.AllDirectories)
+			// Take into account any exclusions
+			.Where(folder =>
+			{
+				string[] segments = folder.Key.Split("/");
+				return !segments.Any(excludedFolders.Contains);
+			})
+		);
+
 		// Load the files from the above folders
-		vault.Files = new Dictionary<string, IVaultFile>(
-			vault.Folders.Values.Concat(new[] { vault.Root })
-				.SelectMany(f => f.GetFiles(SearchOption.TopDirectoryOnly))
-				// Take into account any exclusions
-				.Where(f =>
-					{
-						string lastSegment = f.Key.Split("/").Last();
-						return !excludedFiles.Contains(lastSegment);
-					}
-				));
+		_files = new(_folders.Values.Concat(new[] { Root })
+			.SelectMany(f => f.GetFiles(SearchOption.TopDirectoryOnly))
+			// Take into account any exclusions
+			.Where(f =>
+			{
+				string lastSegment = f.Key.Split("/").Last();
+				return !excludedFiles.Contains(lastSegment);
+			})
+		);
 
 		// Now we need to get all the markdown files.
 		// We can do this by filtering the Files dictionary, grabbing all the files that end with ".md".
-		vault.Notes = vault.Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+		_notes = Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
 			.ToDictionary(static x => x.Key, static x => (IVaultNote)x.Value);
+	}
+
+	/// <inheritdoc />
+	public ValueTask<IVaultFolder> CreateFolderAsync(string path)
+	{
+		// Small starters : Strip the leading slash if present
+		if (path.StartsWith('/'))
+		{
+			path = path[1..];
+		}
 		
-		return vault;
+		// First checks : Is this a valid path?
+		if (path is null or "" or "/")
+		{
+			throw new ArgumentException("The specified path is invalid.", nameof(path));
+		}
+
+		// Second checks : Does the folder already exist?
+		if (Folders.TryGetValue(path, out IVaultFolder? existing))
+		{
+			return ValueTask.FromResult(existing);
+		}
+		
+		// Find the furthest folder that exists, and create the rest.
+		
+		// Slice the path into segments
+		string[] segments = path.Split('/');
+		
+		// Find the furthest folder that exists
+		int furthestDepth = 0;
+		IVaultFolder furthestFolder = Root;
+		
+		for (int i = 0; i < segments.Length; i++)
+		{
+			string currentPath = string.Join('/', segments[..i]);
+			
+			// Check if the folder exists
+			if (!Folders.TryGetValue(currentPath, out IVaultFolder? folder))
+			{
+				break;
+			}
+
+			furthestDepth = i;
+			furthestFolder = folder;
+		}
+		
+		// Now we need to create the rest of the folders
+		for (int i = furthestDepth; i < segments.Length; i++)
+		{
+			string currentPath = string.Join('/', segments[..i]);
+			
+			// Create the folder
+			furthestFolder = FileSystemVaultFolder.CreateFolder(currentPath, furthestFolder, this);
+		}
+		
+		return new(furthestFolder);
+	}
+
+	/// <inheritdoc />
+	public async ValueTask<IVaultFile> CreateFileAsync(string path, byte[] content)
+	{
+		// Small step: Strip the leading slash if present
+		if (path.StartsWith('/'))
+		{
+			path = path[1..];
+		}
+		
+		// First checks : Is this a valid path?
+		if (path is null or "")
+		{
+			throw new ArgumentException("The specified path is invalid.", nameof(path));
+		}
+
+		// Second checks : Does the file already exist?
+		if (Files.TryGetValue(path, out IVaultFile? existing))
+		{
+			return existing;
+		}
+		
+		// Does the parent folder exist? If not, create it.
+		// Luckily, we can use the CreateFolderAsync method for this.
+		IVaultFolder parent = path.Contains('/') ? await CreateFolderAsync(path[..path.LastIndexOf('/')]) : Root;
+		
+		// Create the file
+		return FileSystemVaultFile.CreateFile(path, content, parent, this);
+	}
+
+	/// <inheritdoc />
+	public async ValueTask<IVaultNote> CreateNoteAsync(string path, byte[] content)
+	{
+		// This is just a wrapper around CreateFileAsync with a check for the extension.
+		if (!path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+		{
+			throw new ArgumentException("The specified path does not point to a Markdown file.", nameof(path));
+		}
+		
+		return (IVaultNote)await CreateFileAsync(path, content);
 	}
 }

@@ -31,7 +31,7 @@ public interface IWritableVault : IVault
 	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
 	/// <exception cref="InvalidOperationException">Thrown if a file with the specified path already exists.</exception>
 	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
-	ValueTask<IVaultFile> CreateFileAsync(string path, ReadOnlySpan<byte> content);
+	ValueTask<IVaultFile> CreateFileAsync(string path, byte[] content);
 	
 	/// <summary>
 	/// Creates a new note with the specified path.
@@ -45,6 +45,6 @@ public interface IWritableVault : IVault
 	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
 	/// <exception cref="InvalidOperationException">Thrown if a note with the specified path already exists.</exception>
 	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
-	/// <seealso cref="CreateFileAsync(string, ReadOnlySpan{byte})"/>
-	ValueTask<IVaultNote> CreateNoteAsync(string path, ReadOnlySpan<char> content);
+	/// <seealso cref="CreateFileAsync(string, byte[])"/>
+	ValueTask<IVaultNote> CreateNoteAsync(string path, byte[] content);
 }
