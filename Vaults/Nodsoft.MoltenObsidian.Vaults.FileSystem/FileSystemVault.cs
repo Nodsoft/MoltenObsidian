@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Utilities;
 using Nodsoft.MoltenObsidian.Vault;
@@ -15,6 +15,7 @@ public sealed class FileSystemVault : IWritableVault
 	private readonly ConcurrentDictionary<string, IVaultFolder> _folders;
 	private readonly ConcurrentDictionary<string, IVaultNote> _notes;
 
+	private readonly FileSystemWatcher _watcher;
 
 	/// <inheritdoc />
 	public string Name { get; }
@@ -114,8 +115,63 @@ public sealed class FileSystemVault : IWritableVault
 		// We can do this by filtering the Files dictionary, grabbing all the files that end with ".md".
 		_notes = new(Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
 			.Select(x => new KeyValuePair<string, IVaultNote>(x.Key, (IVaultNote)x.Value)));
+		
+        // Initialize the watcher
+        _watcher = new(directory.FullName)
+        {
+            EnableRaisingEvents = true,
+            IncludeSubdirectories = true
+        };
+        
+        _watcher.Created += OnItemCreated;
+        _watcher.Deleted += OnItemDeleted;
+        // _watcher.Renamed += OnItemRenamed;
+    }
+
+	private static bool IsDirectory(string path)
+	{
+		FileAttributes attr = File.GetAttributes(path);
+		return (attr & FileAttributes.Directory) is FileAttributes.Directory;
+	}
+	
+	private string ToRelativePath(string fullPath) => fullPath[(Root.Path.Length + 1)..];
+	
+	private void OnItemCreated(object sender, FileSystemEventArgs e)
+	{
+		string relativePath = ToRelativePath(e.FullPath);
+		
+		if (IsDirectory(e.FullPath))
+		{
+			FileSystemVaultFolder folder = new(new(e.FullPath), Root.FindFurthestParent(relativePath), this);
+			_folders.TryAdd(folder.Name, folder);
+		}
+		else
+		{
+			FileSystemVaultFile file = FileSystemVaultFile.Create(new(e.FullPath), Root.FindFurthestParent(relativePath), this);
+			_files.TryAdd(file.Path, file);
+			
+			if (file is IVaultNote note)
+			{
+				_notes.TryAdd(file.Path, note);
+			}
+		}
 	}
 
+	private void OnItemDeleted(object sender, FileSystemEventArgs e)
+	{
+		string relativePath = ToRelativePath(e.FullPath);
+		
+		if (IsDirectory(e.FullPath))
+		{
+			_folders.TryRemove(relativePath, out _);
+		}
+		else
+		{
+			_files.TryRemove(relativePath, out _);
+			_notes.TryRemove(relativePath, out _);
+		}
+	}
+	
 	/// <inheritdoc />
 	public ValueTask<IVaultFolder> CreateFolderAsync(string path)
 	{
@@ -234,7 +290,7 @@ public sealed class FileSystemVault : IWritableVault
 		// Second checks : Does the folder exist?
 		if (!_folders.TryRemove(path, out IVaultFolder? folder))
 		{
-			throw new DirectoryNotFoundException("The specified directory does not exist.");
+			throw new DirectoryNotFoundException("The specified directory does not exist inside the instantiated vault.");
 		}
 		
 		// Cascade delete any downstream files
@@ -276,7 +332,7 @@ public sealed class FileSystemVault : IWritableVault
 		// Second checks : Does the file exist?
 		if (!_files.TryRemove(path, out IVaultFile? file))
 		{
-			throw new FileNotFoundException("The specified file does not exist.");
+			throw new FileNotFoundException("The specified file does not exist inside the instantiated vault.");
 		}
 		
 		// Also remove from notes if it's a note
