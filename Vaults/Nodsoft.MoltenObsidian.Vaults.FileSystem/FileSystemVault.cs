@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+using System.Collections.Concurrent;
+using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Utilities;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
@@ -10,9 +11,9 @@ namespace Nodsoft.MoltenObsidian.Vaults.FileSystem;
 /// </summary>
 public sealed class FileSystemVault : IWritableVault
 {
-	private readonly Dictionary<string, IVaultFile> _files;
-	private readonly Dictionary<string, IVaultFolder> _folders;
-	private readonly Dictionary<string, IVaultNote> _notes;
+	private readonly ConcurrentDictionary<string, IVaultFile> _files;
+	private readonly ConcurrentDictionary<string, IVaultFolder> _folders;
+	private readonly ConcurrentDictionary<string, IVaultNote> _notes;
 
 
 	/// <inheritdoc />
@@ -27,14 +28,24 @@ public sealed class FileSystemVault : IWritableVault
 	/// <inheritdoc />
 	public IVaultFile? GetFile(string path) => Files.GetValueOrDefault(Path.HasExtension(path) ? path : Path.ChangeExtension(path, ".md"));
 
+	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultFile> Files => _files;
 
+	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
 
+	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
 
 
+	/// <summary>
+	/// Gets the default list of folders to ignore when loading a vault.
+	/// </summary>
 	public static IEnumerable<string> DefaultIgnoredFolders { get; } = new[] { ".obsidian", ".git", ".vs", ".vscode", "node_modules" };
+	
+	/// <summary>
+	/// Gets the default list of files to ignore when loading a vault.
+	/// </summary>
 	public static IEnumerable<string> DefaultIgnoredFiles { get; } = new[] { ".DS_Store" };
 
 	/// <summary>
@@ -101,8 +112,8 @@ public sealed class FileSystemVault : IWritableVault
 
 		// Now we need to get all the markdown files.
 		// We can do this by filtering the Files dictionary, grabbing all the files that end with ".md".
-		_notes = Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-			.ToDictionary(static x => x.Key, static x => (IVaultNote)x.Value);
+		_notes = new(Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+			.Select(x => new KeyValuePair<string, IVaultNote>(x.Key, (IVaultNote)x.Value)));
 	}
 
 	/// <inheritdoc />
@@ -156,6 +167,7 @@ public sealed class FileSystemVault : IWritableVault
 			
 			// Create the folder
 			furthestFolder = FileSystemVaultFolder.CreateFolder(currentPath, furthestFolder, this);
+			_folders.TryAdd(currentPath, furthestFolder);
 		}
 		
 		return new(furthestFolder);
@@ -181,7 +193,15 @@ public sealed class FileSystemVault : IWritableVault
 		IVaultFolder parent = path.Contains('/') ? await CreateFolderAsync(path[..path.LastIndexOf('/')]) : Root;
 		
 		// Write to file
-		return await FileSystemVaultFile.WriteFileAsync(path, content, parent, this);
+		FileSystemVaultFile created = await FileSystemVaultFile.WriteFileAsync(path, content, parent, this);
+		_files.TryAdd(path, created);
+		
+		if (created is IVaultNote note)
+		{
+			_notes.TryAdd(path, note);
+		}
+		
+		return created;
 	}
 
 	/// <inheritdoc />
@@ -212,14 +232,30 @@ public sealed class FileSystemVault : IWritableVault
 		}
 
 		// Second checks : Does the folder exist?
-		if (!Folders.TryGetValue(path, out IVaultFolder? folder))
+		if (!_folders.TryRemove(path, out IVaultFolder? folder))
 		{
 			throw new DirectoryNotFoundException("The specified directory does not exist.");
 		}
 		
+		// Cascade delete any downstream files
+		_TraverseRemoveDownstream(folder);
+		
 		// Delete the folder
 		((FileSystemVaultFolder)folder).DeleteFolder();
 		return new();
+		
+		void _TraverseRemoveDownstream(IVaultFolder f)
+		{
+			foreach (IVaultFolder subfolder in f.Subfolders)
+			{
+				_TraverseRemoveDownstream(subfolder);
+			}
+			
+			foreach (IVaultFile file in f.Files)
+			{
+				_files.Remove(file.Path, out _);
+			}
+		}
 	}
 	
 	/// <inheritdoc />
@@ -238,9 +274,15 @@ public sealed class FileSystemVault : IWritableVault
 		}
 
 		// Second checks : Does the file exist?
-		if (!Files.TryGetValue(path, out IVaultFile? file))
+		if (!_files.TryRemove(path, out IVaultFile? file))
 		{
 			throw new FileNotFoundException("The specified file does not exist.");
+		}
+		
+		// Also remove from notes if it's a note
+		if (file is IVaultNote)
+		{
+			_notes.TryRemove(path, out _);
 		}
 		
 		// Delete the file

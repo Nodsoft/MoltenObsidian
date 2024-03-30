@@ -7,6 +7,7 @@ namespace Nodsoft.MoltenObsidian.Vault;
 /// This interface is storage-agnostic, and should be able to be implemented using any storage mechanism.
 /// </remarks>
 /// <seealso cref="IVault"/>
+[PublicAPI]
 public interface IWritableVault : IVault
 {
 	/// <summary>
