@@ -1,10 +1,14 @@
-﻿using JetBrains.Annotations;
+﻿using System.Runtime.Versioning;
+using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Provides extension methods for adding MoltenObsidian Filesystem vaults to the service collection.
+/// </summary>
 [PublicAPI]
 public static class VaultDependencyInjectionExtensions
 {
