@@ -14,5 +14,6 @@ We recommend you follow in the footsteps of the reference provider implementatio
 
 **For most cases, here are a few guidelines:**
  - Start by implementing `IVault`, as this is the root of any entity connected to a vault. You'll have an easier time working your way top-to-bottom. 
+   If you need write capabilities, then look into implementing `IWritableVault`.
  - We recommend you derive from a common `IVaultEntity` base/abstract implementation in cases where folders and files are physically represented. In remote sources, this will rarely be the case.
  - We also recommend you create a Factory-style constructor (private/protected ctor & public static method) for the `IVaultFile` implementation. This will allow you to conditionally return a `IVaultNote` during construction, in case the resolved file turns out to be a Markdown file.
