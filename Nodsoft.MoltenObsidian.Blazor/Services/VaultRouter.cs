@@ -58,7 +58,7 @@ public sealed class VaultRouter : IVaultRouter
 	private static Dictionary<string, IVaultEntity> BuildRoutingTable(IVault vault)
 	{
 		// First. Initialize the routing table.
-		Dictionary<string, IVaultEntity> routingTable = new();
+		Dictionary<string, IVaultEntity> routingTable = [];
 		
 		// Folders go first.
 		foreach (IVaultFolder folder in vault.Folders.Values)
