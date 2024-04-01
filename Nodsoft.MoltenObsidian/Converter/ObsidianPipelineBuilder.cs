@@ -18,6 +18,7 @@ public sealed class ObsidianPipelineBuilder : MarkdownPipelineBuilder
 		// Configure the pipeline for all features. This should enable 90% of all Obsidian MD features.
 		this.UseAdvancedExtensions()
 			.UseInternalLinks()
+			.UseObsidianTags()
 			.UseSyntaxHighlighting(darkTheme ? StyleDictionary.DefaultDark : StyleDictionary.DefaultLight);
 
 		// Configure the pipeline for Bootstrap support, if requested.
