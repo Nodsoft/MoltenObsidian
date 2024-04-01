@@ -18,8 +18,13 @@ public static class VaultDependencyInjectionExtensions
 	/// <param name="services">The service collection to add the Vault to.</param>
 	/// <param name="rootDirectoryInfo">The root directory of the Vault.</param>
 	/// <returns>The service collection.</returns>
-	public static IServiceCollection AddMoltenObsidianFileSystemVault(this IServiceCollection services, DirectoryInfo rootDirectoryInfo) 
-		=> services.AddSingleton<IVault>(FileSystemVault.FromDirectory(rootDirectoryInfo));
+	public static IServiceCollection AddMoltenObsidianFileSystemVault(this IServiceCollection services, DirectoryInfo rootDirectoryInfo)
+	{
+		services.AddSingleton<IWritableVault>(s => FileSystemVault.FromDirectory(rootDirectoryInfo));
+		services.AddTransient<IVault>(s => s.GetRequiredService<IWritableVault>());
+		
+		return services;
+	}
 
 	/// <summary>
 	/// Adds a Filesystem-based Vault to the service collection.
