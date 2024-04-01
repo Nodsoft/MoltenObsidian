@@ -8,7 +8,7 @@ using Nodsoft.MoltenObsidian.Vault;
 namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;
 
 /// <summary>
-/// Provides an extension doe the Markdig parser to support Obsidian internal links.
+/// Provides an extension for the Markdig parser to support Obsidian internal links.
 /// </summary>
 public sealed class InternalLinksExtension : IMarkdownExtension
 {
