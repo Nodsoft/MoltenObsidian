@@ -5,6 +5,9 @@ using Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
 
+/// <summary>
+/// Defines a remotely-accessible Molten Obisidan vault, via FTP.
+/// </summary>
 public sealed class FtpRemoteVault : IVault
 {
     private readonly Dictionary<string, IVaultFile> _files = new();
@@ -20,16 +23,34 @@ public sealed class FtpRemoteVault : IVault
 
     internal AsyncFtpClient AsyncFtpClient { get; private init; }
 
+    /// <inheritdoc />
     public string Name { get; set; }
 
+    /// <inheritdoc />
     public IVaultFolder Root => _root;
 
+    /// <inheritdoc />
     public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
+
+    /// <inheritdoc />
     public IReadOnlyDictionary<string, IVaultFile> Files => _files;
 
+    /// <inheritdoc />
     public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
 
-	public static IVault FromManifest(RemoteVaultManifest? manifest, AsyncFtpClient ftpClient)
+    /// <inheritdoc />
+    /// <remarks>
+    /// There is no change detection implemented within the FTP Vault (yet).
+    /// </remarks>
+    public event IVault.VaultUpdateEventHandler? VaultUpdate;
+
+    /// <summary>
+	/// Builds a new Vault from a remote FTP manifest.
+	/// </summary>
+	/// <param name="manifest">The manifest to build the vault from.</param>
+	/// <param name="ftpClient">The FTP client to use for remote requests.</param>
+	/// <returns>A new FTP remote vault.</returns>
+	public static IVault FromManifest(RemoteVaultManifest manifest, AsyncFtpClient ftpClient)
     {
         FtpRemoteVault vault = new()
         {
@@ -41,7 +62,7 @@ public sealed class FtpRemoteVault : IVault
         vault._folders = new Dictionary<string, IVaultFolder>();
         foreach (var manifestFile in manifest.Files)
         {
-            if (manifestFile.Path.Split('/') is not [.. string[] folderParts, string fileName]) continue;
+            if (manifestFile.Path.Split('/') is not [.. var folderParts, var fileName]) continue;
 
             IVaultFolder? currentFolder = vault._root;
             IVaultFolder? parentFolder = vault._root;
