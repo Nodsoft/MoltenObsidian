@@ -19,19 +19,20 @@ public interface IVault
 	/// </summary>
 	IVaultFolder Root { get; }
 
+	
 	/// <summary>
 	/// Gets the folder with the specified path.
 	/// </summary>
 	/// <param name="path">The path of the folder to retrieve.</param>
 	/// <returns>The folder with the specified path.</returns>
-	IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.TryGetValue(path, out IVaultFolder? folder) ? folder : null;
+	IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.GetValueOrDefault(path);
 
 	/// <summary>
 	/// Gets the file with the specified path, or null if no such file exists.
 	/// </summary>
 	/// <param name="path">The path of the file to retrieve.</param>
 	/// <returns>The file with the specified path.</returns>
-	IVaultFile? GetFile(string path) => Files.TryGetValue(path, out IVaultFile? file) ? file : null;
+	IVaultFile? GetFile(string path) => Files.GetValueOrDefault(path);
 
 	/// <summary>
 	/// A dictionary of all files in the vault, keyed by their relative paths.
@@ -56,4 +57,18 @@ public interface IVault
 	/// The paths are relative to the vault root, and do not include the vault root's name.
 	/// </remarks>
 	IReadOnlyDictionary<string, IVaultNote> Notes { get; }
+	
+	/// <summary>
+	/// Defines an event handler for the <see cref="VaultUpdate"/> event.
+	/// </summary>
+	delegate ValueTask VaultUpdateEventHandler(object sender, VaultUpdateEventArgs e);
+	
+	/// <summary>
+	/// Occurs when the vault is updated.
+	/// </summary>
+	/// <remarks>
+	/// This event is raised when a file, folder, or note is added, removed, updated, or moved within the vault.
+	/// </remarks>
+	/// <seealso cref="VaultUpdateEventArgs"/>
+	event VaultUpdateEventHandler VaultUpdate;
 }

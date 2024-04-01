@@ -38,6 +38,9 @@ public sealed class FileSystemVault : IWritableVault
 	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
 
+	/// <inheritdoc />
+	public event IVault.VaultUpdateEventHandler? VaultUpdate;
+	
 
 	/// <summary>
 	/// Gets the default list of folders to ignore when loading a vault.
@@ -124,8 +127,9 @@ public sealed class FileSystemVault : IWritableVault
         };
         
         _watcher.Created += OnItemCreated;
+        _watcher.Changed += OnItemChanged;
         _watcher.Deleted += OnItemDeleted;
-        // _watcher.Renamed += OnItemRenamed;
+        _watcher.Renamed += OnItemRenamed;
     }
 
 	private static bool IsDirectory(string path)
@@ -136,7 +140,8 @@ public sealed class FileSystemVault : IWritableVault
 	
 	private string ToRelativePath(string fullPath) => fullPath[(Root.Path.Length + 1)..];
 	
-	private void OnItemCreated(object sender, FileSystemEventArgs e)
+	private void OnItemCreated(object sender, FileSystemEventArgs e) => OnItemCreatedAsync(sender, e).AsTask().GetAwaiter().GetResult();
+	private async ValueTask OnItemCreatedAsync(object sender, FileSystemEventArgs e)
 	{
 		string relativePath = ToRelativePath(e.FullPath);
 		
@@ -144,6 +149,8 @@ public sealed class FileSystemVault : IWritableVault
 		{
 			FileSystemVaultFolder folder = new(new(e.FullPath), Root.FindFurthestParent(relativePath), this);
 			_folders.TryAdd(folder.Name, folder);
+
+			await (VaultUpdate?.Invoke(this, new(UpdateType.Add, folder)) ?? new());
 		}
 		else
 		{
@@ -154,20 +161,83 @@ public sealed class FileSystemVault : IWritableVault
 			{
 				_notes.TryAdd(file.Path, note);
 			}
+
+			await (VaultUpdate?.Invoke(this, new(UpdateType.Add, file)) ?? new());
+		}
+	}
+	
+	private void OnItemRenamed(object sender, RenamedEventArgs e) => OnItemRenamedAsync(sender, e).AsTask().GetAwaiter().GetResult();
+	private async ValueTask OnItemRenamedAsync(object sender, RenamedEventArgs e)
+	{
+		string relativePath = ToRelativePath(e.FullPath);
+		string oldRelativePath = ToRelativePath(e.OldFullPath);
+		
+		if (IsDirectory(e.FullPath))
+		{
+			if (_folders.TryRemove(oldRelativePath, out IVaultFolder? folder))
+			{
+				_folders.TryAdd(relativePath, folder);
+				await (VaultUpdate?.Invoke(this, new(UpdateType.Move, folder)) ?? new());
+			}
+		}
+		else
+		{
+			if (_files.TryRemove(oldRelativePath, out IVaultFile? file))
+			{
+				_files.TryAdd(relativePath, file);
+				await (VaultUpdate?.Invoke(this, new(UpdateType.Move, file)) ?? new());
+			}
+			
+			if (_notes.TryRemove(oldRelativePath, out IVaultNote? note))
+			{
+				_notes.TryAdd(relativePath, note);
+			}
+		}
+	}
+	
+	private void OnItemChanged(object sender, FileSystemEventArgs e) => OnItemChangedAsync(sender, e).AsTask().GetAwaiter().GetResult();
+	private async ValueTask OnItemChangedAsync(object sender, FileSystemEventArgs e)
+	{
+		// There is nothing much to do here. All content changes are effective immediately through the FileSystemVault implementation.
+		// We just need to pick up the modified item, and propagate the change through the VaultUpdate event.
+		
+		string relativePath = ToRelativePath(e.FullPath);
+		
+		if (IsDirectory(e.FullPath))
+		{
+			if (_folders.TryGetValue(relativePath, out IVaultFolder? folder))
+			{
+				await (VaultUpdate?.Invoke(this, new(UpdateType.Update, folder)) ?? new());
+			}
+		}
+		else
+		{
+			if (_files.TryGetValue(relativePath, out IVaultFile? file))
+			{
+				await (VaultUpdate?.Invoke(this, new(UpdateType.Update, file)) ?? new());
+			}
 		}
 	}
 
-	private void OnItemDeleted(object sender, FileSystemEventArgs e)
+	private void OnItemDeleted(object sender, FileSystemEventArgs e) => OnItemDeletedAsync(sender, e).AsTask().GetAwaiter().GetResult();
+	private async ValueTask OnItemDeletedAsync(object sender, FileSystemEventArgs e)
 	{
 		string relativePath = ToRelativePath(e.FullPath);
 		
 		if (IsDirectory(e.FullPath))
 		{
-			_folders.TryRemove(relativePath, out _);
+			if (_folders.TryRemove(relativePath, out IVaultFolder? folder))
+			{
+				await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, folder)) ?? new());
+			}
 		}
 		else
 		{
-			_files.TryRemove(relativePath, out _);
+			if (_files.TryRemove(relativePath, out IVaultFile? file))
+			{
+				await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, file)) ?? new());
+			}
+			
 			_notes.TryRemove(relativePath, out _);
 		}
 	}
@@ -194,11 +264,7 @@ public sealed class FileSystemVault : IWritableVault
 		}
 		
 		// Find the furthest folder that exists, and create the rest.
-		
-		// Slice the path into segments
 		string[] segments = path.Split('/');
-		
-		// Find the furthest folder that exists
 		int furthestDepth = 0;
 		IVaultFolder furthestFolder = Root;
 		
@@ -206,7 +272,6 @@ public sealed class FileSystemVault : IWritableVault
 		{
 			string currentPath = string.Join('/', segments[..i]);
 			
-			// Check if the folder exists
 			if (!Folders.TryGetValue(currentPath, out IVaultFolder? folder))
 			{
 				break;
