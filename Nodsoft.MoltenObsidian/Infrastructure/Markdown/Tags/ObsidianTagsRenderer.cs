@@ -16,7 +16,7 @@ public class ObsidianTagsRenderer : HtmlObjectRenderer<Tag>
             return;
         }
 
-        renderer.Write(/*lang=html*/"<span class=\"tag\">");
+        renderer.Write(/*lang=html*/$"<span class=\"tag moltenobsidian-tag\" data-name=\"{obj.Name.ToLower()}\">");
         renderer.Write(obj.Name);
         renderer.WriteAttributes(obj);
         renderer.Write(/*lang=html*/"</span>");
