@@ -35,7 +35,9 @@ internal sealed class FileSystemVaultFolder : FileSystemVaultEntityBase, IVaultF
 	internal static FileSystemVaultFolder CreateFolder(string path, IVaultFolder? parent, FileSystemVault vault)
 	{
 		DirectoryInfo entity = Directory.CreateDirectory(System.IO.Path.Combine(((FileSystemVaultFolder)vault.Root).PhysicalDirectoryInfo.FullName, path));
-		return new(entity, parent, vault);
+		FileSystemVaultFolder folder = new(entity, parent, vault);
+		(parent as FileSystemVaultFolder)?.AddChildReference(folder);
+		return folder;
 	}
 
 	/// <summary>
@@ -43,8 +45,46 @@ internal sealed class FileSystemVaultFolder : FileSystemVaultEntityBase, IVaultF
 	/// </summary>
 	/// <exception cref="DirectoryNotFoundException">The specified directory does not exist.</exception>
 	/// <exception cref="IOException">An I/O error occurred while deleting the directory.</exception>
-	internal void DeleteFolder() => PhysicalDirectoryInfo.Delete(true);
+	internal void DeleteFolder()
+	{
+		PhysicalDirectoryInfo.Delete(true);
+		(Parent as FileSystemVaultFolder)?.DeleteChildReference(this);
+	}
 
+	internal void AddChildReference(IVaultEntity child)
+	{
+		if (child.Parent != this)
+		{
+			throw new InvalidOperationException("The specified entity is not a child of this folder.");
+		}
+
+		if (child is IVaultFolder folder)
+		{
+			_subfolders.Add((FileSystemVaultFolder)folder);
+		}
+		else if (child is IVaultFile file)
+		{
+			_files.Add((FileSystemVaultFile)file);
+		}
+	}
+
+	internal void DeleteChildReference(IVaultEntity child)
+	{
+		if (child.Parent != this)
+		{
+			throw new InvalidOperationException("The specified entity is not a child of this folder.");
+		}
+		
+		if (child is IVaultFolder folder)
+		{
+			_subfolders.Remove((FileSystemVaultFolder)folder);
+		}
+		else if (child is IVaultFile file)
+		{
+			_files.Remove((FileSystemVaultFile)file);
+		}
+	}
+	
 	public IReadOnlyList<IVaultFolder> Subfolders => _subfolders;
 
 	public IReadOnlyList<IVaultFile> Files => _files;
