@@ -16,9 +16,11 @@ public sealed class FileSystemVault : IWritableVault
 	private readonly ConcurrentDictionary<string, IVaultNote> _notes;
 
 	private readonly FileSystemWatcher _watcher;
+	private readonly DirectoryInfo _directoryInfo;
+
 
 	/// <inheritdoc />
-	public string Name { get; }
+	public string Name => _directoryInfo.Name;
 
 	/// <inheritdoc />
 	public IVaultFolder Root { get; }
@@ -89,8 +91,8 @@ public sealed class FileSystemVault : IWritableVault
 			throw new DirectoryNotFoundException("The specified directory does not exist.");
 		}
 
-		Name = directory.Name;
-		Root = new FileSystemVaultFolder(directory, null, this);
+		_directoryInfo = directory;
+		Root = new FileSystemVaultFolder(_directoryInfo, null, this);
 
 		// Now we need to load all the files and folders
 		_folders = new(Root
@@ -138,7 +140,7 @@ public sealed class FileSystemVault : IWritableVault
 		return (attr & FileAttributes.Directory) is FileAttributes.Directory;
 	}
 	
-	private string ToRelativePath(string fullPath) => fullPath[(Root.Path.Length + 1)..];
+	private string ToRelativePath(string fullPath) => fullPath[(_directoryInfo.FullName.Length + 1)..];
 	
 	private void OnItemCreated(object sender, FileSystemEventArgs e) => OnItemCreatedAsync(sender, e).AsTask().GetAwaiter().GetResult();
 	private async ValueTask OnItemCreatedAsync(object sender, FileSystemEventArgs e)
@@ -224,21 +226,14 @@ public sealed class FileSystemVault : IWritableVault
 	{
 		string relativePath = ToRelativePath(e.FullPath);
 		
-		if (IsDirectory(e.FullPath))
+		if (_folders.TryRemove(relativePath, out IVaultFolder? folder))
 		{
-			if (_folders.TryRemove(relativePath, out IVaultFolder? folder))
-			{
-				await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, folder)) ?? new());
-			}
+			await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, folder)) ?? new());
 		}
-		else
+		else if (_files.TryRemove(relativePath, out IVaultFile? file))
 		{
-			if (_files.TryRemove(relativePath, out IVaultFile? file))
-			{
-				await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, file)) ?? new());
-			}
-			
 			_notes.TryRemove(relativePath, out _);
+			await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, file)) ?? new());
 		}
 	}
 	
@@ -338,7 +333,7 @@ public sealed class FileSystemVault : IWritableVault
 	}
 
 	/// <inheritdoc />
-	public ValueTask DeleteFolderAsync(string path)
+	public async ValueTask DeleteFolderAsync(string path)
 	{
 		// Small step: Strip the leading slash if present
 		if (path.StartsWith('/'))
@@ -363,7 +358,9 @@ public sealed class FileSystemVault : IWritableVault
 		
 		// Delete the folder
 		((FileSystemVaultFolder)folder).DeleteFolder();
-		return new();
+		
+		await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, folder)) ?? new());
+		return;
 		
 		void _TraverseRemoveDownstream(IVaultFolder f)
 		{
@@ -380,7 +377,7 @@ public sealed class FileSystemVault : IWritableVault
 	}
 	
 	/// <inheritdoc />
-	public ValueTask DeleteFileAsync(string path)
+	public async ValueTask DeleteFileAsync(string path)
 	{
 		// Small step: Strip the leading slash if present
 		if (path.StartsWith('/'))
@@ -408,7 +405,8 @@ public sealed class FileSystemVault : IWritableVault
 		
 		// Delete the file
 		((FileSystemVaultFile)file).DeleteFile();
-		return new();
+		await (VaultUpdate?.Invoke(this, new(UpdateType.Remove, file)) ?? new());
+		return;
 	}
 	
 	/// <inheritdoc />
