@@ -3,6 +3,7 @@
     <PropertyGroup>
         <Description>Local Filesystem Vault provider for Molten Obsidian</Description>
         <PackageTags>$(CommonPackageTags), filesystem</PackageTags>
+        <UnsupportedOSPlatform>browser</UnsupportedOSPlatform>
     </PropertyGroup>
 
     <ItemGroup>

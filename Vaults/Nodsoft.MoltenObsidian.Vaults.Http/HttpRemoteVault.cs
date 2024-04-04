@@ -14,20 +14,32 @@ public sealed class HttpRemoteVault : IVault
 	internal HttpClient HttpClient { get; private init; }
 
 	private HttpRemoteVault() { }
-	
+
+	/// <inheritdoc />
 	public string Name { get; set; }
 
+	/// <inheritdoc />
 	public IVaultFolder Root => _root; 
 	private HttpRemoteFolder _root;
 
+	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
 	private readonly Dictionary<string, IVaultFolder> _folders = new();
-	
+
+	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultFile> Files => _files;
 	private readonly Dictionary<string, IVaultFile> _files = new();
 
+	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
 	private readonly Dictionary<string, IVaultNote> _notes = new();
+	
+	
+	/// <inheritdoc />
+	/// <remarks>
+	/// There is no change detection implemented within the HTTP Vault (yet).
+	/// </remarks>
+	public event IVault.VaultUpdateEventHandler? VaultUpdate;
 	
 	
 	/// <summary>

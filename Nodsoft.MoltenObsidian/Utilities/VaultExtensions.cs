@@ -176,6 +176,39 @@ public static class VaultExtensions
 			return null;
 		}
 	}
-	
-	
+
+	/// <summary>
+	/// Resolves a relative path's furthest target folder, relative to the current folder.
+	/// </summary>
+	/// <param name="parent">The folder to resolve the path from.</param>
+	/// <param name="path">The relative path to resolve.</param>
+	/// <returns>The furthest resolved folder, or <see cref="parent"/> if no suitable folder could be found.</returns>
+	public static IVaultFolder FindFurthestParent(this IVaultFolder parent, string path)
+	{
+		// Get the specified parent's relative path from the vault root.
+		return _TraverseUpstream(Path.Join(parent.Path, path).Replace('\\', '/')) ?? parent;
+		
+		
+		IVaultFolder? _TraverseUpstream(string? p)
+		{
+			if (p is null or "" or "/")
+			{
+				return null;
+			}
+			
+			if (parent.Vault.Folders.TryGetValue(p, out IVaultFolder? folder))
+			{
+				return folder;
+			}
+			
+			// Get the parent folder's path (chop off the last folder).
+			if (p.Contains('/'))
+			{
+				_TraverseUpstream(p[..^p.LastIndexOf('/')]);
+			}
+		
+			// And when all else fails...
+			return null;
+		}
+	}
 }

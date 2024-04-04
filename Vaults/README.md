@@ -32,8 +32,6 @@ IVault vault = FileSystemVault.FromDirectory("/path/to/vault");
 ```
 
 ### Known Limitations (Potential future features?)
- - **The FileSystem provider is readonly.** This is an upstream limitation from the `IVault` interface itself, which does not support any write capabilities, as of now.
- - **No tree refresh capabilities have been implemented yet.** Once instantiated, the Vault file structure is immutable.
  - **No caching support on the provider itself.** This is both by design and by constraint, as we intend to keep the reference Vault implementations as unopinionated as possible, relying on the most minimal set of dependencies (exception noted for [MS-DI/MEDI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection), which is taken for ganted as a standard for DI).
 
 **If any of those features are considered a necessity in your use case, feel free to voice your need by [raising an issue](https://github.com/Nodsoft/MoltenObsidian/issues).**
@@ -89,7 +87,7 @@ IVault vault = HttpRemoteVault.FromManifest(manifest, httpClient);
 Please note that the example path used in the above examples reflect the HTTP path preceding the Manifest's `moltenobsidian.manifest.json`. This means the actual manifest link would be `https://path.to/vault/moltenobsidian.manifest.json`.
 
 ### Known Limitations (Potential future features?)
- - **The HTTP provider is readonly.** This is an upstream limitation from the `IVault` interface itself, which does not support any write capabilities, as of now.
+ - **The HTTP provider is readonly by constraint.**
  - **No tree refresh capabilities have been implemented yet.** Once instantiated, the Vault file structure is immutable. This is by constraint, as we'd need to design a refresh mechanism on the vault's manifest itself ; The implications of which are debatable.
  - **No caching support on the provider itself.** This is both by design and by constraint, as we intend to keep the reference Vault implementations as unopinionated as possible, relying on the most minimal set of dependencies (exception noted for [MS-DI/MEDI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection), which is taken for ganted as a standard for DI).
  - **No checksum comparison implementation**. While the Manifest holds the checksum of each file, there is currently no use for these as of yet.
@@ -137,7 +135,7 @@ IVault vault = FtpRemoteVault.FromManifest(manifest, ftpClient);
 Please note that the example path used in the above examples reflect the FTP path preceding the Manifest's `moltenobsidian.manifest.json`. This means the actual manifest link would be `ftp://user:password@path.to/vault/moltenobsidian.manifest.json`.
 
 ### Known Limitations (Potential future features?)
-- **The FTP provider is readonly.** This is an upstream limitation from the `IVault` interface itself, which does not support any write capabilities, as of now.
+- **The FTP provider is readonly.**
 - **No tree refresh capabilities have been implemented yet.** Once instantiated, the Vault file structure is immutable. This is by constraint, as we'd need to design a refresh mechanism on the vault's manifest itself ; The implications of which are debatable.
 - **No caching support on the provider itself.** This is both by design and by constraint, as we intend to keep the reference Vault implementations as unopinionated as possible, relying on the most minimal set of dependencies (exception noted for [MS-DI/MEDI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection), which is taken for granted as a standard for DI).
 - **No checksum comparison implementation**. While the Manifest holds the checksum of each file, there is currently no use for these as of yet.

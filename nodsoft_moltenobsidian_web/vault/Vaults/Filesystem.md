@@ -27,8 +27,6 @@ IVault vault = FileSystemVault.FromDirectory("/path/to/vault");
 ```
 
 ### Known Limitations (Potential future features?)
- - **The FileSystem provider is readonly.** This is an upstream limitation from the `IVault` interface itself, which does not support any write capabilities as of now.
- - **No tree refresh capabilities have been implemented yet.** Once instantiated, the Vault file structure is immutable.
  - **No caching support on the provider itself.** This is both by design and by constraint, as we intend to keep the reference Vault implementations as unopinionated as possible, relying on the most minimal set of dependencies (exception noted for [MS-DI/MEDI](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection), which is taken for granted as a standard for DI).
 
 ***If any of those features are considered a necessity in your use case, feel free to voice your need by [raising an issue](https://github.com/Nodsoft/MoltenObsidian/issues).***
