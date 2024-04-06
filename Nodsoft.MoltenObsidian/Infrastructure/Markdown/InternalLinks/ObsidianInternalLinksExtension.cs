@@ -1,9 +1,6 @@
 ﻿using Markdig;
 using Markdig.Parsers.Inlines;
 using Markdig.Renderers;
-using Markdig.Renderers.Html.Inlines;
-using Markdig.Renderers.Normalize;
-using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;
 
@@ -12,11 +9,12 @@ namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;
 /// </summary>
 public sealed class InternalLinksExtension : IMarkdownExtension
 {
-	public InternalLinksExtension()
-	{
-		
-	}
-	
+	/// <summary>
+	/// Initializes a new instance of the <see cref="InternalLinksExtension"/> class.
+	/// </summary>
+	public InternalLinksExtension() { }
+
+	/// <inheritdoc />
 	public void Setup(MarkdownPipelineBuilder pipeline)
 	{
 		if (!pipeline.InlineParsers.Contains<ObsidianInternalLinksParser>())
@@ -26,5 +24,6 @@ public sealed class InternalLinksExtension : IMarkdownExtension
 		}
 	}
 
+	/// <inheritdoc />
 	public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer) { }
 }

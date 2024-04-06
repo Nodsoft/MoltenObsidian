@@ -1,6 +1,4 @@
-﻿using System.Net.Mime;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Syntax.Inlines;
@@ -25,15 +23,17 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	/// [[note_one|not note one]]
 	/// [[note#section|display|tooltip]]
 	/// </example>
-	private static readonly Regex _internalLinkRegex = new(
-		@"^\[\[(
-			# link, and optional anchor
-			(?<link>[^\|\#\]]+)?(\#(?<anchor>[^\|\]]+))? 
-			# display title (optional)
-			(\|(?<title>[^|\]]+))? 
-			# tooltip (optional)
-			(\|(?<tooltip>[^|\]]+))? 
-		)\]\]",
+	private static readonly Regex InternalLinkRegex = new(
+		"""
+			^\[\[(
+				# link, and optional anchor
+				(?<link>[^\|\#\]]+)?(\#(?<anchor>[^\|\]]+))?
+				# display title (optional)
+				(\|(?<title>[^|\]]+))?
+				# tooltip (optional)
+				(\|(?<tooltip>[^|\]]+))?
+			)\]\]
+		""",
 		RegexOptions.Compiled 
 		| RegexOptions.IgnorePatternWhitespace 
 		| RegexOptions.ExplicitCapture 
@@ -45,7 +45,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	/// </summary>
 	public ObsidianInternalLinksParser()
 	{
-		OpeningCharacters = new[] { '[' };
+		OpeningCharacters = ['['];
 	}
 
 	/// <inheritdoc />
@@ -58,7 +58,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 		}
 
 		// Grab the remainder of the slice, and check if it matches the internal link pattern.
-		Match match = _internalLinkRegex.Match(slice.Text[slice.Start..slice.End]);
+		Match match = InternalLinkRegex.Match(slice.Text[slice.Start..slice.End]);
 
 		if (match is { Groups: [{ Name: "0" }]})
 		{
@@ -82,38 +82,38 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 			Column = column,
 		};
 
-		if (processor.Context?.Properties.GetValueOrDefault("currentFile") as IVaultNote is { } currentFile 
-			&& internalLink.ResolveVaultLink(currentFile) is { } resolved)
+		if ((processor.Context?.Properties.GetValueOrDefault("currentFile") as IVaultNote) is not { } currentFile
+		    || internalLink.ResolveVaultLink(currentFile) is not { } resolved)
 		{
-			internalLink.Url = internalLink switch
-			{
-				{ TargetNote: not (null or ""), TargetSectionLinkFragment: { } section and not "" } 
-					when resolved.Path is [.. var path, '.', 'm', 'd']
-					=> $"{path}#{section.ToLowerInvariant().Replace(' ', '-')}",
-				
-				{ TargetNote: not (null or "") } when resolved.Path is [.. var path, '.', 'm', 'd'] => path,
-				{ TargetSection: not (null or "") } => $"{currentFile.Path}#{internalLink.TargetSectionLinkFragment}",
-				_ => "#"
-			};
-
-			internalLink.Title = internalLink switch
-			{
-				{ Display: { } display and not "" } => display,
-				{ TargetNote: { } note and not "", TargetSection: { } section and not "" } => $"{note.Split("/").Last()} > {section}",
-				{ TargetNote: not (null or "") } => internalLink.TargetNote.Split("/").Last(),
-				{ TargetSection: not (null or "") } => internalLink.TargetSection,
-				_ => string.Empty
-			};
-			
-			internalLink.AppendChild(new LiteralInline(internalLink.Title));
-			processor.Inline = internalLink;
-			
-			// Adjust the slice to account for the matched text
-			slice.Start += match.Length;
-			
-			return true;
+			return false;
 		}
 
-		return false;
+		internalLink.Url = internalLink switch
+		{
+			{ TargetNote: not (null or ""), TargetSectionLinkFragment: { } section and not "" } 
+				when resolved.Path is [.. var path, '.', 'm', 'd']
+				=> $"{path}#{section.ToLowerInvariant().Replace(' ', '-')}",
+				
+			{ TargetNote: not (null or "") } when resolved.Path is [.. var path, '.', 'm', 'd'] => path,
+			{ TargetSection: not (null or "") } => $"{currentFile.Path}#{internalLink.TargetSectionLinkFragment}",
+			_ => "#"
+		};
+
+		internalLink.Title = internalLink switch
+		{
+			{ Display: { } display and not "" } => display,
+			{ TargetNote: { } note and not "", TargetSection: { } section and not "" } => $"{note.Split("/").Last()} > {section}",
+			{ TargetNote: not (null or "") } => internalLink.TargetNote.Split("/").Last(),
+			{ TargetSection: not (null or "") } => internalLink.TargetSection,
+			_ => string.Empty
+		};
+			
+		internalLink.AppendChild(new LiteralInline(internalLink.Title));
+		processor.Inline = internalLink;
+			
+		// Adjust the slice to account for the matched text
+		slice.Start += match.Length;
+			
+		return true;
 	}
 }

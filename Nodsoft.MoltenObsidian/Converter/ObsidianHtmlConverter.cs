@@ -1,10 +1,5 @@
 ﻿using Markdig;
 using Nodsoft.MoltenObsidian.Vault;
-using YamlDotNet.Core;
-using YamlDotNet.RepresentationModel;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization.NodeDeserializers;
 
 namespace Nodsoft.MoltenObsidian.Converter;
 

@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Markdig.Helpers;
 using Markdig.Parsers;
 

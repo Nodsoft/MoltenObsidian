@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using Nodsoft.MoltenObsidian.Vault;
 
@@ -25,7 +24,7 @@ public sealed class InternalLink : LinkInline
 	/// <summary>
 	/// Regex substitution pattern for internal link anchors, to replace spaces with dashes and remove all other invalid characters.
 	/// </summary>
-	private static readonly Regex _anchorRegex = new(@"[^\w.]+", RegexOptions.Compiled);
+	private static readonly Regex AnchorRegex = new(@"[^\w.]+", RegexOptions.Compiled);
 
 	
 	/// <summary>
@@ -42,7 +41,10 @@ public sealed class InternalLink : LinkInline
 	/// </remarks>
 	public string? TargetSection { get; set; }
 
-	public string? TargetSectionLinkFragment => TargetSection is null ? null : _anchorRegex.Replace(TargetSection, "-").Trim('-').ToLowerInvariant();
+	/// <summary>
+	/// The fragment of the section anchor, suitable for use in a URL.
+	/// </summary>
+	public string? TargetSectionLinkFragment => TargetSection is null ? null : AnchorRegex.Replace(TargetSection, "-").Trim('-').ToLowerInvariant();
 	
 	/// <summary>
 	/// The display text of the internal link, if any.

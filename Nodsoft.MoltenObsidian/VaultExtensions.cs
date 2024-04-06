@@ -66,6 +66,7 @@ public static class VaultExtensions
 	/// <summary>
 	/// Gets all folders in this folder, and all subfolders if <paramref name="searchOption"/> is set to <see cref="SearchOption.AllDirectories"/>.
 	/// </summary>
+	/// <param name="folder">The folder to search.</param>
 	/// <param name="searchOption">The search option to use.</param>
 	/// <returns>A dictionary of all corresponding folders, keyed by their vault-relative path.</returns>
 	/// <seealso cref="IVaultFolder" />
@@ -144,7 +145,7 @@ public static class VaultExtensions
 			?? folder?.Files.FirstOrDefault(f => f is IVaultNote { NoteName: var noteName } 
 				&& noteName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
 		
-		static IVaultFile? _TraverseUpstream(IVaultFolder folder, string fileName)
+		static IVaultFile? _TraverseUpstream(IVaultFolder? folder, string fileName)
 		{
 			// First try to resolve in the current folder.
 			IVaultFile? resolvedFile = _FromFolderFiles(folder, fileName);
@@ -152,16 +153,16 @@ public static class VaultExtensions
 			resolvedFile = resolvedFile switch
 			{
 				// If that didn't work, try to resolve by traversing the vault, upstream first.
-				null when folder.Parent is not null => _TraverseUpstream(folder.Parent, fileName),
+				null when folder?.Parent is not null => _TraverseUpstream(folder.Parent, fileName),
 				_ => resolvedFile
 			};
 
 			return resolvedFile;
 		}
 		
-		static IVaultFile? _TraverseDownstream(IVaultFolder parent, string fileName)
+		static IVaultFile? _TraverseDownstream(IVaultFolder? parent, string fileName)
 		{
-			foreach (IVaultFolder? folder in parent.Subfolders)
+			foreach (IVaultFolder? folder in parent?.Subfolders ?? [])
 			{
 				// Does that folder contain the file?
 				if ((_FromFolderFiles(folder, fileName) ?? _TraverseDownstream(folder, fileName)) is { } resolvedFile)
@@ -182,7 +183,7 @@ public static class VaultExtensions
 	/// </summary>
 	/// <param name="parent">The folder to resolve the path from.</param>
 	/// <param name="path">The relative path to resolve.</param>
-	/// <returns>The furthest resolved folder, or <see cref="parent"/> if no suitable folder could be found.</returns>
+	/// <returns>The furthest resolved folder, or parent if no suitable folder could be found.</returns>
 	public static IVaultFolder FindFurthestParent(this IVaultFolder parent, string path)
 	{
 		// Get the specified parent's relative path from the vault root.
