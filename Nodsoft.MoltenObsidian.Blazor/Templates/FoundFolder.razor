@@ -35,6 +35,7 @@
 	/// Render context for a found folder.
 	/// </summary>
 	/// <param name="Folder">The folder that was found.</param>
+	/// <param name="DisplayOptions">The display options to use.</param>
 	public sealed record FoundFolderRenderContext(IVaultFolder Folder, ObsidianVaultDisplayOptions DisplayOptions)
 		: TemplateRenderContextBase(DisplayOptions);
 

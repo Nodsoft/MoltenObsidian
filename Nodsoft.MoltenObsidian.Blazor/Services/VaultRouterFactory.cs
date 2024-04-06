@@ -9,7 +9,7 @@ namespace Nodsoft.MoltenObsidian.Blazor.Services;
 /// <seealso cref="VaultRouter"/>
 public sealed class VaultRouterFactory
 {
-	private readonly Dictionary<IVault, VaultRouter> _routers = new();
+	private readonly Dictionary<IVault, VaultRouter> _routers = [];
 
 	/// <summary>
 	/// Gets the router for the specified vault.

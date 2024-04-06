@@ -17,6 +17,7 @@
 	/// Render context used when routing doesn't hit any entity.
 	/// </summary>
 	/// <param name="Path">Path that was requested.</param>
+	/// <param name="DisplayOptions">Display options to use.</param>
 	public sealed record NotFoundRenderContext(string Path, ObsidianVaultDisplayOptions DisplayOptions) : TemplateRenderContextBase(DisplayOptions);
 
 }

@@ -17,6 +17,7 @@
 	/// Render context for a found vault Note.
 	/// </summary>
 	/// <param name="Note">The vault Note to render.</param>
+	/// <param name="DisplayOptions">The display options to use when rendering the note.</param>
 	public record FoundNoteRenderContext(IVaultNote Note, ObsidianVaultDisplayOptions DisplayOptions) : TemplateRenderContextBase(DisplayOptions);
 
 }

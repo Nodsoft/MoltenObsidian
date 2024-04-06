@@ -1,7 +1,8 @@
 ﻿@using Nodsoft.MoltenObsidian.Vault
 
+@* ReSharper disable once InconsistentNaming *@
 @code {
-    public static @RenderFragment FolderNavigationTree(IVaultFolder folder, bool isRoot = false) => __builder =>
+    public static RenderFragment FolderNavigationTree(IVaultFolder folder, bool isRoot = false) => __builder =>
     {
         // Merge all subfolders and files into a single list.
         IOrderedEnumerable<KeyValuePair<string, IVaultEntity>> items = folder.Subfolders

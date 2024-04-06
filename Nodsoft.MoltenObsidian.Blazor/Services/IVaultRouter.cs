@@ -2,6 +2,9 @@
 
 namespace Nodsoft.MoltenObsidian.Blazor.Services;
 
+/// <summary>
+/// Specifies a service that routes paths to vault entities.
+/// </summary>
 public interface IVaultRouter
 {
 	/// <summary>

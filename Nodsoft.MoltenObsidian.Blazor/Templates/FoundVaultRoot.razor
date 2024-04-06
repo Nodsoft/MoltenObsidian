@@ -19,6 +19,7 @@
 	/// Render context for a found Vault Root.
 	/// </summary>
 	/// <param name="Vault">The Vault for which root was found.</param>
+	/// <param name="DisplayOptions">The display options to use.</param>
 	public sealed record FoundVaultRootRenderContext(IVault Vault, ObsidianVaultDisplayOptions DisplayOptions) : TemplateRenderContextBase(DisplayOptions);
 
 }
