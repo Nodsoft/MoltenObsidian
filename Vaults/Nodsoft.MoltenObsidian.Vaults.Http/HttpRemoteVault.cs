@@ -5,7 +5,7 @@ using Nodsoft.MoltenObsidian.Vaults.Http.Data;
 namespace Nodsoft.MoltenObsidian.Vaults.Http;
 
 /// <summary>
-/// Defines a remotely-accessible Molten Obisidan vault, via HTTP.
+/// Defines a remotely-accessible MoltenObisidan vault, via HTTP.
 /// </summary>
 public sealed class HttpRemoteVault : IVault
 {
@@ -24,15 +24,15 @@ public sealed class HttpRemoteVault : IVault
 
 	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
-	private readonly Dictionary<string, IVaultFolder> _folders = new();
+	private readonly Dictionary<string, IVaultFolder> _folders = [];
 
 	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultFile> Files => _files;
-	private readonly Dictionary<string, IVaultFile> _files = new();
+	private readonly Dictionary<string, IVaultFile> _files = [];
 
 	/// <inheritdoc />
 	public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
-	private readonly Dictionary<string, IVaultNote> _notes = new();
+	private readonly Dictionary<string, IVaultNote> _notes = [];
 	
 	
 	/// <inheritdoc />
@@ -65,7 +65,7 @@ public sealed class HttpRemoteVault : IVault
 			if (manifestFile.Path.Split('/') is not [.. var folderParts, var fileName]) continue;
 
 			IVaultFolder? currentFolder = vault._root;
-			IVaultFolder? parentFolder = vault._root;
+			IVaultFolder parentFolder = vault._root;
 
 			for (int i = 0; i < folderParts.Length; i++)
 			{

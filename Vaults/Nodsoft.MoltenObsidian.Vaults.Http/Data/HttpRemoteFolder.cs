@@ -2,6 +2,9 @@
 
 namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
+/// <summary>
+/// Represents a folder stored in a remote Molten Obsidian vault, accessible via HTTP.
+/// </summary>
 public sealed class HttpRemoteFolder : IVaultFolder
 {
 	private HttpRemoteFolder() { }
@@ -13,6 +16,11 @@ public sealed class HttpRemoteFolder : IVaultFolder
 		Vault = vault
 	};
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HttpRemoteFolder"/> class.
+	/// </summary>
+	/// <param name="part">The part of the path to represent.</param>
+	/// <param name="currentFolder">The parent folder of the folder.</param>
 	public HttpRemoteFolder(string part, IVaultFolder currentFolder)
 	{
 		Name = part.Split('/').Last();
@@ -20,16 +28,25 @@ public sealed class HttpRemoteFolder : IVaultFolder
 		Vault = currentFolder.Vault;
 	}
 
+	/// <inheritdoc />
 	public string Name { get; set; }
+
+	/// <inheritdoc />
 	public string Path { get; set; }
+
+	/// <inheritdoc />
 	public IVaultFolder? Parent { get; private init; }
+
+	/// <inheritdoc />
 	public IVault Vault { get; private init; }
-	
+
+	/// <inheritdoc />
 	public IReadOnlyList<IVaultFolder> Subfolders => _subfolders;
-	private readonly List<HttpRemoteFolder> _subfolders = new(); 
-	
+	private readonly List<HttpRemoteFolder> _subfolders = [];
+
+	/// <inheritdoc />
 	public IReadOnlyList<IVaultFile> Files => _files;
-	private readonly List<HttpRemoteFile> _files = new();
+	private readonly List<HttpRemoteFile> _files = [];
 	
 	/// <summary>
 	/// Adds a subfolder to this folder's list of subfolders.
