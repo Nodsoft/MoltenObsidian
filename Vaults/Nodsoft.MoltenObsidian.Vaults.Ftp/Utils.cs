@@ -3,9 +3,14 @@ using FluentFTP;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
 
+/// <summary>
+/// Provides utility methods for the FTP vault.
+/// </summary>
 public static class Utils
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    /// <summary>
+    /// Ensures that the client is connected to the server.
+    /// </summary>
     public static async ValueTask<AsyncFtpClient> EnsureConnected(this AsyncFtpClient client)
     {
         if (!client.IsConnected)
