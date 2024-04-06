@@ -8,9 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Text.Json" Version="7.0.3" />
-
-		<PackageReference Include="MimeTypes" Version="2.4.1">
+		<PackageReference Include="MimeTypes" Version="2.5.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -20,4 +18,11 @@
 	  <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 	</ItemGroup>
 
+	<ItemGroup Condition="$(TargetFramework) == 'net8.0'">
+		<PackageReference Include="System.Text.Json" Version="8.0.3" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="$(TargetFramework) == 'net6.0'">
+		<PackageReference Include="System.Text.Json" Version="7.0.4" />
+	</ItemGroup>
 </Project>
