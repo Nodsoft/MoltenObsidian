@@ -62,24 +62,16 @@ public static class StaticSiteGenerator
         {
             // It's a note. Convert to html and save frontmatter if any.
             return text.Frontmatter is { Count: not 0 }
-                ? new()
-                {
-                    // frontmatter
+                ? [
                     new(new($"{path}.yaml"), Encoding.ASCII.GetBytes(YamlSerializer.Serialize(text.Frontmatter))),
                     // html
                     new(new($"{path}.html"), Encoding.ASCII.GetBytes(text.ToHtml()))
-                }
-                : new()
-                {
-                    new(new($"{path}.html"), Encoding.ASCII.GetBytes(text.ToHtml()))
-                };
+                ]
+                : [new(new($"{path}.html"), Encoding.ASCII.GetBytes(text.ToHtml()))];
         }
         
         // Otherwise it's a file. Save it.
-        return new()
-        {
-            new(new($"{path}{extension}"), await inputFile.Value.ReadBytesAsync())
-        };
+        return [new(new($"{path}{extension}"), await inputFile.Value.ReadBytesAsync())];
     }
 
     /// <summary>
@@ -111,7 +103,7 @@ public static class StaticSiteGenerator
         // download manifest and use it to construct the ftpremotevault
         AsyncFtpClient client = new(uri.Host, user, pass, 21);
 
-        object value = await client.EnsureConnected();
+        await client.EnsureConnected();
         byte[] bytes = await client.DownloadBytes(RemoteVaultManifest.ManifestFileName, CancellationToken.None);
         RemoteVaultManifest? manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(bytes);
 
