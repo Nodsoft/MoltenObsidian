@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using FluentFTP;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Manifest;
@@ -17,9 +17,12 @@ public static class VaultDependencyInjectionExtensions
     private static async Task<IVault> BuildFtpVaultAsync(Func<IServiceProvider, AsyncFtpClient> ftpClientProvider, IServiceProvider services)
     {
         AsyncFtpClient ftpClient = await ftpClientProvider(services).EnsureConnected();
-        byte[] bytes = await ftpClient.DownloadBytes("moltenobsidian.manifest.json", CancellationToken.None) 
+        
+        await using Stream stream = await ftpClient.OpenRead("moltenobsidian.manifest.json") 
             ?? throw new InvalidOperationException("Could not download manifest.");
         
+        RemoteVaultManifest manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(stream)
+            ?? throw new InvalidOperationException("Could not deserialize manifest.");
 
         return FtpRemoteVault.FromManifest(manifest, ftpClient);
     }
