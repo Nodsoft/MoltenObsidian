@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
-using Nodsoft.MoltenObsidian.Utilities;
 using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;

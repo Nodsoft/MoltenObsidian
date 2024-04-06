@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using JetBrains.Annotations;
-using Nodsoft.MoltenObsidian.Utilities;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
 
@@ -290,7 +289,7 @@ public sealed class FileSystemVault : IWritableVault
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<IVaultFile> WriteFileAsync(string path, byte[] content)
+	public async ValueTask<IVaultFile> WriteFileAsync(string path, Stream content)
 	{
 		// Small step: Strip the leading slash if present
 		if (path.StartsWith('/'))
@@ -321,7 +320,7 @@ public sealed class FileSystemVault : IWritableVault
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<IVaultNote> WriteNoteAsync(string path, byte[] content)
+	public async ValueTask<IVaultNote> WriteNoteAsync(string path, Stream content)
 	{
 		// This is just a wrapper around CreateFileAsync with a check for the extension.
 		if (!path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
