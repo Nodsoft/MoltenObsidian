@@ -44,13 +44,13 @@ internal class FileSystemVaultFile : FileSystemVaultEntityBase, IVaultFile
 	/// <param name="parent">The parent folder of the file to create.</param>
 	/// <param name="vault">The vault that the file belongs to.</param>
 	/// <returns>The newly created <see cref="FileSystemVaultFile"/> instance.</returns>
-	public static async ValueTask<FileSystemVaultFile> WriteFileAsync(string path, ReadOnlyMemory<byte> content, IVaultFolder parent, FileSystemVault vault)
+	public static async ValueTask<FileSystemVaultFile> WriteFileAsync(string path, Stream content, IVaultFolder parent, FileSystemVault vault)
 	{
 		string fullPath = System.IO.Path.Join(((FileSystemVaultFolder)vault.Root).PhysicalDirectoryInfo.FullName, path);
 		bool fileExists = File.Exists(fullPath);
 		
 		await using FileStream fs = File.Open(fullPath, FileMode.Create, FileAccess.Write);
-		await fs.WriteAsync(content);
+		await content.CopyToAsync(fs);
 		fs.Flush();
 		
 		FileSystemVaultFile file = parent.Files.FirstOrDefault(f => f.Path == path) as FileSystemVaultFile 

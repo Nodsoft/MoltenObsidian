@@ -1,6 +1,6 @@
 ﻿using Nodsoft.MoltenObsidian.Vault;
 
-namespace Nodsoft.MoltenObsidian.Utilities;
+namespace Nodsoft.MoltenObsidian;
 
 /// <summary>
 /// Verious extension methods for the <see cref="IVault"/> interface and its dependents.
@@ -26,7 +26,7 @@ public static class VaultExtensions
 		
 		// All directories? Okay. Get ready for quite a bit of recursion.
 		// Traverse the subfolders.
-		Dictionary<string, IVaultFile> files = new();
+		Dictionary<string, IVaultFile> files = [];
 		_FolderTraversal(folder, ref files);
 		
 		return files;
@@ -78,7 +78,7 @@ public static class VaultExtensions
 		
 		// All directories? Okay. Get ready for quite a bit of recursion.
 		// Traverse the subfolders.
-		Dictionary<string, IVaultFolder> folders = new();
+		Dictionary<string, IVaultFolder> folders = [];
 		_FolderTraversal(folder, ref folders);
 		
 		return folders;
@@ -210,5 +210,44 @@ public static class VaultExtensions
 			// And when all else fails...
 			return null;
 		}
+	}
+
+	/// <summary>
+	/// Writes content to a specified file, creating the file if it does not exist.
+	/// </summary>
+	/// <remarks>
+	///	If the file already exists, it will be overwritten.
+	///	If the file's path hits a missing folder, the folder will be created.
+	/// </remarks>
+	/// <param name="vault">The vault to write to.</param>
+	/// <param name="path">The path of the file to write to.</param>
+	/// <param name="content">The content to write to the file.</param>
+	/// <returns>A task that holds the file as its result.</returns>
+	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
+	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
+	public static async ValueTask<IVaultFile> WriteFileAsync(this IWritableVault vault, string path, byte[] content)
+	{
+		await using MemoryStream ms = new(content);
+		return await vault.WriteFileAsync(path, ms);
+	}
+	
+	/// <summary>
+	/// Writes content to a specified note, creating the note if it does not exist.
+	/// </summary>
+	/// <remarks>
+	/// If the note already exists, it will be overwritten.
+	/// If the note's path hits a missing folder, the folder will be created.
+	/// </remarks>
+	/// <param name="vault">The vault to write to.</param>
+	/// <param name="path">The path of the note to write to.</param>
+	/// <param name="content">The content to write to the note.</param>
+	/// <returns>A task that holds the note as its result.</returns>
+	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
+	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
+	/// <seealso cref="WriteFileAsync(IWritableVault, string, byte[])" />
+	public static async ValueTask<IVaultNote> WriteNoteAsync(this IWritableVault vault, string path, byte[] content)
+	{
+		await using MemoryStream ms = new(content);
+		return (IVaultNote)await vault.WriteFileAsync(path, ms);
 	}
 }

@@ -29,18 +29,12 @@ public interface IWritableVault : IVault
 	ValueTask DeleteFolderAsync(string path);
 	
 	/// <summary>
-	/// Writes content to a specified file, creating the file if it does not exist.
+	/// Writes the streamed content to a specified file, creating the file if it does not exist.
 	/// </summary>
-	/// <remarks>
-	///	If the file already exists, it will be overwritten.
-	///	If the file's path hits a missing folder, the folder will be created.
-	/// </remarks>
-	/// <param name="path">The path of the file to create.</param>
-	/// <param name="content">The content of the file to create.</param>
-	/// <returns>A task that holds the newly created file as its result.</returns>
-	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
-	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
-	ValueTask<IVaultFile> WriteFileAsync(string path, byte[] content);
+	/// <param name="path">The path of the file to write to.</param>
+	/// <param name="content">The streamed content to write to the file.</param>
+	/// <returns>A task that holds the file as its result.</returns>
+	ValueTask<IVaultFile> WriteFileAsync(string path, Stream content);
 	
 	/// <summary>
 	/// Deletes the file with the specified path.
@@ -51,21 +45,20 @@ public interface IWritableVault : IVault
 	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
 	ValueTask DeleteFileAsync(string path);
 	
-	
 	/// <summary>
-	/// Writes content to a specified note, creating the note if it does not exist.
+	/// Writes streamed content to a specified note, creating the note if it does not exist.
 	/// </summary>
 	/// <remarks>
 	/// If the note already exists, it will be overwritten.
 	/// If the note's path hits a missing folder, the folder will be created.
 	/// </remarks>
-	/// <param name="path">The path of the note to create.</param>
-	/// <param name="content">The content of the note to create.</param>
-	/// <returns>A task that holds the newly created note as its result.</returns>
+	/// <param name="path">The path of the note to write to.</param>
+	/// <param name="content">The streamed content to write to the note.</param>
+	/// <returns>A task that holds the note as its result.</returns>
 	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
 	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
-	/// <seealso cref="WriteFileAsync(string, byte[])"/>
-	ValueTask<IVaultNote> WriteNoteAsync(string path, byte[] content);
+	/// <seealso cref="WriteFileAsync(string, Stream)"/>
+	ValueTask<IVaultNote> WriteNoteAsync(string path, Stream content);
 
 	/// <summary>
 	/// Deletes the note with the specified path.
