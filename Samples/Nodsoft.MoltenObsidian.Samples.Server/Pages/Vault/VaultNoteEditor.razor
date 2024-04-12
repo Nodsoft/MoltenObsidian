@@ -1,0 +1,49 @@
+@page "/vault/edit"
+@using System.Text
+@using Nodsoft.MoltenObsidian.Vault
+@inject IWritableVault Vault
+
+<h3>VaultNoteEditor</h3>
+<p>Editing path: <code>@(EditPath ?? "*null*")</code></p>
+
+<EditForm Model="@_editModel" OnValidSubmit="SaveAsync">
+    <InputTextArea @bind-Value="@_editModel.Content" class="form-control" style="height: 300px" />
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
+
+
+@code {
+    [Parameter, SupplyParameterFromQuery(Name = "path")]
+    public string? EditPath { get; set; }
+
+    private IVaultFile? _file;
+    private readonly VaultFileModel _editModel = new();
+    
+    /// <inheritdoc />
+    protected override async Task OnParametersSetAsync()
+    {
+        if (EditPath is not null)
+        {
+            _file = Vault.GetFile(EditPath);
+            if (_file is not null)
+            {
+                _editModel.Path = _file.Path;
+                _editModel.Content = Encoding.UTF8.GetString(await _file.ReadBytesAsync());
+            }
+        }
+        
+        await base.OnParametersSetAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        await Vault.WriteFileAsync(EditPath, Encoding.UTF8.GetBytes(_editModel.Content));
+    }
+    
+    public class VaultFileModel
+    {
+        public string Path { get; set; }
+        public string Content { get; set; }
+    }
+
+}

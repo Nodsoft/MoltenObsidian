@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    
+    <PropertyGroup>
+        <!-- Remove documentation, and warnings for missing documentation (useless in samples) -->
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <NoWarn>1591</NoWarn>
+    </PropertyGroup>
+    
+</Project>

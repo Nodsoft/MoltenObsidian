@@ -1,0 +1,47 @@
+﻿@page "/vault/{*VaultPath}"
+@inject IWritableVault Vault
+
+@using Nodsoft.MoltenObsidian.Vault
+@using Nodsoft.MoltenObsidian.Blazor.Helpers
+@using Nodsoft.MoltenObsidian.Converter
+@using Nodsoft.MoltenObsidian.Blazor.Helpers.Components
+
+<h3>VaultPage</h3>
+
+<ObsidianVaultDisplay Vault="Vault" BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath" Options="@VaultDisplayOptions" Context="ctx">
+	<FoundNote>
+		<div class="d-flex flex-row justify-content-between">
+			@VaultPath
+			
+			<div id="toolbar" class="d-flex flex-row">
+				<a class="btn btn-warning" href="/vault/edit?path=@Uri.EscapeDataString(ctx.Note.Path)">Edit</a>
+				<button class="btn btn-danger" @onclick="async () => await RemoveNoteAsync(ctx.Note)">Delete</button>
+			</div>
+		</div>
+		
+		<hr />
+
+		<article name="@ctx.Note.Name">
+			<RenderNoteContent Note="@ctx.Note" Converter="ctx.DisplayOptions.Converter" />
+		</article>
+	</FoundNote>
+</ObsidianVaultDisplay>
+
+
+@code {
+
+	[Parameter]
+	public string VaultPath { get; set; }
+
+	public static ObsidianVaultDisplayOptions VaultDisplayOptions = new()
+	{
+		Converter = new(new ObsidianPipelineBuilder(true, true).Build())
+	};
+
+	private async Task RemoveNoteAsync(IVaultNote note)
+	{
+		await ((note.Vault as IWritableVault)?.DeleteNoteAsync(note.Path) ?? new());
+		StateHasChanged();
+	}
+
+}

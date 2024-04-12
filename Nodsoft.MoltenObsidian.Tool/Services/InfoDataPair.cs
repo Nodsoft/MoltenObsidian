@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Nodsoft.MoltenObsidian.Tool.Services;
+﻿namespace Nodsoft.MoltenObsidian.Tool.Services;
 
 public record InfoDataPair(FileInfo FileInfo, byte[] FileData);
 

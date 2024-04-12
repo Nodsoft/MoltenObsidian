@@ -1,6 +1,6 @@
 ﻿using Nodsoft.MoltenObsidian.Vault;
 
-namespace Nodsoft.MoltenObsidian.Utilities;
+namespace Nodsoft.MoltenObsidian;
 
 /// <summary>
 /// Verious extension methods for the <see cref="IVault"/> interface and its dependents.
@@ -26,7 +26,7 @@ public static class VaultExtensions
 		
 		// All directories? Okay. Get ready for quite a bit of recursion.
 		// Traverse the subfolders.
-		Dictionary<string, IVaultFile> files = new();
+		Dictionary<string, IVaultFile> files = [];
 		_FolderTraversal(folder, ref files);
 		
 		return files;
@@ -66,6 +66,7 @@ public static class VaultExtensions
 	/// <summary>
 	/// Gets all folders in this folder, and all subfolders if <paramref name="searchOption"/> is set to <see cref="SearchOption.AllDirectories"/>.
 	/// </summary>
+	/// <param name="folder">The folder to search.</param>
 	/// <param name="searchOption">The search option to use.</param>
 	/// <returns>A dictionary of all corresponding folders, keyed by their vault-relative path.</returns>
 	/// <seealso cref="IVaultFolder" />
@@ -78,7 +79,7 @@ public static class VaultExtensions
 		
 		// All directories? Okay. Get ready for quite a bit of recursion.
 		// Traverse the subfolders.
-		Dictionary<string, IVaultFolder> folders = new();
+		Dictionary<string, IVaultFolder> folders = [];
 		_FolderTraversal(folder, ref folders);
 		
 		return folders;
@@ -144,7 +145,7 @@ public static class VaultExtensions
 			?? folder?.Files.FirstOrDefault(f => f is IVaultNote { NoteName: var noteName } 
 				&& noteName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
 		
-		static IVaultFile? _TraverseUpstream(IVaultFolder folder, string fileName)
+		static IVaultFile? _TraverseUpstream(IVaultFolder? folder, string fileName)
 		{
 			// First try to resolve in the current folder.
 			IVaultFile? resolvedFile = _FromFolderFiles(folder, fileName);
@@ -152,16 +153,16 @@ public static class VaultExtensions
 			resolvedFile = resolvedFile switch
 			{
 				// If that didn't work, try to resolve by traversing the vault, upstream first.
-				null when folder.Parent is not null => _TraverseUpstream(folder.Parent, fileName),
+				null when folder?.Parent is not null => _TraverseUpstream(folder.Parent, fileName),
 				_ => resolvedFile
 			};
 
 			return resolvedFile;
 		}
 		
-		static IVaultFile? _TraverseDownstream(IVaultFolder parent, string fileName)
+		static IVaultFile? _TraverseDownstream(IVaultFolder? parent, string fileName)
 		{
-			foreach (IVaultFolder? folder in parent.Subfolders)
+			foreach (IVaultFolder? folder in parent?.Subfolders ?? [])
 			{
 				// Does that folder contain the file?
 				if ((_FromFolderFiles(folder, fileName) ?? _TraverseDownstream(folder, fileName)) is { } resolvedFile)
@@ -176,6 +177,78 @@ public static class VaultExtensions
 			return null;
 		}
 	}
+
+	/// <summary>
+	/// Resolves a relative path's furthest target folder, relative to the current folder.
+	/// </summary>
+	/// <param name="parent">The folder to resolve the path from.</param>
+	/// <param name="path">The relative path to resolve.</param>
+	/// <returns>The furthest resolved folder, or parent if no suitable folder could be found.</returns>
+	public static IVaultFolder FindFurthestParent(this IVaultFolder parent, string path)
+	{
+		// Get the specified parent's relative path from the vault root.
+		return _TraverseUpstream(Path.Join(parent.Path, path).Replace('\\', '/')) ?? parent;
+		
+		
+		IVaultFolder? _TraverseUpstream(string? p)
+		{
+			if (p is null or "" or "/")
+			{
+				return null;
+			}
+			
+			if (parent.Vault.Folders.TryGetValue(p, out IVaultFolder? folder))
+			{
+				return folder;
+			}
+			
+			// Get the parent folder's path (chop off the last folder).
+			if (p.Contains('/'))
+			{
+				_TraverseUpstream(p[..^p.LastIndexOf('/')]);
+			}
+		
+			// And when all else fails...
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// Writes content to a specified file, creating the file if it does not exist.
+	/// </summary>
+	/// <remarks>
+	///	If the file already exists, it will be overwritten.
+	///	If the file's path hits a missing folder, the folder will be created.
+	/// </remarks>
+	/// <param name="vault">The vault to write to.</param>
+	/// <param name="path">The path of the file to write to.</param>
+	/// <param name="content">The content to write to the file.</param>
+	/// <returns>A task that holds the file as its result.</returns>
+	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
+	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
+	public static async ValueTask<IVaultFile> WriteFileAsync(this IWritableVault vault, string path, byte[] content)
+	{
+		await using MemoryStream ms = new(content);
+		return await vault.WriteFileAsync(path, ms);
+	}
 	
-	
+	/// <summary>
+	/// Writes content to a specified note, creating the note if it does not exist.
+	/// </summary>
+	/// <remarks>
+	/// If the note already exists, it will be overwritten.
+	/// If the note's path hits a missing folder, the folder will be created.
+	/// </remarks>
+	/// <param name="vault">The vault to write to.</param>
+	/// <param name="path">The path of the note to write to.</param>
+	/// <param name="content">The content to write to the note.</param>
+	/// <returns>A task that holds the note as its result.</returns>
+	/// <exception cref="ArgumentException">Thrown if the specified path is invalid.</exception>
+	/// <exception cref="IOException">Thrown if an I/O error occurs.</exception>
+	/// <seealso cref="WriteFileAsync(IWritableVault, string, byte[])" />
+	public static async ValueTask<IVaultNote> WriteNoteAsync(this IWritableVault vault, string path, byte[] content)
+	{
+		await using MemoryStream ms = new(content);
+		return (IVaultNote)await vault.WriteFileAsync(path, ms);
+	}
 }

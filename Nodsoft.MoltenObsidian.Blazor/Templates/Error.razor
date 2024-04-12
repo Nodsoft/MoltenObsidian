@@ -19,6 +19,7 @@
 	/// </summary>
 	/// <param name="Path">The path that was being accessed when the error occured.</param>
 	/// <param name="Exception">The exception that was thrown.</param>
+	/// <param name="DisplayOptions">The display options to use.</param>
 	public sealed record ErrorRenderContext(string Path, Exception Exception, ObsidianVaultDisplayOptions DisplayOptions) 
 		: TemplateRenderContextBase(DisplayOptions);
 

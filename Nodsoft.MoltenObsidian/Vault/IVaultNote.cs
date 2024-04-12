@@ -25,7 +25,7 @@ public interface IVaultNote : IVaultFile
 	/// The name of the obsidian note. This usually corresponds to the file name, without the extension.
 	/// </summary>
 	/// <remarks>
-	/// This is a convenience property, and is equivalent to <see cref="IVaultFile.Name"/> without the extension.
+	/// This is a convenience property, and is equivalent to <see cref="IVaultEntity.Name"/> without the extension.
 	/// </remarks>
 	string NoteName => Name.EndsWith(".md") ? Name[..^3] : Name;
 }

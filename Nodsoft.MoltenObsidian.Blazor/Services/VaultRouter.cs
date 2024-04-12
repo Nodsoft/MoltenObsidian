@@ -8,7 +8,7 @@ namespace Nodsoft.MoltenObsidian.Blazor.Services;
 public sealed class VaultRouter : IVaultRouter
 {
 	private readonly IVault _vault;
-	private readonly Dictionary<string, IVaultEntity> _routes;
+	private Dictionary<string, IVaultEntity> _routes;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="VaultRouter"/> class.
@@ -17,8 +17,20 @@ public sealed class VaultRouter : IVaultRouter
 	public VaultRouter(IVault vault)
 	{
 		_vault = vault;
-		_routes = BuildRoutingTable(vault);
+		_vault.VaultUpdate += OnVaultUpdate;
+		_routes = BuildRoutingTable(_vault);
 	}
+
+	private ValueTask OnVaultUpdate(object sender, VaultUpdateEventArgs e)
+    {
+	    if (e.Type is not UpdateType.Update)
+	    {
+			// Rebuild the routing table.
+            _routes = BuildRoutingTable(_vault);
+	    }
+
+	    return new();
+    }
 	
 	/// <summary>
 	/// Routes a path to a vault entity.
@@ -46,7 +58,7 @@ public sealed class VaultRouter : IVaultRouter
 	private static Dictionary<string, IVaultEntity> BuildRoutingTable(IVault vault)
 	{
 		// First. Initialize the routing table.
-		Dictionary<string, IVaultEntity> routingTable = new();
+		Dictionary<string, IVaultEntity> routingTable = [];
 		
 		// Folders go first.
 		foreach (IVaultFolder folder in vault.Folders.Values)

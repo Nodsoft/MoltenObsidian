@@ -13,7 +13,7 @@ public static class VaultComponentHelpers
 	/// Regex for matching a slug segment at the end of a string. (e.g. "/{*slugName}")
 	/// This is the same regex used by the Blazor Router to match slug segments.
 	/// </summary>
-	private static readonly Regex _slugRegex = new(@"\/\{\*[\w\d]+\}$", RegexOptions.Compiled);
+	private static readonly Regex SlugRegex = new(@"\/\{\*[\w\d]+\}$", RegexOptions.Compiled);
 	
 	/// <summary>
 	/// A dictionary containing the base vault path for a component type.
@@ -23,7 +23,7 @@ public static class VaultComponentHelpers
 	/// <br />
 	/// Value: The base vault path for the component type.
 	/// </example>
-	private static readonly Dictionary<string, string> _baseVaultPaths = new();
+	private static readonly Dictionary<string, string> BaseVaultPaths = [];
 
 	/// <inheritdoc cref="GetCallingBaseVaultPath(Type)"/>
 	/// <typeparam name="TComponent">The type of the component to get the base vault path for.</typeparam>
@@ -45,7 +45,7 @@ public static class VaultComponentHelpers
 	private static string GetCallingBaseVaultPath(Type componentType)
 	{
 		// Check if the base vault path has already been resolved for this component type.
-		if (_baseVaultPaths.TryGetValue(componentType.FullName!, out string? resolved))
+		if (BaseVaultPaths.TryGetValue(componentType.FullName!, out string? resolved))
 		{
 			return resolved;
 		}
@@ -56,8 +56,8 @@ public static class VaultComponentHelpers
 		
 		// Second. Does the RouteAttribute have a slug segment at the end?
 		// If so, remove it.
-		string basePath = _slugRegex.IsMatch(routeAttribute.Template) 
-			? _slugRegex.Replace(routeAttribute.Template, string.Empty) 
+		string basePath = SlugRegex.IsMatch(routeAttribute.Template) 
+			? SlugRegex.Replace(routeAttribute.Template, string.Empty) 
 			: routeAttribute.Template;
 		
 		// Third. Does the base path end with slashes?
@@ -68,7 +68,7 @@ public static class VaultComponentHelpers
 		}
 		
 		// Finally. Cache the resolved base path and return it.
-		_baseVaultPaths.Add(componentType.FullName, basePath);
+		BaseVaultPaths.Add(componentType.FullName!, basePath);
 		return basePath;
 	}
 }

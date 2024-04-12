@@ -3,10 +3,19 @@ using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
+/// <summary>
+/// Represents a file stored in a remote Molten Obsidian vault, accessible via HTTP.
+/// </summary>
 public class HttpRemoteFile : IVaultFile
 {
 	private readonly ManifestFile _manifestFile;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="HttpRemoteFile"/> class.
+	/// </summary>
+	/// <param name="file">The manifest file to represent.</param>
+	/// <param name="name">The name of the file.</param>
+	/// <param name="parent">The parent folder of the file.</param>
 	protected HttpRemoteFile(ManifestFile file, string name, IVaultFolder parent)
 	{
 		_manifestFile = file;
@@ -21,10 +30,16 @@ public class HttpRemoteFile : IVaultFile
 			? new HttpRemoteNote(file, name, parent) 
 			: new HttpRemoteFile(file, name, parent);
 
+	/// <inheritdoc />
 	public string Name { get; }
+
+	/// <inheritdoc />
 	public string Path => _manifestFile.Path;
+
+	/// <inheritdoc />
 	public string ContentType => _manifestFile.ContentType ?? "application/octet-stream";
-	
+
+	/// <inheritdoc />
 	public async ValueTask<byte[]> ReadBytesAsync()
 	{
 		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
@@ -33,6 +48,7 @@ public class HttpRemoteFile : IVaultFile
 		
 	}
 
+	/// <inheritdoc />
 	public async ValueTask<Stream> OpenReadAsync()
 	{
 		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
@@ -40,8 +56,10 @@ public class HttpRemoteFile : IVaultFile
 		return await response.Content.ReadAsStreamAsync();
 	}
 
+	/// <inheritdoc />
 	public IVaultFolder Parent { get; }
-	
+
+	/// <inheritdoc />
 	public IVault Vault => Parent.Vault;
 	
 	

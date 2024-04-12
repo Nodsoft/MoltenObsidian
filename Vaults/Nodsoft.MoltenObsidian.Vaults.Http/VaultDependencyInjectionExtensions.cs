@@ -7,6 +7,9 @@ using Nodsoft.MoltenObsidian.Vaults.Http;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Provides extension methods for configuring MoltenObsidian vaults in the dependency injection container.
+/// </summary>
 [PublicAPI]
 public static class VaultDependencyInjectionExtensions
 {

@@ -1,45 +1,61 @@
 ﻿using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
 
-namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
+namespace Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
 
+/// <summary>
+/// Represents a folder in a remote FTP vault.
+/// </summary>
 public sealed class FtpRemoteFolder : IVaultFolder
 {
-    private List<FtpRemoteFile> _files = new();
-    private List<FtpRemoteFolder> _subfolders = new();
+    private List<FtpRemoteFile> _files = [];
+    private List<FtpRemoteFolder> _subfolders = [];
 
-    private FtpRemoteFolder()
-    {
-    }
+    private FtpRemoteFolder() { }
 
-    public FtpRemoteFolder(string part, IVaultFolder currentFolder)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FtpRemoteFolder"/> class.
+    /// </summary>
+    /// <param name="path">The path to the folder.</param>
+    /// <param name="currentFolder">The parent folder of the new folder.</param>
+    public FtpRemoteFolder(string path, IVaultFolder currentFolder)
     {
-        Name = part.Split('/').Last();
-        Path = part.Replace('\\', '/');
+        Path = path.Replace('\\', '/');
+        Name = Path.Split('/').Last();
         Vault = currentFolder.Vault;
     }
 
-    public string Name { get; set; }
-    public string Path { get; set; }
+    /// <inheritdoc />
+    public string Name { get; private init; }
+
+    /// <inheritdoc />
+    public string Path { get; private init; }
+
+    /// <inheritdoc />
     public IVaultFolder? Parent { get; private init; }
+
+    /// <inheritdoc />
     public IVault Vault { get; private init; }
+
+    /// <inheritdoc />
     public IReadOnlyList<IVaultFolder> Subfolders => _subfolders;
+
+    /// <inheritdoc />
     public IReadOnlyList<IVaultFile> Files => _files;
 
-    internal static FtpRemoteFolder FromRoot(string name, IVault vault) =>
-        new()
-        {
-            Name = name,
-            Path = "",
-            Vault = vault
-        };
+    internal static FtpRemoteFolder FromRoot(string name, IVault vault) => new()
+    {
+        Name = name,
+        Path = "",
+        Vault = vault
+    };
 
     internal void AddSubFolder(FtpRemoteFolder folder)
     {
         _subfolders.Add(folder);
     }
 
-    public void AddFile(FtpRemoteFile file)
+    
+    internal void AttachFile(FtpRemoteFile file)
     {
         _files.Add(file);
     }

@@ -36,6 +36,7 @@
 	/// </summary>
 	/// <param name="Note">The index note to render.</param>
 	/// <param name="Folder">The folder containing the index note.</param>
+	/// <param name="DisplayOptions">The display options to use.</param>
 	public sealed record FoundIndexNoteRenderContext(IVaultNote Note, IVaultFolder Folder, ObsidianVaultDisplayOptions DisplayOptions)
 		: TemplateRenderContextBase(DisplayOptions);
 

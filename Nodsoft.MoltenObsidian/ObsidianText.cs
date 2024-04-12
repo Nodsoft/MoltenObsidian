@@ -22,6 +22,7 @@ public readonly record struct ObsidianText
 	/// Creates a new <see cref="ObsidianText"/> from the specified string.
 	/// </summary>
 	/// <param name="obsidianText">The Obsidian-flavoured Markdown string.</param>
+	/// <param name="vaultFile">The Obsidian vault file that this text was loaded from.</param>
 	public ObsidianText(string obsidianText, IVaultNote? vaultFile = null)
 	{
 		_vaultFile = vaultFile;
@@ -31,14 +32,14 @@ public readonly record struct ObsidianText
 
 		// If there is a YAML header, parse it into a dictionary.
 		// Otherwise, set the frontmatter to an empty dictionary.
-		Frontmatter = frontmatter is null ? new() : ParseYamlFrontMatter(frontmatter);
+		Frontmatter = frontmatter is null ? [] : ParseYamlFrontMatter(frontmatter);
 	}
 
 
 	/// <summary>
 	/// YAML deserializer used to parse the YAML frontmatter, if present.
 	/// </summary>
-	private static readonly IDeserializer _yamlDeserializer = new DeserializerBuilder()
+	private static readonly IDeserializer YamlDeserializer = new DeserializerBuilder()
 		.WithNamingConvention(CamelCaseNamingConvention.Instance)
 		.Build();
 	
@@ -129,7 +130,7 @@ public readonly record struct ObsidianText
 	/// <param name="frontMatter">The YAML front matter to parse.</param>
 	/// <returns>A dictionary of key-value pairs.</returns>
 	/// <exception cref="YamlException">Thrown when the YAML front matter is invalid.</exception>
-	public static Dictionary<string, object> ParseYamlFrontMatter(string frontMatter) => _yamlDeserializer.Deserialize<Dictionary<string, object>>(frontMatter);
+	public static Dictionary<string, object> ParseYamlFrontMatter(string frontMatter) => YamlDeserializer.Deserialize<Dictionary<string, object>>(frontMatter);
 	
 	private static void TrimBom(scoped ref string text)
 	{

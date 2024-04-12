@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
 using Nodsoft.MoltenObsidian.Blazor.Helpers;
 using Nodsoft.MoltenObsidian.Blazor.Services;
@@ -12,7 +13,7 @@ namespace Nodsoft.MoltenObsidian.Blazor;
 /// Provides a central Razor component for loading files from the vault, according to page routing.
 /// </summary>
 [PublicAPI]
-public sealed partial class ObsidianVaultDisplay : ComponentBase
+public sealed class ObsidianVaultDisplay : ComponentBase
 {
 	/// <summary>
 	/// The Vault being displayed.
@@ -24,6 +25,9 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	/// </summary>
 	[Inject] public VaultRouterFactory? RouterFactory { get; set; }
 	
+	/// <summary>
+	/// The router responsible for handling paths for the <see cref="Vault"/>.
+	/// </summary>
 	public IVaultRouter? Router { get; set; }
 	
 	/// <summary>
@@ -109,6 +113,12 @@ public sealed partial class ObsidianVaultDisplay : ComponentBase
 	private IVaultEntity? _foundEntity;
 	private string _currentPath = ".";
 	private RenderFragment? _display;
+
+	/// <inheritdoc />
+	protected override void BuildRenderTree(RenderTreeBuilder builder) => builder.AddContent(0, _display);
+
+	/// <inheritdoc />
+	protected override bool ShouldRender() => _display is not null;
 
 	/// <inheritdoc />
 	protected override async Task OnParametersSetAsync()

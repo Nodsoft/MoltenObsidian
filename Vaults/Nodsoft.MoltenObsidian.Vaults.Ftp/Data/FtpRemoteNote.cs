@@ -4,14 +4,17 @@ using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
 
-internal class FtpRemoteNote : FtpRemoteFile, IVaultNote
+/// <summary>
+/// Represents a note in a remote FTP vault.
+/// </summary>
+/// <seealso cref="FtpRemoteFile" />
+public sealed class FtpRemoteNote : FtpRemoteFile, IVaultNote
 {
-    internal FtpRemoteNote(ManifestFile file, string name, IVaultFolder parent) : base(file, name, parent)
-    {
-    }
+    internal FtpRemoteNote(ManifestFile file, string name, IVaultFolder parent) : base(file, name, parent) { }
 
+    /// <inheritdoc />
     public async ValueTask<ObsidianText> ReadDocumentAsync()
     {
-        return new ObsidianText(Encoding.UTF8.GetString(await ReadBytesAsync()), this);
+        return new(Encoding.UTF8.GetString(await ReadBytesAsync()), this);
     }
 }
