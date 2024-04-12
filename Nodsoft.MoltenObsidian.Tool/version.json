@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json",
+  "inherit": true,
+  "version": "1.0-beta",
+  "pathFilters": [
+    ".",
+    "../Directory.Build.props",
+    ":/Nodsoft.MoltenObsidian/*",
+    ":/Nodsoft.MoltenObsidian.Manifest/*"
+  ]
+}
