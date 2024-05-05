@@ -4,4 +4,4 @@ This is a test vault, meant to be used with the `Nodsoft.MoltenObsidian.Tests` p
 
 ## See also :
 
-Check out this #cool_tag, and my [[Hidden Note]].
+Check out this #cool_tag and #cooler_tag, and my [[Hidden Note]].

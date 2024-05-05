@@ -17,7 +17,17 @@ public sealed class FileSystemVault : IWritableVault
 	private readonly FileSystemWatcher _watcher;
 	private readonly DirectoryInfo _directoryInfo;
 
-
+	/// <summary>
+	/// Defines the filesystem folders ignored by this vault.
+	/// </summary>
+	internal IEnumerable<string> ExcludedFolders { get; }
+	
+	/// <summary>
+	/// Defines the filesystem files ignored by this vault.
+	/// </summary>
+	internal IEnumerable<string> ExcludedFiles { get; }
+	
+	
 	/// <inheritdoc />
 	public string Name => _directoryInfo.Name;
 
@@ -46,12 +56,12 @@ public sealed class FileSystemVault : IWritableVault
 	/// <summary>
 	/// Gets the default list of folders to ignore when loading a vault.
 	/// </summary>
-	public static IEnumerable<string> DefaultIgnoredFolders { get; } = new[] { ".obsidian", ".git", ".vs", ".vscode", "node_modules" };
+	public static IEnumerable<string> DefaultIgnoredFolders { get; } = [".obsidian", ".git", ".vs", ".vscode", "node_modules"];
 	
 	/// <summary>
 	/// Gets the default list of files to ignore when loading a vault.
 	/// </summary>
-	public static IEnumerable<string> DefaultIgnoredFiles { get; } = new[] { ".DS_Store" };
+	public static IEnumerable<string> DefaultIgnoredFiles { get; } = [".DS_Store"];
 
 	/// <summary>
 	/// Creates a new <see cref="FileSystemVault"/> instance from the specified path.
@@ -90,6 +100,9 @@ public sealed class FileSystemVault : IWritableVault
 			throw new DirectoryNotFoundException("The specified directory does not exist.");
 		}
 
+		ExcludedFolders = excludedFolders;
+		ExcludedFiles = excludedFiles;
+
 		_directoryInfo = directory;
 		Root = new FileSystemVaultFolder(_directoryInfo, null, this);
 
@@ -105,7 +118,7 @@ public sealed class FileSystemVault : IWritableVault
 		);
 
 		// Load the files from the above folders
-		_files = new(_folders.Values.Concat(new[] { Root })
+		_files = new(_folders.Values.Concat([Root])
 			.SelectMany(f => f.GetFiles(SearchOption.TopDirectoryOnly))
 			// Take into account any exclusions
 			.Where(f =>
