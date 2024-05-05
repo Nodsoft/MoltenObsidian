@@ -7,7 +7,7 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace Nodsoft.MoltenObsidian;
 
 /// <summary>
-/// Represents a string of Obsian-flavoured Markdown text.
+/// Represents a string of Obsidian-flavoured Markdown text.
 /// </summary>
 [PublicAPI]
 public readonly record struct ObsidianText

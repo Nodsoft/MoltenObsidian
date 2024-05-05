@@ -21,6 +21,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
+      <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Assets/**" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 </Project>

@@ -1,11 +1,11 @@
-namespace Nodsoft.MoltenObsidian.Tests;
+namespace Nodsoft.MoltenObsidian.Tests.Core;
 
 /// <summary>
 /// Provides tests for the <see cref="ObsidianText"/> struct.
 /// </summary>
 /// <seealso cref="ObsidianText"/>
 [Collection(nameof(ObsidianText))]
-public class ObsidianTextTests
+public sealed class ObsidianTextTests
 {
     private const string PlainText = "This is a plain text string.";
 
