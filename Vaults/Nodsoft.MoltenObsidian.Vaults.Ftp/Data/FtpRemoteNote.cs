@@ -11,10 +11,4 @@ namespace Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
 public sealed class FtpRemoteNote : FtpRemoteFile, IVaultNote
 {
     internal FtpRemoteNote(ManifestFile file, string name, IVaultFolder parent) : base(file, name, parent) { }
-
-    /// <inheritdoc />
-    public async ValueTask<ObsidianText> ReadDocumentAsync()
-    {
-        return new(Encoding.UTF8.GetString(await ReadBytesAsync()), this);
-    }
 }

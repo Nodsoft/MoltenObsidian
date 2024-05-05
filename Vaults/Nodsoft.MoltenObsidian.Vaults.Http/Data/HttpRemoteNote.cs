@@ -10,10 +10,4 @@ namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 public sealed class HttpRemoteNote : HttpRemoteFile, IVaultNote
 {
 	internal HttpRemoteNote(ManifestFile file, string name, IVaultFolder parent) : base(file, name, parent) { }
-	
-	/// <summary>
-	/// Reads the document content of the note.
-	/// </summary>
-	/// <returns>A task containing the note's content.</returns>
-	public async ValueTask<ObsidianText> ReadDocumentAsync() => new(Encoding.UTF8.GetString(await ReadBytesAsync()), this);
 }
