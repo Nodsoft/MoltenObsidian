@@ -42,6 +42,7 @@ public class ObsidianTagsParser : InlineParser
         
         // ReSharper disable once StringLiteralTypo
         const string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_/-";
+        const string disallowedStandaloneChars = "0123456789";
         
         int endPos = slice.Start;
         
@@ -53,6 +54,12 @@ public class ObsidianTagsParser : InlineParser
         }
 
         if (slice.Text[slice.Start..endPos] is not ['#', .. [_, ..] match])
+        {
+            return false;
+        }
+        
+        // Disallow full-numeric tags
+        if (match.All(disallowedStandaloneChars.Contains))
         {
             return false;
         }
