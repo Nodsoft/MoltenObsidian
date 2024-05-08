@@ -15,7 +15,7 @@ public static class VaultManifestGenerator
 	/// <returns>A <see cref="RemoteVaultManifest"/> instance.</returns>
 	public static async Task<RemoteVaultManifest> GenerateManifestAsync(IVault vault)
 	{
-		List<ManifestFile> files = new();
+		List<ManifestFile> files = [];
 
 		// Grab all the files in the vault
 		foreach ((_, IVaultFile file) in vault.Files)
@@ -30,7 +30,7 @@ public static class VaultManifestGenerator
 		return new()
 		{
 			Name = vault.Name,
-			Files = files.ToArray(),
+			Files = [..files]
 		};
 	}
 
@@ -44,7 +44,27 @@ public static class VaultManifestGenerator
 		// Read the file. We'll need it later.
 		await using Stream stream = await file.OpenReadAsync();
 
-#if !NET7_0_OR_GREATER
+		// Build a new file object
+		return new()
+		{
+			Path = file.Path,
+			Hash = await HashDataAsync(stream),
+			Size = stream.Length,
+			ContentType = Manifest.MimeTypes.GetMimeType(file.Name), // A fuller namespace is required here because of a conflict with the other apparitions of MimeTypes.
+			Metadata = file is IVaultNote note ? (await note.ReadDocumentAsync()).Frontmatter : []
+		};
+	}
+	
+	/// <summary>
+	/// Computes the SHA256 hash of the specified stream.
+	/// </summary>
+	/// <param name="stream">The stream to hash.</param>
+	/// <returns>The SHA256 hash of the stream.</returns>
+	internal static async ValueTask<string> HashDataAsync(Stream stream)
+	{
+#if NET7_0_OR_GREATER
+		return Convert.ToBase64String(await SHA256.HashDataAsync(stream));
+#else
 		byte[] fileBytes = new byte[stream.Length];
 		int readBytesCount = await stream.ReadAsync(fileBytes);
 		
@@ -52,22 +72,8 @@ public static class VaultManifestGenerator
 		{
 			throw new InvalidOperationException("The file could not be read.");
 		}
+		
+		return Convert.ToBase64String(SHA256.HashData(fileBytes));
 #endif
-
-		// Build a new file object
-		return new()
-		{
-			Path = file.Path,
-			
-#if NET7_0_OR_GREATER
-			Hash = Convert.ToBase64String(await SHA256.HashDataAsync(stream)), // Create a SHA256 hash of the file 
-#else
-			Hash = Convert.ToBase64String(SHA256.HashData(fileBytes)), // Create a SHA256 hash of the file
-#endif
-			
-			Size = stream.Length,
-			ContentType = Manifest.MimeTypes.GetMimeType(file.Name), // A fuller namespace is required here because of a conflict with the other apparitions of MimeTypes.
-			Metadata = file is IVaultNote note ? (await note.ReadDocumentAsync()).Frontmatter : new()
-		};
 	}
 }
