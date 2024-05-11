@@ -23,6 +23,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>icon.png</PackageIcon>
 
+		<UseArtifactsOutput>true</UseArtifactsOutput>
+		
 		<!-- Generate XML documentation -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
