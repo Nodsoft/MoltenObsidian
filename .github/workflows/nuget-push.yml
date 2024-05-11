@@ -63,14 +63,14 @@ jobs:
         run: dotnet build -c Release --no-restore
         
       - name: Package
-        run: dotnet pack -c Release --no-build
+        run: dotnet pack -c Release --no-build --include-symbols
 
       - id: is-public-release
         uses: ASzc/change-string-case-action@v6
         with:
           string: ${{ steps.nbgv.outputs.PublicRelease }}
 
-      - name: Attest build provenance for .nupkgs
+      - name: Attest build provenance for .(s)nupkgs
         uses: actions/attest-build-provenance@v1
         # Only once per package: take nuget provider
         if: matrix.nuget.name == 'NuGet'
@@ -78,12 +78,11 @@ jobs:
           subject-path: "**/Release/*nupkg"
 
       # Publish
-      - name: Build, Pack & Publish to ${{ matrix.nuget.name }}
+      - name: Publish packages to ${{ matrix.nuget.name }}
         run: |
-          dotnet nuget push "**/Release/*nupkg" \
+          dotnet nuget push "**/Release/*.nupkg" \
           --source "${{ matrix.nuget.source }}" \
           --symbol-source "${{ matrix.nuget.source }}" \
           --api-key "${{ secrets[matrix.nuget.keyname] }}" \
           --symbol-api-key "${{ secrets[matrix.nuget.keyname] }}" \
-          --skip-duplicate ${{ steps.is-public-release.outputs.string }} 
-          
+          --skip-duplicate
