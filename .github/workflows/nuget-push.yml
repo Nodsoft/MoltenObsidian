@@ -116,4 +116,4 @@ jobs:
         # Only once per package: take nuget provider
         if: matrix.nuget.name == 'NuGet'
         with:
-          subject-path: '**/artifacts/**/*.nupkg'
+          subject-path: '**/Release/*.nupkg'
