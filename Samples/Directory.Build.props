@@ -3,6 +3,7 @@
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
     
     <PropertyGroup>
+        <IsPackable>false</IsPackable>
         <!-- Remove documentation, and warnings for missing documentation (useless in samples) -->
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <NoWarn>1591</NoWarn>
