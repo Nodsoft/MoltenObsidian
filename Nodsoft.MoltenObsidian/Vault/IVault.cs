@@ -25,6 +25,7 @@ public interface IVault
 	/// </summary>
 	/// <param name="path">The path of the folder to retrieve.</param>
 	/// <returns>The folder with the specified path.</returns>
+	[MustUseReturnValue]
 	IVaultFolder? GetFolder(string? path) => path is null or "" ? Root : Folders.GetValueOrDefault(path);
 
 	/// <summary>
@@ -32,6 +33,7 @@ public interface IVault
 	/// </summary>
 	/// <param name="path">The path of the file to retrieve.</param>
 	/// <returns>The file with the specified path.</returns>
+	[MustUseReturnValue]
 	IVaultFile? GetFile(string path) => Files.GetValueOrDefault(path);
 
 	/// <summary>

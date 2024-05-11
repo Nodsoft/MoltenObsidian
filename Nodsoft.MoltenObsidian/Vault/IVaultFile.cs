@@ -19,18 +19,11 @@ public interface IVaultFile : IVaultEntity
 	string ContentType { get; }
 	
 	/// <summary>
-	/// Reads the contents of the file, as a buffer.
-	/// </summary>
-	/// <returns>A buffer containing the file contents.</returns>
-	/// <exception cref="IOException">An error occurred while reading the file.</exception>
-	/// <exception cref="UnauthorizedAccessException">The file could not be accessed.</exception>
-	ValueTask<byte[]> ReadBytesAsync();
-	
-	/// <summary>
 	/// Opens the file for reading, as a stream.
 	/// </summary>
 	/// <returns>A stream containing the file contents.</returns>
 	/// <exception cref="IOException">An error occurred while opening a stream to the file.</exception>
 	/// <exception cref="UnauthorizedAccessException">The file could not be accessed.</exception>
+	[MustUseReturnValue]
 	ValueTask<Stream> OpenReadAsync();
 }

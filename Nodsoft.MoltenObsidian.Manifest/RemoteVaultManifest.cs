@@ -18,5 +18,5 @@ public class RemoteVaultManifest
 	/// <summary>
 	/// The relative paths of the files contained in the vault.
 	/// </summary>
-	public IReadOnlyList<ManifestFile> Files { get; init; } = Array.Empty<ManifestFile>();
+	public IReadOnlyList<ManifestFile> Files { get; init; } = [];
 }

@@ -1,4 +1,5 @@
-﻿using Nodsoft.MoltenObsidian.Vault;
+﻿using System.Text;
+using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian;
 
@@ -251,4 +252,29 @@ public static class VaultExtensions
 		await using MemoryStream ms = new(content);
 		return (IVaultNote)await vault.WriteFileAsync(path, ms);
 	}
+	
+	/// <summary>
+	/// Reads the contents of the file, as a buffer.
+	/// </summary>
+	/// <returns>A buffer containing the file contents.</returns>
+	/// <exception cref="IOException">An error occurred while reading the file.</exception>
+	/// <exception cref="UnauthorizedAccessException">The file could not be accessed.</exception>
+	[MustUseReturnValue]
+	public static async ValueTask<byte[]> ReadBytesAsync(this IVaultFile file)
+	{
+		await using Stream stream = await file.OpenReadAsync();
+		await using MemoryStream ms = new();
+		await stream.CopyToAsync(ms);
+		return ms.ToArray();
+	}
+	
+	/// <summary>
+	/// Reads the file as an ObsidianText instance.
+	/// </summary>
+	/// <returns>An ObsidianText instance.</returns>
+	/// <exception cref="IOException">Thrown if the file cannot be read.</exception>
+	/// <exception cref="InvalidDataException">Thrown if the file is not a valid Markdown file.</exception>
+	/// <exception cref="UnauthorizedAccessException">Thrown if the file cannot be accessed.</exception>
+	[MustUseReturnValue]
+	public static async ValueTask<ObsidianText> ReadDocumentAsync(this IVaultNote note) => new(Encoding.UTF8.GetString(await note.ReadBytesAsync()), note);
 }

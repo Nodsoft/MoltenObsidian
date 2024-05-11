@@ -1,4 +1,5 @@
-﻿using Nodsoft.MoltenObsidian.Manifest;
+﻿using FluentFTP;
+using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Ftp.Data;
@@ -41,20 +42,10 @@ public class FtpRemoteFile : IVaultFile
     public string ContentType { get; }
 
     /// <inheritdoc />
-    public async ValueTask<byte[]> ReadBytesAsync()
-    {
-        var client = await ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
-        var bytes = await client.DownloadBytes(_manifestFile.Path, default);
-        return bytes;
-    }
-
-    /// <inheritdoc />
     public async ValueTask<Stream> OpenReadAsync()
     {
-        var client = await ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
-        var stream = new MemoryStream();
-        await client.DownloadStream(stream, _manifestFile.Path);
-        return stream;
+        AsyncFtpClient client = await ((FtpRemoteVault)Vault).AsyncFtpClient.EnsureConnected();
+        return await client.OpenRead(_manifestFile.Path);
     }
 
     internal static FtpRemoteFile FromManifest(ManifestFile file, string name, IVaultFolder parent) =>
