@@ -8,6 +8,8 @@
 		<Deterministic>true</Deterministic>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
 		<Company>Nodsoft Systems</Company>
 		<Authors>Sakura Akeno Isayeki</Authors>
