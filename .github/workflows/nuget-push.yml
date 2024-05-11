@@ -80,10 +80,10 @@ jobs:
       # Publish
       - name: Build, Pack & Publish to ${{ matrix.nuget.name }}
         run: |
-          dotnet nuget push '**/Release/*nupkg'
-          --source "${{ matrix.nuget.source }}" 
-          --symbol-source "${{ matrix.nuget.source }}"
-          --api-key "${{ secrets[matrix.nuget.keyname] }}"
-          --symbol-api-key "${{ secrets[matrix.nuget.keyname] }}"
+          dotnet nuget push '**/Release/*nupkg' \
+          --source "${{ matrix.nuget.source }}" \
+          --symbol-source "${{ matrix.nuget.source }}" \
+          --api-key "${{ secrets[matrix.nuget.keyname] }}" \
+          --symbol-api-key "${{ secrets[matrix.nuget.keyname] }}" \
           --skip-duplicate ${{ steps.is-public-release.outputs.string }} 
           
