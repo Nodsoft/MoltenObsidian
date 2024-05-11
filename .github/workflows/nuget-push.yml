@@ -109,4 +109,11 @@ jobs:
           NUGET_SOURCE: ${{ matrix.nuget.source }}
 
           # Flag to toggle pushing symbols along with nuget package to the server, disabled by default
-          # INCLUDE_SYMBOLS: false
+          INCLUDE_SYMBOLS: true
+
+      - name: Attest build provenance for .nupkgs
+        uses: actions/attest-build-provenance@v1
+        # Only once per package: take nuget provider
+        if: matrix.nuget.name == 'NuGet'
+        with:
+          subject-path: '**/artifacts/**/*.nupkg'

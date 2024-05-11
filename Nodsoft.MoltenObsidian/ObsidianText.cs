@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Nodsoft.MoltenObsidian.Converter;
+﻿using Nodsoft.MoltenObsidian.Converter;
 using Nodsoft.MoltenObsidian.Vault;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -8,7 +7,7 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace Nodsoft.MoltenObsidian;
 
 /// <summary>
-/// Represents a string of Obsian-flavoured Markdown text.
+/// Represents a string of Obsidian-flavoured Markdown text.
 /// </summary>
 [PublicAPI]
 public readonly record struct ObsidianText
@@ -27,7 +26,13 @@ public readonly record struct ObsidianText
 	{
 		_vaultFile = vaultFile;
 		
+		if (obsidianText is null or "")
+		{
+			return;
+		}
+		
 		// First, check if the text starts with a YAML header, and split it off if so.
+		TrimBom(ref obsidianText);
 		(string? frontmatter, Text) = SplitYamlFrontMatter(obsidianText);
 
 		// If there is a YAML header, parse it into a dictionary.
@@ -42,17 +47,16 @@ public readonly record struct ObsidianText
 	private static readonly IDeserializer YamlDeserializer = new DeserializerBuilder()
 		.WithNamingConvention(CamelCaseNamingConvention.Instance)
 		.Build();
-	
+
 	/// <summary>
 	/// The Obsidian-flavoured Markdown text.
 	/// </summary>
-	public string Text { get; }
-	
+	public string Text { get; } = "";
+
 	/// <summary>
-	/// The YAML header (frontmatter) found at the beginning of the text,
-	/// parsed into a key-value dictionary.
+	/// The YAML header (frontmatter) found at the beginning of the text, parsed into a key-value dictionary.
 	/// </summary>
-	public Dictionary<string, object> Frontmatter { get; }
+	public Dictionary<string, object> Frontmatter { get; } = [];
 
 	/// <summary>
 	/// The length of <see cref="Text"/>.
@@ -105,7 +109,6 @@ public readonly record struct ObsidianText
 		
 		string[] lines = SplitByNewline(obsidianMarkdown);
 //		string[] lines = obsidianMarkdown.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-		TrimBom(ref lines[0]);
 		
 		int firstLine = Array.FindIndex(lines, _LineDelimiterPredicate);
 		int secondLine = Array.FindIndex(lines, firstLine + 1, _LineDelimiterPredicate);
@@ -134,7 +137,7 @@ public readonly record struct ObsidianText
 	
 	private static void TrimBom(scoped ref string text)
 	{
-		if (text.Length is not 0 && text[0] is '\uFEFF')
+		if (text[0] is '\uFEFF')
 		{
 			text = text[1..];
 		}
@@ -147,7 +150,7 @@ public readonly record struct ObsidianText
 	/// <returns></returns>
 	public static string[] SplitByNewline(ReadOnlySpan<char> input)
 	{
-		var result = new List<string>();
+		List<string> result = [];
 
 		int previousIndex = 0;
 		for (int i = 0; i < input.Length; i++)
@@ -155,13 +158,11 @@ public readonly record struct ObsidianText
 			if (input[i] is '\n' || (input[i] is '\r' && (i == input.Length - 1 || input[i + 1] is not '\n')))
 			{
 				result.Add(input[previousIndex..i].ToString());
-
 				previousIndex = i + 1;
 			}
 			else if (input[i] is '\r' && i < input.Length - 1 && input[i + 1] is '\n')
 			{
 				result.Add(input[previousIndex..i].ToString());
-
 				previousIndex = i + 2;
 				i++;
 			}
@@ -172,6 +173,6 @@ public readonly record struct ObsidianText
 			result.Add(input[previousIndex..].ToString());
 		}
 
-		return result.ToArray();
+		return [..result];
 	}
 }

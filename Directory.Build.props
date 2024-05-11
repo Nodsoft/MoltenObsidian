@@ -23,6 +23,8 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>icon.png</PackageIcon>
 
+		<UseArtifactsOutput>true</UseArtifactsOutput>
+		
 		<!-- Generate XML documentation -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
@@ -39,6 +41,12 @@
 		<None Condition="!Exists('README.md')" Include="$(_DirectoryBuildPropsBasePath)\README.md" Pack="true" PackagePath="/" />
 		<None Include="$(MSBuildThisFileDirectory)\LICENSE" Pack="true" PackagePath="/" />
 		<None Include="$(MSBuildThisFileDirectory)\icon.png" Pack="true" PackagePath="/" />
+	</ItemGroup>
+	
+	<ItemGroup Label="TestProjectAccessibility">
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Nodsoft.MoltenObsidian.Tests</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 	
 </Project>

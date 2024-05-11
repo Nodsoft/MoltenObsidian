@@ -40,15 +40,6 @@ public class HttpRemoteFile : IVaultFile
 	public string ContentType => _manifestFile.ContentType ?? "application/octet-stream";
 
 	/// <inheritdoc />
-	public async ValueTask<byte[]> ReadBytesAsync()
-	{
-		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
-		using HttpResponseMessage response = await httpClient.GetAsync(_manifestFile.Path);
-		return await response.Content.ReadAsByteArrayAsync();
-		
-	}
-
-	/// <inheritdoc />
 	public async ValueTask<Stream> OpenReadAsync()
 	{
 		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;

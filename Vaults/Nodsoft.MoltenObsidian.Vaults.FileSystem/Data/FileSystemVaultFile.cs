@@ -14,19 +14,9 @@ internal class FileSystemVaultFile : FileSystemVaultEntityBase, IVaultFile
 
 	public virtual string ContentType { get; }
 
-	public async ValueTask<byte[]> ReadBytesAsync()
-	{
-		// Grab the full path to the file. Use the vault's root path as the base.
-		string fullPath = FullPath;
-		
-		// Read the file's contents.
-		return await File.ReadAllBytesAsync(fullPath);
-	}
-
 	private string FullPath => System.IO.Path.Join(((FileSystemVaultFolder)Vault.Root).PhysicalDirectoryInfo.FullName, Path);
 
-	public ValueTask<Stream> OpenReadAsync() 
-		=> ValueTask.FromResult<Stream>(File.OpenRead(FullPath));
+	public ValueTask<Stream> OpenReadAsync() => new(File.OpenRead(FullPath));
 	
 	public static FileSystemVaultFile Create(FileInfo file, IVaultFolder parent, IVault vault) 
 		=> file.Extension is ".md"

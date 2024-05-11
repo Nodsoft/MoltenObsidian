@@ -39,13 +39,27 @@ public class ObsidianTagsParser : InlineParser
         
         // Set the end position to the next blank space, forbidden character, or end of the slice.
         // Allowed chars: a-z, A-Z, 0-9, _, /, -
+        
+        // ReSharper disable once StringLiteralTypo
+        const string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_/-";
+        const string disallowedStandaloneChars = "0123456789";
+        
         int endPos = slice.Start;
-        while (endPos < slice.Text.Length && !slice[endPos].IsWhiteSpaceOrZero())
+        
+        while (endPos < slice.Text.Length 
+               && slice[endPos] is var currentChar && !currentChar.IsWhiteSpaceOrZero() 
+               && (allowedChars.Contains(currentChar) || endPos == slice.Start && currentChar is '#'))
         {
             endPos++;
         }
 
         if (slice.Text[slice.Start..endPos] is not ['#', .. [_, ..] match])
+        {
+            return false;
+        }
+        
+        // Disallow full-numeric tags
+        if (match.All(disallowedStandaloneChars.Contains))
         {
             return false;
         }
@@ -56,7 +70,7 @@ public class ObsidianTagsParser : InlineParser
             Span = { Start = slice.Start, End = endPos }
         };
 
-        slice.Start = endPos + 1;
+        slice.Start = endPos;
         return true;
     }
 }

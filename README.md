@@ -1,17 +1,25 @@
-<img align="right" src="icon.png" alt="logo" width="256"/>
+<p align="center"><img src="icon.png" alt="logo" width="256"/></p>
+<h1 align="center">MoltenObsidian</h1>
+<h3 align="center">.NET 6+ Library for <a href="https://obsidian.md">Obsidian</a>-flavoured Markdown parsing, with support for vault mapping and Blazor.</h3>
 
-# Molten Obsidian
+<div align="center">
+	<hr />
+	<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Nodsoft/MoltenObsidian/build.yml?style=flat&logo=github&label=test%2Fbuild">
+	<img alt="NuGet Core Version" src="https://img.shields.io/nuget/v/Nodsoft.MoltenObsidian?style=flat&logo=nuget&label=core">
+	<img alt="NuGet Core Preversion" src="https://img.shields.io/nuget/vpre/Nodsoft.MoltenObsidian?style=flat&logo=nuget&label=core%20(pre)">
+	<img alt="NuGet Downloads" src="https://img.shields.io/nuget/dt/Nodsoft.MoltenObsidian?style=flat&logo=nuget">
+ 	<hr />
+ </div>
+ <div>&#8203;</div>
 
-**.NET 6+ Library for [Obsidian](https://obsidian.md)-flavoured Markdown parsing for Blazor with Vault mapping support.**
-
-### Premise
+## Premise
 
 Molten Obsidian is a high-performance library designed as an easily integrated and lightweight FOSS alternative to [Obsidian Publish](https://publish.obsidian.md). 
 With extensibility and integration-oriented conception, this library makes it perfect for integrating Obsidian-flavoured markdown notes on your Blazor App, but also importing entire vaults as a navigation-ready area, with full routing support.
 
 Furthermore, Molten Obisidian extends past the original [Obsidian specifications](https://help.obsidian.md/), aiming to supercharge your documentation/wiki applications and websites needs, using a customizable data source interface, and supercharged YAML frontmatter capabilities.
 
-## Example
+### Example
 
 **Converting an Obsidian-flavoured Markdown note to HTML** is as simple as this : 
 ```csharp
@@ -69,9 +77,9 @@ In a matter of minutes, you've just created a web app integration for your own O
 
 Now, let's take it further.
 
-# Customizations
+## Customizations
 
-## Vault sources (see: [Vaults](/Vaults))
+### Vault sources (see: [Vaults](/Vaults))
 Molten Obsidian is designed with extensibility at its core, and allows you to implement your own Vault source. Should the [**existing reference Vault providers**](/Vaults) not be suitable for your Vault storage needs, you can provide your own implementation. 
 
 **A few examples of additional stores you can implement:**
@@ -81,7 +89,7 @@ Molten Obsidian is designed with extensibility at its core, and allows you to im
 
 If you're finding yourself implementing any of these, feel free to PR! We'll be more than happy to support new vault providers.
 
-## Layouts
+### Layouts
 Molten Obsidian is meant to tailor itself to your app. As such, you can provide within the Blazor Component a series of `RenderFragment` delegates responsible for organizing the Vault display.
 
 You can provide them in cascade, as such :
