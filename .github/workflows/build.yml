@@ -46,10 +46,10 @@ jobs:
       - name: Attest build provenance for .nupkgs
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: 'artifacts/**/*.nupkg'
+          subject-path: '**/artifacts/**/*.nupkg'
         
       - name: Publish debug artifacts
         uses: actions/upload-artifact@v2
         with:
           name: debug-artifacts
-          path: 'artifacts/**'
+          path: '**/artifacts/**' 
