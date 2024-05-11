@@ -75,12 +75,12 @@ jobs:
         # Only once per package: take nuget provider
         if: matrix.nuget.name == 'NuGet'
         with:
-          subject-path: '**/Release/*.nupkg'
+          subject-path: "**/Release/*nupkg"
 
       # Publish
       - name: Build, Pack & Publish to ${{ matrix.nuget.name }}
         run: |
-          dotnet nuget push '**/Release/*nupkg' \
+          dotnet nuget push "**/Release/*nupkg" \
           --source "${{ matrix.nuget.source }}" \
           --symbol-source "${{ matrix.nuget.source }}" \
           --api-key "${{ secrets[matrix.nuget.keyname] }}" \
