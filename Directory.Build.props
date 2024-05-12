@@ -35,9 +35,12 @@
 	<ItemGroup>
 		<!-- Nerdbank.GitVersioning -->
 		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" Condition="!Exists('packages.config')" PrivateAssets="all" />
-		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
 	</ItemGroup>
 
+	<ItemGroup Condition="$(PackAsTool) != 'true'">
+		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
+	</ItemGroup>
+	
 	<ItemGroup Label="PackageInfoFiles">
 		<!-- Import the Readme at build props level if there is none in the project -->
 
