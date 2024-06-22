@@ -8,6 +8,8 @@
 		<Deterministic>true</Deterministic>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
 		<Company>Nodsoft Systems</Company>
 		<Authors>Sakura Akeno Isayeki</Authors>
@@ -23,7 +25,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>icon.png</PackageIcon>
 
-		<UseArtifactsOutput>true</UseArtifactsOutput>
+<!--		<UseArtifactsOutput>true</UseArtifactsOutput>-->
 		
 		<!-- Generate XML documentation -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -35,6 +37,10 @@
 		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" Condition="!Exists('packages.config')" PrivateAssets="all" />
 	</ItemGroup>
 
+	<ItemGroup Condition="$(PackAsTool) != 'true'">
+		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
+	</ItemGroup>
+	
 	<ItemGroup Label="PackageInfoFiles">
 		<!-- Import the Readme at build props level if there is none in the project -->
 
