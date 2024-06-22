@@ -25,8 +25,21 @@ const base = import.meta.env.BASE_URL ?? "/";
 <meta name="theme-color" content="#ffffff" />
 <meta name="generator" content={Astro.generator} />
 
+<!-- Preconnects -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+
 <!-- CSP -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' fonts.googleapis.com 'unsafe-inline'; font-src 'self' fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';" />
+<meta
+  http-equiv="Content-Security-Policy" 
+  content="
+    default-src 'self'; 
+    style-src 'self' https://fonts.googleapis.com/ 'unsafe-inline'; 
+    font-src 'self' https://fonts.gstatic.com/; 
+    img-src 'self' data:; 
+    script-src 'self';
+  " 
+/>
 
 <!-- Canonical URL -->
 <!--<link rel="canonical" href={canonicalURL} />-->
