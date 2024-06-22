@@ -6,7 +6,7 @@ const defaultProps = {
   description: ".NET 6+ Library for Obsidian-flavoured Markdown parsing for Blazor with Vault mapping support."
 }
 
-const { title, description } = Astro.props || defaultProps;
+const { title, description } = defaultProps;
 const base = import.meta.env.BASE_URL ?? "/";
 ---
 
