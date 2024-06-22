@@ -50,13 +50,19 @@ export class VaultManifestClient {
         continue;
       }
       
-      const indexFileRegex = /(\/?index\.md|readme\.md)$/ig;
+      const mdRegex = /\.md$/;
+      const indexFileRegex = /(\/?index\.md|readme\.md)$/ig;      
+      
       if (file.path.match(indexFileRegex)) {
         console.log(file.path, file.path.replace(indexFileRegex, ''));
         routingTable.set(file.path.replace(indexFileRegex, ''), file);
+        
+        if (!file.path.match(/^\/?index\.md$/i) || file.path.match(/^\/?readme\.md$/i)) {
+          routingTable.set(file.path.replace(mdRegex, ''), file);
+        }
       }
       else if (file.path.endsWith('.md')) {
-        const mdRegex = /\.md$/;
+        
         routingTable.set(file.path.replace(mdRegex, ''), file);
         // routingTable.set(file.path.replace(mdRegex, '.html'), file);
       }

@@ -181,9 +181,11 @@ public class FileSystemVaultTests
         // Act
         string content = await note.ReadDocumentAsync();
         
+        
+        
         // Assert
         Assert.NotNull(note);
-        Assert.Equal(/*lang=md*/"This is a hidden note!\nNot at all.\nIt's just in a folder.", content);
+        Assert.Equal(/*lang=md*/$"This is a hidden note!{Environment.NewLine}Not at all.{Environment.NewLine}It's just in a folder.", content);
     }
     
     /// <summary>
@@ -203,8 +205,9 @@ public class FileSystemVaultTests
         Assert.NotNull(note);
         
         Assert.Equal(
-            /*lang=md*/"# README\n\nThis is a test vault, meant to be used with the `Nodsoft.MoltenObsidian.Tests` project's test suite.\n\n" +
-            /*lang=md*/"## See also :\n\nCheck out this #cool_tag and #cooler_tag, and my [[Hidden Note]].", 
+            /*lang=md*/$"# README{Environment.NewLine}{Environment.NewLine}" +
+                       $"This is a test vault, meant to be used with the `Nodsoft.MoltenObsidian.Tests` project's test suite.{Environment.NewLine}{Environment.NewLine}" +
+                       $"## See also :{Environment.NewLine}{Environment.NewLine}Check out this #cool_tag and #cooler_tag, and my [[Hidden Note]].", 
             content
         );
         

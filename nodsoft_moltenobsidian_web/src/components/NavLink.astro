@@ -7,7 +7,9 @@ type Props = HTMLAttributes<'a'>;
 const { href, class: className, ...props } = Astro.props;
 
 const { pathname } = Astro.url;
-const isActive = href === pathname || href === decodeURI(pathname).replace(/^\//, '');
----
+const isIndex = (props as Props)['data-index-note'] === true || className === 'vault-folder-title';
+const normalizedPath = decodeURI(pathname).replace(/^\//, '').replace(isIndex ? /\/(index|readme)$/i : '', '');
+const isActive = href === normalizedPath
 
+---
 <a href={href} class:list={[className, { active: isActive }]} {...props}><slot /></a>
