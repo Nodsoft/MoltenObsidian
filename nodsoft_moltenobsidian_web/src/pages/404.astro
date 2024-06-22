@@ -9,12 +9,8 @@ const path = Astro.url
 <Layout>
     <article class="cover-center">
         <div class="title">
-            <div>
-                <h1>404</h1>
-                <p>Page not found</p>
-            </div>
-
-            <Image inert src={logo} alt="MoltenObsidian Logo" height="320" width="320" />
+            <h1>404</h1>
+            <p>Page not found</p>
         </div>
 
         <p>Oh dear! It looks like the page you are looking for doesn't exist :</p>
@@ -32,17 +28,16 @@ const path = Astro.url
 
 <style lang="scss">
   .cover-center {
+    margin-top: 4em;
     font-size: 150%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     align-items: center;
-    height: 80%;
+    min-height: 80%;
 
     .title {
-      display: inline-flex;
-      flex-direction: row;
       align-items: center;
       font-size: 200%;
       gap: 2em;
@@ -52,14 +47,19 @@ const path = Astro.url
         margin-block: 1rem;
       }
     }
+
+    code {
+      // wrap long URIs
+      word-break: break-all;
+    }
   }
 </style>
 
 <script>
-    export function getUri() {
-        return window.location.href;
-    }
-    
-    const currentLoc = document.getElementById('current-loc');
-    currentLoc.textContent = getUri();
+  export function getUri() {
+    return window.location.href;
+  }
+
+  const currentLoc = document.getElementById('current-loc');
+  currentLoc.textContent = getUri();
 </script>
