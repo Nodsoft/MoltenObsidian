@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../public/android-chrome-512x512.png'
+import Layout from "../layouts/Layout.astro";
+
+const path = Astro.url
+---
+
+<Layout>
+    <article class="cover-center">
+        <div class="title">
+            <div>
+                <h1>404</h1>
+                <p>Page not found</p>
+            </div>
+
+            <Image inert src={logo} alt="MoltenObsidian Logo" height="320" width="320" />
+        </div>
+
+        <p>Oh dear! It looks like the page you are looking for doesn't exist :</p>
+
+        <div aria-description="Current URI">
+            <code>{path}</code>
+        </div>
+
+        <p>
+            Perhaps there is a typo in the URI, or the page has been removed. <br />
+            Try going back to the <a class="link-secondary" href="/">Home page</a>, or browse the site using the navigation menu.
+        </p>
+    </article>
+</Layout>
+
+<style lang="scss">
+  .cover-center {
+    font-size: 150%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    height: 80%;
+
+    .title {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      font-size: 200%;
+      gap: 2em;
+      margin-block-end: 2em;
+
+      h1, p {
+        margin-block: 1rem;
+      }
+    }
+  }
+</style>
