@@ -15,7 +15,7 @@
 		<Authors>Sakura Akeno Isayeki</Authors>
 		<Title>Molten Obsidian</Title>
 		<Product>Molten Obsidian</Product>
-		<PackageProjectUrl>https://github.com/Nodsoft/MoltenObsidian</PackageProjectUrl>
+		<PackageProjectUrl>https://moltenobsidian.dev</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Nodsoft/MoltenObsidian</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<CommonPackageTags>obsidian, moltenobsidian, vault, markdown, html, extensions</CommonPackageTags>
