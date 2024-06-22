@@ -6,7 +6,7 @@ import YAML from 'yaml'
  * @class
  * @public
  */
-export class VaultManifestClient {
+export class VaultManifestClient {  
   protected _routingTable: Map<string, VaultFile> | undefined;
   
   public static fromManifest(manifest: VaultManifest) {
@@ -51,14 +51,20 @@ export class VaultManifestClient {
       }
       
       const indexFileRegex = /(\/?index\.md|readme\.md)$/ig;
-      if (file.path.match(indexFileRegex)) {
-        console.log(file.path, file.path.replace(indexFileRegex, ''));
-        routingTable.set(file.path.replace(indexFileRegex, ''), file);
-      }
-      else if (file.path.endsWith('.md')) {
+      
+      if (file.path.endsWith('.md')) {
         const mdRegex = /\.md$/;
-        routingTable.set(file.path.replace(mdRegex, ''), file);
-        // routingTable.set(file.path.replace(mdRegex, '.html'), file);
+        const canonicalPath = file.path.replace(mdRegex, '');
+        
+        if (file.path.match(indexFileRegex)) {
+          const canonicalIxPath = file.path.replace(indexFileRegex, '');
+          console.log(file.path, canonicalIxPath);          
+          routingTable.set(canonicalIxPath, file);
+          routingTable.set(canonicalPath, file);
+        } else {
+          routingTable.set(canonicalPath, file);
+          // routingTable.set(file.path.replace(mdRegex, '.html'), file);
+        }
       }
 
       // routingTable.set(file.path, file);
