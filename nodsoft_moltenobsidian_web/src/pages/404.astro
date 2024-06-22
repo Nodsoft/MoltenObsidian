@@ -20,7 +20,7 @@ const path = Astro.url
         <p>Oh dear! It looks like the page you are looking for doesn't exist :</p>
 
         <div aria-description="Current URI">
-            <code>{path}</code>
+            <code id="current-loc" />
         </div>
 
         <p>
@@ -54,3 +54,12 @@ const path = Astro.url
     }
   }
 </style>
+
+<script>
+    export function getUri() {
+        return window.location.href;
+    }
+    
+    const currentLoc = document.getElementById('current-loc');
+    currentLoc.textContent = getUri();
+</script>
