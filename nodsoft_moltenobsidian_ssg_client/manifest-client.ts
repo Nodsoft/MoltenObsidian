@@ -6,7 +6,7 @@ import YAML from 'yaml'
  * @class
  * @public
  */
-export class VaultManifestClient {  
+export class VaultManifestClient {
   protected _routingTable: Map<string, VaultFile> | undefined;
   
   public static fromManifest(manifest: VaultManifest) {
@@ -50,21 +50,21 @@ export class VaultManifestClient {
         continue;
       }
       
-      const indexFileRegex = /(\/?index\.md|readme\.md)$/ig;
+      const mdRegex = /\.md$/;
+      const indexFileRegex = /(\/?index\.md|readme\.md)$/ig;      
       
-      if (file.path.endsWith('.md')) {
-        const mdRegex = /\.md$/;
-        const canonicalPath = file.path.replace(mdRegex, '');
+      if (file.path.match(indexFileRegex)) {
+        console.log(file.path, file.path.replace(indexFileRegex, ''));
+        routingTable.set(file.path.replace(indexFileRegex, ''), file);
         
-        if (file.path.match(indexFileRegex)) {
-          const canonicalIxPath = file.path.replace(indexFileRegex, '');
-          console.log(file.path, canonicalIxPath);          
-          routingTable.set(canonicalIxPath, file);
-          routingTable.set(canonicalPath, file);
-        } else {
-          routingTable.set(canonicalPath, file);
-          // routingTable.set(file.path.replace(mdRegex, '.html'), file);
+        if (!file.path.match(/^\/?index\.md$/i) || file.path.match(/^\/?readme\.md$/i)) {
+          routingTable.set(file.path.replace(mdRegex, ''), file);
         }
+      }
+      else if (file.path.endsWith('.md')) {
+        
+        routingTable.set(file.path.replace(mdRegex, ''), file);
+        // routingTable.set(file.path.replace(mdRegex, '.html'), file);
       }
 
       // routingTable.set(file.path, file);
