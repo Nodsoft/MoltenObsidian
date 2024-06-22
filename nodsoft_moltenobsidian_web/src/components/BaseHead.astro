@@ -16,14 +16,17 @@ const base = import.meta.env.BASE_URL ?? "/";
 <link rel="icon" href={base + "favicon.ico"} />
 <link rel="icon" type="image/png" sizes="512x512" href={base + "android-chrome-512x512.png"} />
 <link rel="icon" type="image/png" sizes="192x192" href={base + "android-chrome-192x192.png"} />
-<link rel="apple-touch-icon" sizes="180x180" href={base + "apple-touch-icon.png"}>
-<link rel="icon" type="image/png" sizes="150x150" href={base + "mstile-150x150.png"}>
-<link rel="icon" type="image/png" sizes="32x32" href={base + "favicon-32x32.png"}>
-<link rel="icon" type="image/png" sizes="16x16" href={base + "favicon-16x16.png"}>
-<link rel="manifest" href={base + "site.webmanifest"}>
-<meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
+<link rel="apple-touch-icon" sizes="180x180" href={base + "apple-touch-icon.png"} />
+<link rel="icon" type="image/png" sizes="150x150" href={base + "mstile-150x150.png"} />
+<link rel="icon" type="image/png" sizes="32x32" href={base + "favicon-32x32.png"} />
+<link rel="icon" type="image/png" sizes="16x16" href={base + "favicon-16x16.png"} />
+<link rel="manifest" href={base + "site.webmanifest"} />
+<meta name="msapplication-TileColor" content="#da532c" />
+<meta name="theme-color" content="#ffffff" />
 <meta name="generator" content={Astro.generator} />
+
+<!-- CSP -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' fonts.googleapis.com 'unsafe-inline'; font-src 'self' fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline';" />
 
 <!-- Canonical URL -->
 <!--<link rel="canonical" href={canonicalURL} />-->
