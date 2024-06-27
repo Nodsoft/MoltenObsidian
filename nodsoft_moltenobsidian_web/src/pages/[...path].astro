@@ -2,10 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import { cast, toRelativeVaultPath } from '../vault-utils';
 import { VaultManifestClient } from 'moltenobsidian-ssg-client/manifest-client';
-import { VaultManifest, VaultFile, VaultFileMetadata } from 'moltenobsidian-ssg-client/vault-manifest';
+import type { VaultManifest, VaultFile, VaultFileMetadata } from 'moltenobsidian-ssg-client/vault-manifest';
 import manifest from '../../public/vault/moltenobsidian.manifest.json';
 import fs from 'node:fs/promises';
-import * as console from "console";
+import { Seo } from "astro-seo-meta";
 
 
 export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
@@ -39,7 +39,24 @@ const { path } = Astro.params;
 const { content, cssclasses } = Astro.props;
 ---
 
-<Layout>    
+<Layout>   
+    <Seo 
+      slot="head"
+      title="MoltenObsidian"
+      description=".NET 6+ CLI Tool & Blazor Library for Obsidian-flavoured Markdown parsing with Vault mapping support."
+      keywords={["MoltenObsidian", "Obsidian", "Markdown", "Vault", "Blazor", "CLI", ".NET"]}
+      icon="/favicon.ico"
+      themeColor="#883AEB"
+      colorScheme="dark"
+      facebook={{
+          image: "/android-chrome-512x512.png",
+          type: "website"
+      }}
+      
+      twitter.image="/android-chrome-512x512.png"
+      twitter.card="summary_large_image"
+    />
+    
     <article style="margin-top: 4rem; margin-bottom: 4rem;" class:list={cssclasses}>
         <Fragment set:html={content} />
     </article>
