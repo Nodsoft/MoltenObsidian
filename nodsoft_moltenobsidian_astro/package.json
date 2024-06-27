@@ -1,0 +1,21 @@
+{
+	"name": "root",
+	"private": true,
+	"packageManager": "pnpm@9.4.0",
+	"engines": {
+		"node": ">=18.20.3"
+	},
+	"scripts": {
+		"package:dev": "pnpm --filter package-name dev",
+		"playground:dev": "pnpm --filter playground dev",
+		"dev": "pnpm --stream -r -parallel dev",
+		"changeset": "changeset",
+		"release": "node scripts/release.mjs",
+		"lint": "biome check .",
+		"lint:fix": "biome check --apply ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.8.2",
+		"@changesets/cli": "^2.27.5"
+	}
+}

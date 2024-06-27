@@ -1,0 +1,19 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:recommended"],
+	"dependencyDashboard": true,
+	"lockFileMaintenance": {
+		"enabled": true
+	},
+	"postUpdateOptions": ["pnpmDedupe"],
+	"packageRules": [
+		{
+			"groupName": "all dependencies",
+			"groupSlug": "all",
+			"matchPackagePatterns": ["*"],
+			"schedule": ["before 4am on Monday"],
+			"rangeStrategy": "bump"
+		}
+	],
+	"ignoreDeps": ["node"]
+}
