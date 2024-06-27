@@ -5,7 +5,6 @@ import Sidebar from "../components/Sidebar.astro";
 import { SITE_TITLE } from "../consts";
 import { ViewTransitions } from "astro:transitions";
 
-
 interface Props {
 	title: string;
 	description: string;
@@ -20,7 +19,9 @@ const baseHeadTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
 <html lang="en" transition:animate="none">
 	<!--suppress HtmlRequiredTitleElement, included in BaseHead -->
 	<head>
-		<BaseHead title={baseHeadTitle} description={description} />
+		<BaseHead>
+			<slot name="head" />
+		</BaseHead>
 	</head>
 	
 	<body class="flex-row-lg">

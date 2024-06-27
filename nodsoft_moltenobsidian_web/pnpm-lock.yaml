@@ -11,6 +11,9 @@ dependencies:
   astro:
     specifier: ^4.11.0
     version: 4.11.0(sass@1.77.6)
+  astro-seo-meta:
+    specifier: ^4.1.1
+    version: 4.1.1(astro@4.11.0)
   bootstrap-icons:
     specifier: ^1.11.3
     version: 1.11.3
@@ -1047,6 +1050,14 @@ packages:
 
   /array-iterate@2.0.1:
     resolution: {integrity: sha512-I1jXZMjAgCMmxT4qxXfPXa6SthSoE8h6gkSI9BGGNv8mP8G/v0blc+qFnZu6K42vTOiuME596QaLO0TP3Lk0xg==}
+    dev: false
+
+  /astro-seo-meta@4.1.1(astro@4.11.0):
+    resolution: {integrity: sha512-hZdqKLAgjRTW4LPcYMGfH5VuA4Zidv6gYmJgw0Dw7QmPExuSLnEqFHLreRzOdQibqH4JD6PHrHoIHrUb3HUs2A==}
+    peerDependencies:
+      astro: ^4.0.0
+    dependencies:
+      astro: 4.11.0(sass@1.77.6)
     dev: false
 
   /astro@4.11.0(sass@1.77.6):
