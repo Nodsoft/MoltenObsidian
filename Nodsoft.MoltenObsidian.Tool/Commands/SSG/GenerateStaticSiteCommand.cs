@@ -43,9 +43,12 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
     [CommandOption("--generate-manifest"), Description("Generate a manifest file for the local vault if missing")]
     public bool GenerateManifest { get; private set; }
     
+    [CommandOption("--watch"), Description("Watch the vault for changes and regenerate the static site")]
+    public bool Watch { get; private set; }
+    
     public override ValidationResult Validate()
     {
-        if (LocalVaultPathString is not (null or "") && RemoteManifestUrlString is not (null or ""))
+        if (LocalVaultPathString is not "" && RemoteManifestUrlString is not "")
         {
             return ValidationResult.Error("--from-url and --from-folder options cannot be used together");
         }
@@ -64,6 +67,11 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
         {
 	        return ValidationResult.Error("Cannot generate a manifest for a remote vault");
         }
+
+        if (Watch && LocalVaultPath is null)
+		{
+	        return ValidationResult.Error("You can only use --watch with local vaults.");
+		}
         
         OutputPath ??= new(Environment.CurrentDirectory);
 
@@ -115,39 +123,70 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 		
 		if (settings.GenerateManifest)
 		{
-			manifest = await GenerateManifestCommand.GenerateManifestAsync(
-				vault, 
-				settings.LocalVaultPath!, 
-				settings.OutputPath, 
-				settings.DebugMode,
-				_ => true
-			);
+			await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true);
 		}
 		
 		await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders);
+
+		if (settings.Watch)
+		{
+			await AnsiConsole.Console.Status().StartAsync("Watching vault for changes...", async ctx =>
+			{
+				ctx.Spinner(Spinner.Known.Dots);
+				ctx.SpinnerStyle(Style.Parse("purple bold"));
+
+				// Watch for changes
+				vault.VaultUpdate += async (_, args) =>
+				{
+					try
+					{
+						if (args.Entity.Path is RemoteVaultManifest.ManifestFileName)
+						{
+							AnsiConsole.MarkupLine(/*lang=md*/"[grey]Manifest update detected. Ignoring...[/]");
+							return;
+						}
+					
+						// Print a status message.
+						AnsiConsole.MarkupLine(/*lang=md*/$"[grey]Vault update detected (Entity name: [/]{args.Entity.Path}[grey], Change type: [/]{args.Type})");
+						AnsiConsole.MarkupLine(/*lang=md*/"[blue]Regenerating manifest...[/]");
+
+						if (settings.GenerateManifest)
+						{
+							await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true);
+						}
+						
+						await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders);
+					}
+					catch (Exception e)
+					{
+						// Print an error message.
+						AnsiConsole.MarkupLine(/*lang=md*/"[red]An error occurred while regenerating the manifest:[/]");
+						AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
+					}
+				};
+				
+				await Task.Delay(-1);
+			});
+		}
+		
 		return 0;
 	}
 
     internal static async Task WriteStaticFilesAsync(IVault vault, DirectoryInfo outputDirectory, string[] ignoredFiles, string[] ignoredFolders)
 	{
-		await AnsiConsole.Status().StartAsync("Generating static assets.", async ctx =>
+		AnsiConsole.MarkupLine(/*lang=md*/"Generating static assets...");
+		
+		foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
 		{
-			ctx.Status("Generating static assets.");
-			ctx.Spinner(Spinner.Known.Noise);
-			ctx.SpinnerStyle(Style.Parse("purple bold"));
-			
-			foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
+			if (StaticSiteGenerator.IsIgnored(pathFilePair.Key, ignoredFolders, ignoredFiles))
 			{
-				if (StaticSiteGenerator.IsIgnored(pathFilePair.Key, ignoredFolders, ignoredFiles))
-				{
-					continue;
-				}
-
-				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(outputDirectory.ToString(), pathFilePair);
-				await Task.WhenAll(fileData.Select(WriteDataAsync));
+				continue;
 			}
-		});
 
+			List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(outputDirectory.ToString(), pathFilePair);
+			await Task.WhenAll(fileData.Select(WriteDataAsync));
+		}
+		
 		AnsiConsole.Console.MarkupLine(/*lang=md*/$"Wrote static files to [green link]{outputDirectory.FullName}[/].");
 	}
     

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using JetBrains.Annotations;
@@ -108,7 +109,14 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			if (settings.Force || settings.Watch)
 			{
 				// Warn the user that the file will be overwritten.
-				AnsiConsole.MarkupLine( /*lang=md*/"[yellow]A manifest file already exists at the specified location, but [green]--force[/] was specified. Overwriting.[/]");
+				string forceFlagStr = settings switch
+				{
+					{ Force: true } => "--force",
+					{ Watch: true } => "--watch",
+					_ => throw new UnreachableException()
+				};
+				
+				AnsiConsole.MarkupLine(/*lang=md*/$"[yellow]A manifest file already exists at the specified location, but [green]{forceFlagStr}[/] was specified. Overwriting.[/]");
 			}
 			else
 			{
@@ -131,9 +139,13 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		
 		if (settings.Watch)
 		{
-			await AnsiConsole.Console.Status().StartAsync("Watching vault for changes...", async statusCtx =>
+			await AnsiConsole.Console.Status().StartAsync("Watching vault for changes...", async ctx =>
 			{
-				vault.VaultUpdate += async (caller, args) =>
+				// Print a status message.
+				ctx.Spinner(Spinner.Known.Dots);
+				ctx.SpinnerStyle(Style.Parse("purple bold"));
+				
+				vault.VaultUpdate += async (_, args) =>
 				{
 					try
 					{
@@ -150,11 +162,11 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 						// Regenerate the manifest.
 						await GenerateManifestAsync(vault, settings.VaultPath, settings.OutputPath, settings.DebugMode, _ => true);
 					}
-					catch (Exception ex)
+					catch (Exception e)
 					{
 						// Print an error message.
 						AnsiConsole.MarkupLine(/*lang=md*/"[red]An error occurred while regenerating the manifest:[/]");
-						AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+						AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
 					}
 				};
 				
