@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Manifest;
+using Nodsoft.MoltenObsidian.Vault;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -72,26 +73,24 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		if (settings.DebugMode)
 		{
 			// Inform the user that we're in debug mode.
-			AnsiConsole.MarkupLine(/*lang=md*/"[bold blue]Debug mode is enabled.[/]");
+			AnsiConsole.MarkupLine( /*lang=md*/"[bold blue]Debug mode is enabled.[/]");
 		}
-		
+
 		// This is where the magic happens.
 		// We'll be using the Spectre.Console library to provide a nice CLI experience.
 		// Statuses at each step, and a nice summary at the end.
 
 		FileSystemVault vault = null!;
-		
+
 		// First, load the Obsidian vault. This will validate the vault and load all the files.
 		AnsiConsole.Console.Status().Start("Loading vault...", _ =>
 		{
 			// Print the ignores if they're set.
 			if (settings.DebugMode)
 			{
-				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? ["*None*"])}");
-				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoreFiles ?? ["*None*"])}");
+				AnsiConsole.Console.MarkupLine( /*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? ["*None*"])}");
+				AnsiConsole.Console.MarkupLine( /*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoreFiles ?? ["*None*"])}");
 			}
-			
-			
 
 			settings.IgnoredFolders ??= FileSystemVault.DefaultIgnoredFolders.ToArray();
 			settings.IgnoreFiles ??= FileSystemVault.DefaultIgnoredFiles.ToArray();
@@ -99,9 +98,51 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			// Load the vault.
 			vault = FileSystemVault.FromDirectory(settings.VaultPath, settings.IgnoredFolders, settings.IgnoreFiles);
 		});
-		
-		AnsiConsole.MarkupLine(/*lang=md*/$"Loaded vault with [green]{vault.Files.Count}[/] files.");
 
+		AnsiConsole.MarkupLine( /*lang=md*/$"Loaded vault with [green]{vault.Files.Count}[/] files.");
+		
+		await GenerateManifestAsync(vault, settings.VaultPath, settings.OutputPath, settings.DebugMode, file =>
+		{
+			if (settings.Force)
+			{
+				// Warn the user that the file will be overwritten.
+				AnsiConsole.MarkupLine( /*lang=md*/"[yellow]A manifest file already exists at the specified location, but [green]--force[/] was specified. Overwriting.[/]");
+			}
+			else
+			{
+				// If it does, ask the user if they want to overwrite it.
+				bool overwrite = AnsiConsole.Prompt(new ConfirmationPrompt( /*lang=md*/"[yellow]The manifest file already exists. Overwrite?[/]"));
+
+				if (!overwrite)
+				{
+					// If they don't, abort.
+					AnsiConsole.MarkupLine("[red]Aborted.[/]");
+					return false;
+				}
+
+				// If they do, delete the file.
+				file.Delete();
+			}
+
+			return true;
+		});
+		
+		return 0;
+	}
+
+	internal static async Task<RemoteVaultManifest> GenerateManifestAsync(
+		IVault vault, 
+		DirectoryInfo vaultPath, 
+		DirectoryInfo? outputPath, 
+		bool debugMode,
+		Func<FileInfo, bool> promptOverwrite
+	) {
+		// Assert the vault as FileSystem-Based
+		if (vault is not FileSystemVault)
+		{
+			throw new InvalidOperationException("The vault must be a FileSystemVault to generate a manifest.");
+		}
+		
 		// Next, generate the manifest.
 		RemoteVaultManifest manifest = null!;
 		await AnsiConsole.Console.Status().StartAsync("Generating manifest...", async _ =>
@@ -109,54 +150,39 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			// Generate the manifest.
 			manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
 		});
+
+		AnsiConsole.MarkupLine( /*lang=md*/$"Generated manifest with [green]{manifest.Files.Count}[/] files.");
 		
-		AnsiConsole.MarkupLine(/*lang=md*/$"Generated manifest with [green]{manifest.Files.Count}[/] files.");
-		
-		// Finally, write the manifest to disk, at the specified location (or the vault root if not specified).
-		FileInfo manifestFile = new(Path.Combine((settings.OutputPath ?? settings.VaultPath).FullName, RemoteVaultManifest.ManifestFileName));
-		
-		// Check if the file already exists.
-		if (manifestFile.Exists)
+		// Write the manifest to disk, at the specified location (or the vault root if not specified).
+		FileInfo manifestFile = new(Path.Combine((outputPath ?? vaultPath).FullName, RemoteVaultManifest.ManifestFileName));
+
+		if (manifestFile.Exists && !promptOverwrite(manifestFile))
 		{
-			if (settings.Force)
-			{
-				// Warn the user that the file will be overwritten.
-				AnsiConsole.MarkupLine(/*lang=md*/"[yellow]A manifest file already exists at the specified location, but [green]--force[/] was specified. Overwriting.[/]");
-			}
-			else
-			{
-				// If it does, ask the user if they want to overwrite it.
-				bool overwrite = AnsiConsole.Prompt(new ConfirmationPrompt(/*lang=md*/"[yellow]The manifest file already exists. Overwrite?[/]"));
-			
-				if (!overwrite)
-				{
-					// If they don't, abort.
-					AnsiConsole.MarkupLine("[red]Aborted.[/]");
-					return 1;
-				}
-			
-				// If they do, delete the file.
-				manifestFile.Delete();
-			}
+			return manifest;
 		}
 
+		// Write the manifest to disk.
+		await WriteManifestFileAsync(manifestFile, manifest, debugMode);
+		return manifest;
+	}
+
+	internal static async Task WriteManifestFileAsync(FileInfo file, RemoteVaultManifest manifest, bool debugMode)
+	{
 		await AnsiConsole.Console.Status().StartAsync("Writing manifest...", async _ =>
 		{
 			// Write the new manifest to disk.
-			await using FileStream stream = manifestFile.Open(FileMode.OpenOrCreate, FileAccess.Write);
-			stream.SetLength(0);
+			await using FileStream fs = file.Open(FileMode.OpenOrCreate, FileAccess.Write);
+			fs.SetLength(0);
 
-			
 #pragma warning disable CA1869
-			await JsonSerializer.SerializeAsync(stream, manifest, new JsonSerializerOptions
+			await JsonSerializer.SerializeAsync(fs, manifest, new JsonSerializerOptions
 			{
-				WriteIndented = settings.DebugMode, // If debug mode is enabled, write the manifest with indentation.
+				WriteIndented = debugMode, // If debug mode is enabled, write the manifest with indentation.
 				PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Use camelCase for property names.
 				DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Don't write null values.
 			});
 		});
-		
-		AnsiConsole.MarkupLine(/*lang=md*/$"Wrote manifest to [green link]{manifestFile.FullName}[/].");
-		return 0;
+
+		AnsiConsole.MarkupLine(/*lang=md*/$"Wrote manifest to [green link]{file.FullName}[/].");
 	}
 }
