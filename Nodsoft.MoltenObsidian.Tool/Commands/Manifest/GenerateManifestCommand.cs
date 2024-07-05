@@ -37,7 +37,11 @@ public sealed class GenerateManifestSettings : CommandSettings
 	
 	[CommandOption("--debug", IsHidden = true)]
 	public bool DebugMode { get; set; }
+	
+	[CommandOption("--watch"), Description("Watches the vault for changes and regenerates the manifest.")]
+	public bool Watch { get; set; }
 
+	
 	public override ValidationResult Validate()
 	{
 		if (VaultPathStr is "" || (VaultPath = new(VaultPathStr)) is { Exists: false })
@@ -50,17 +54,15 @@ public sealed class GenerateManifestSettings : CommandSettings
 			return ValidationResult.Error($"The output path '{OutputPath}' does not exist.");
 		}
 
-		if (!Force)
+		if (!Force && !VaultPath.GetDirectories().Any(static d => d.Name == ".obsidian"))
 		{
-			if (!VaultPath.GetDirectories().Any(static d => d.Name == ".obsidian"))
-			{
-				return ValidationResult.Error($"The vault path '{VaultPath}' does not appear to be a valid Obsidian vault.");
-			}
+			return ValidationResult.Error($"The vault path '{VaultPath}' does not appear to be a valid Obsidian vault.");
 		}
 
 		return ValidationResult.Success();
 	}
 }
+
 
 /// <summary>
 /// Provides a command that generates a manifest for a Molten Obsidian vault.
@@ -88,8 +90,8 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			// Print the ignores if they're set.
 			if (settings.DebugMode)
 			{
-				AnsiConsole.Console.MarkupLine( /*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? ["*None*"])}");
-				AnsiConsole.Console.MarkupLine( /*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoreFiles ?? ["*None*"])}");
+				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? ["*None*"])}");
+				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoreFiles ?? ["*None*"])}");
 			}
 
 			settings.IgnoredFolders ??= FileSystemVault.DefaultIgnoredFolders.ToArray();
@@ -98,12 +100,12 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			// Load the vault.
 			vault = FileSystemVault.FromDirectory(settings.VaultPath, settings.IgnoredFolders, settings.IgnoreFiles);
 		});
-
-		AnsiConsole.MarkupLine( /*lang=md*/$"Loaded vault with [green]{vault.Files.Count}[/] files.");
+		
+		AnsiConsole.MarkupLine(/*lang=md*/$"Loaded vault with [green]{vault.Files.Count}[/] files.");
 		
 		await GenerateManifestAsync(vault, settings.VaultPath, settings.OutputPath, settings.DebugMode, file =>
 		{
-			if (settings.Force)
+			if (settings.Force || settings.Watch)
 			{
 				// Warn the user that the file will be overwritten.
 				AnsiConsole.MarkupLine( /*lang=md*/"[yellow]A manifest file already exists at the specified location, but [green]--force[/] was specified. Overwriting.[/]");
@@ -111,12 +113,12 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			else
 			{
 				// If it does, ask the user if they want to overwrite it.
-				bool overwrite = AnsiConsole.Prompt(new ConfirmationPrompt( /*lang=md*/"[yellow]The manifest file already exists. Overwrite?[/]"));
+				bool overwrite = AnsiConsole.Prompt(new ConfirmationPrompt(/*lang=md*/"[yellow]The manifest file already exists. Overwrite?[/]"));
 
 				if (!overwrite)
 				{
 					// If they don't, abort.
-					AnsiConsole.MarkupLine("[red]Aborted.[/]");
+					AnsiConsole.MarkupLine(/*lang=md*/"[red]Aborted.[/]");
 					return false;
 				}
 
@@ -126,6 +128,40 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 
 			return true;
 		});
+		
+		if (settings.Watch)
+		{
+			await AnsiConsole.Console.Status().StartAsync("Watching vault for changes...", async statusCtx =>
+			{
+				vault.VaultUpdate += async (caller, args) =>
+				{
+					try
+					{
+						if (args.Entity.Path is RemoteVaultManifest.ManifestFileName)
+						{
+							AnsiConsole.MarkupLine(/*lang=md*/"[grey]Manifest update detected. Ignoring...[/]");
+							return;
+						}
+					
+						// Print a status message.
+						AnsiConsole.MarkupLine(/*lang=md*/$"[grey]Vault update detected (Entity name: [/]{args.Entity.Path}[grey], Change type: [/]{args.Type})");
+						AnsiConsole.MarkupLine(/*lang=md*/"[blue]Regenerating manifest...[/]");
+					
+						// Regenerate the manifest.
+						await GenerateManifestAsync(vault, settings.VaultPath, settings.OutputPath, settings.DebugMode, _ => true);
+					}
+					catch (Exception ex)
+					{
+						// Print an error message.
+						AnsiConsole.MarkupLine(/*lang=md*/"[red]An error occurred while regenerating the manifest:[/]");
+						AnsiConsole.MarkupLine($"[red]{ex.Message}[/]");
+					}
+				};
+				
+				// Watch the vault for changes.
+				await Task.Delay(-1);
+			});
+		}
 		
 		return 0;
 	}
@@ -144,14 +180,10 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		}
 		
 		// Next, generate the manifest.
-		RemoteVaultManifest manifest = null!;
-		await AnsiConsole.Console.Status().StartAsync("Generating manifest...", async _ =>
-		{
-			// Generate the manifest.
-			manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
-		});
+		AnsiConsole.Console.MarkupLine( /*lang=md*/"Generating manifest...");
+		RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
 
-		AnsiConsole.MarkupLine( /*lang=md*/$"Generated manifest with [green]{manifest.Files.Count}[/] files.");
+		AnsiConsole.MarkupLine(/*lang=md*/$"Generated manifest with [green]{manifest.Files.Count}[/] files.");
 		
 		// Write the manifest to disk, at the specified location (or the vault root if not specified).
 		FileInfo manifestFile = new(Path.Combine((outputPath ?? vaultPath).FullName, RemoteVaultManifest.ManifestFileName));
@@ -166,21 +198,20 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		return manifest;
 	}
 
-	internal static async Task WriteManifestFileAsync(FileInfo file, RemoteVaultManifest manifest, bool debugMode)
+	private static async Task WriteManifestFileAsync(FileInfo file, RemoteVaultManifest manifest, bool debugMode)
 	{
-		await AnsiConsole.Console.Status().StartAsync("Writing manifest...", async _ =>
-		{
-			// Write the new manifest to disk.
-			await using FileStream fs = file.Open(FileMode.OpenOrCreate, FileAccess.Write);
-			fs.SetLength(0);
+		AnsiConsole.MarkupLine(/*lang=md*/$"Writing manifest...");
+		
+		// Write the new manifest to disk.
+		await using FileStream fs = file.Open(FileMode.OpenOrCreate, FileAccess.Write);
+		fs.SetLength(0);
 
 #pragma warning disable CA1869
-			await JsonSerializer.SerializeAsync(fs, manifest, new JsonSerializerOptions
-			{
-				WriteIndented = debugMode, // If debug mode is enabled, write the manifest with indentation.
-				PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Use camelCase for property names.
-				DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Don't write null values.
-			});
+		await JsonSerializer.SerializeAsync(fs, manifest, new JsonSerializerOptions
+		{
+			WriteIndented = debugMode, // If debug mode is enabled, write the manifest with indentation.
+			PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Use camelCase for property names.
+			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Don't write null values.
 		});
 
 		AnsiConsole.MarkupLine(/*lang=md*/$"Wrote manifest to [green link]{file.FullName}[/].");
