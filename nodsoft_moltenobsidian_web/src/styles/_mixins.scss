@@ -17,8 +17,10 @@
   font-size: 90%;
 }
 
-@mixin code-block-syntax($lang) {
-.lang-#{$lang} .#{$lang} pre {
-    @content;
+@mixin code-block-syntax($langs) {
+  @each $lang in $langs {
+    .lang-#{$lang} .#{$lang} pre {
+      @content;
+    }
   }
 }

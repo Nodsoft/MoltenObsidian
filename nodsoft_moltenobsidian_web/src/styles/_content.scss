@@ -82,6 +82,6 @@ table, .table {
   @include callout-color("info", rgb(0, 122, 255));
 }
 
-@include code-block-syntax("csharp") {
+@include code-block-syntax("csharp", "cs") {
   @import "syntax/csharp";
 }
