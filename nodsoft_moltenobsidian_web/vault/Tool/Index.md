@@ -39,6 +39,3 @@ All subsequent commands follow the conventional POSIX structure :
 moltenobsidian <command> [subcommand] [-a|--arguments [value]]  
 ```
 
-
-# Features
-
