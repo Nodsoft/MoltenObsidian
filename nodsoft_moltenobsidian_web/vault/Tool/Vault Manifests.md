@@ -35,8 +35,8 @@ For reference, these are the default exclusions:
 Some features of the manifest command are specifically oriented for development and automation purposes. 
 Here is a detailed account of some of the extra features baked into this command.
 
-| Flag      | Description                                                              |
-| --------- | ------------------------------------------------------------------------ |
-| `--force` | Forces any existing manifest found at the output path to be overwritten. |
-| `--watch` | Continuously watches for changes and updates the manifest accordingly.   |
-| `--debug` | Prints out extra information, similar to a verbose flag.                 |
+| Flag      | Description                                                              | Notes                                  |
+| --------- | ------------------------------------------------------------------------ | -------------------------------------- |
+| `--force` | Forces any existing manifest found at the output path to be overwritten. |                                        |
+| `--watch` | Continuously watches for changes and updates the manifest accordingly.   | Implicitly enables the `--force` flag. |
+| `--debug` | Prints out extra information, similar to a verbose flag.                 |                                        |
