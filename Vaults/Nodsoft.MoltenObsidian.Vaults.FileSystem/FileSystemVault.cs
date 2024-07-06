@@ -51,8 +51,18 @@ public sealed class FileSystemVault : IWritableVault
 
 	/// <inheritdoc />
 	public event IVault.VaultUpdateEventHandler? VaultUpdate;
-	
 
+	/// <summary>
+	/// Provides a dictionary of file change locks, by last datetime modified.
+	/// This is used to mitigate duplicate dispatches of a given file change event.
+	/// </summary>
+	private readonly ConcurrentDictionary<string, (SemaphoreSlim, DateTime)> _fileChangeLocks = [];
+	
+	/// <summary>
+	/// Debounce period between file changes.
+	/// </summary>
+	private static readonly TimeSpan DebouncePeriod = TimeSpan.FromMilliseconds(100);
+	
 	/// <summary>
 	/// Gets the default list of folders to ignore when loading a vault.
 	/// </summary>
@@ -152,7 +162,7 @@ public sealed class FileSystemVault : IWritableVault
 		return (attr & FileAttributes.Directory) is FileAttributes.Directory;
 	}
 	
-	private string ToRelativePath(string fullPath) => fullPath[(_directoryInfo.FullName.Length + 1)..];
+	private string ToRelativePath(string fullPath) => fullPath[(_directoryInfo.FullName.Length + 1)..].Replace('\\', '/');
 	
 	private void OnItemCreated(object sender, FileSystemEventArgs e) => OnItemCreatedAsync(sender, e).AsTask().GetAwaiter().GetResult();
 	private async ValueTask OnItemCreatedAsync(object sender, FileSystemEventArgs e)
@@ -228,7 +238,32 @@ public sealed class FileSystemVault : IWritableVault
 		{
 			if (_files.TryGetValue(relativePath, out IVaultFile? file))
 			{
-				await (VaultUpdate?.Invoke(this, new(UpdateType.Update, file)) ?? new());
+				// Ensure hashes differ
+				(SemaphoreSlim semaphore, _) = _fileChangeLocks.GetOrAdd(relativePath, _ => (new(1, 1), DateTime.UnixEpoch));
+
+				if (semaphore.CurrentCount is 0)
+				{
+					return;
+				}
+				
+				await semaphore.WaitAsync();
+				
+				try
+				{
+					// Update w/ reference hash at time of lock
+					(_, DateTime lastChange) = _fileChangeLocks[relativePath];
+					DateTime current = DateTime.UtcNow;
+					
+					if (lastChange.Add(DebouncePeriod) < current)
+					{
+						await (VaultUpdate?.Invoke(this, new(UpdateType.Update, file)) ?? new());
+						_fileChangeLocks[relativePath] = new(semaphore, current);
+					}
+				}
+				finally
+				{
+					semaphore.Release();
+				}
 			}
 		}
 	}

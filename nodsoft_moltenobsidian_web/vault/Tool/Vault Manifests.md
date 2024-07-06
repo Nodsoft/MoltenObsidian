@@ -18,15 +18,25 @@ Similarly, there may be cases where you need to output the manifest to a separat
 
 Finally, if the default list of excluded folders/files is not sufficient, you can overwrite the list using the `--exclude-folder` and `--exclude-file` arguments. These can be invoked multiple times in the same command, like so:
 ```sh  
-moltenobsidian manifest generate "/path/to/vault/root"--exclude-folder ".obsidian" --exclude-folder ".git" --exclude-folder ".github"
+moltenobsidian manifest generate "/path/to/vault/root" --exclude-folder ".obsidian" --exclude-folder ".git" --exclude-folder ".github"
 ```  
 ```sh  
-moltenobsidian manifest generate "/path/to/vault/root"--exclude-file "my/secret/document.md" --exclude-file "secrets.json"
+moltenobsidian manifest generate "/path/to/vault/root" --exclude-file "my/secret/document.md" --exclude-file "secrets.json"
 ```  
 
 For reference, these are the default exclusions:
 
-| **Entity Type** | **Exclusions** |  
-| --- | --- |  
-| **Folders** | `.obsidian` `.git` `.vs` `.vscode` `node_modules` |  
-| **Files** | `.DS_STORE` |  
+| **Entity Type** | **Exclusions**                                    |
+| --------------- | ------------------------------------------------- |
+| **Folders**     | `.obsidian` `.git` `.vs` `.vscode` `node_modules` |
+| **Files**       | `.DS_STORE`                                       |
+
+### Developer features
+Some features of the manifest command are specifically oriented for development and automation purposes. 
+Here is a detailed account of some of the extra features baked into this command.
+
+| Flag      | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| `--force` | Forces any existing manifest found at the output path to be overwritten. |
+| `--watch` | Continuously watches for changes and updates the manifest accordingly.   |
+| `--debug` | Prints out extra information, similar to a verbose flag.                 |

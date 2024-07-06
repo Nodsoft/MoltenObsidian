@@ -47,8 +47,12 @@ table, .table {
 .markdown-alert {
   @mixin callout-color($name, $color) {
     background-color: rgba($color, 0.1);
+    
+    &-#{$name} {
+      background-color: rgba($color, 0.1)
+    }
 
-    &-title {
+    &-#{$name} .markdown-alert-title {
       color: $color;
 
       svg {
@@ -80,8 +84,10 @@ table, .table {
 
   // Colors
   @include callout-color("info", rgb(0, 122, 255));
+  @include callout-color("note", rgb(0, 122, 255));
+  @include callout-color("tip", rgb(83, 223, 221));
 }
 
-@include code-block-syntax("csharp") {
+@include code-block-syntax("csharp", "cs") {
   @import "syntax/csharp";
 }

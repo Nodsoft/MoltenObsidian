@@ -1,8 +1,8 @@
-@mixin font-styles($size, $weight: 700, $line-height: 1, $margin-bottom: 1em) {
+@mixin font-styles($size, $weight: 700, $line-height: 1, $margin-bottom: 0.5em) {
   font-size: $size;
   font-weight: $weight;
   line-height: $line-height;
-  margin-bottom: $margin-bottom;
+  margin-block-end: $margin-bottom;
 }
 
 @mixin bg-acrylic($background) {
@@ -17,8 +17,10 @@
   font-size: 90%;
 }
 
-@mixin code-block-syntax($lang) {
-.lang-#{$lang} .#{$lang} pre {
-    @content;
+@mixin code-block-syntax($langs...) {
+  @each $lang in $langs {
+    .lang-#{$lang} .#{$lang} pre {
+      @content;
+    }
   }
 }

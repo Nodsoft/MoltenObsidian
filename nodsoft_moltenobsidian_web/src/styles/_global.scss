@@ -94,23 +94,23 @@ h1 {
 }
 
 h2 {
-  @include font-styles(3.5em);
-}
-
-h3 {
   @include font-styles(3em);
 }
 
-h4 {
+h3 {
   @include font-styles(2.5em);
 }
 
-h5 {
+h4 {
   @include font-styles(2em);
 }
 
-h6 {
+h5 {
   @include font-styles(1.5em);
+}
+
+h6 {
+  @include font-styles(1.25em);
 }
 
 @media (max-device-width: map-get($breakpoints, "md")) {
