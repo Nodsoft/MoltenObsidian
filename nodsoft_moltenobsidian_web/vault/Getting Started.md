@@ -13,7 +13,7 @@ As all tool-related operations are detailed on [[Tool/Index|the tool's readme]],
 The MoltenObsidian library can be found on [NuGet](https://www.nuget.org/packages?q=Tags:"moltenobsidian"). Here's a rundown of the main packages you'll be using :
 - [`Nodsoft.MoltenObsidian`](https://www.nuget.org/packages/Nodsoft.MoltenObsidian): The backbone of the library. Include this package if none other, as it is implicitly referenced by all other packages.
 - [`Nodsoft.MoltenObsidian.Blazor`](https://www.nuget.org/packages/Nodsoft.MoltenObsidian.Blazor): The Blazor integration. This package provides a turnkey solution for Blazor Server, United, and WASM based applications.
-- [[Vaults/Index|A vault provider]]: One of them will be required to import a vault.
+- [[Library/Vaults Providers/Index|A vault provider]]: One of them will be required to import a vault.
 
 Package installation follows the same pattern as other NuGet packages. 
 Use your IDE's package manager, or run these commands within the root of your .NET project : 
@@ -46,8 +46,9 @@ And a paragraph with **bold** and *italic* text.
 // This is the HTML string you can then call in Blazor components as `@htmlText`.
 MarkupString htmlText = obsidianMarkdown.ToHtml();
 ```
-But that's just the basics. Under the hood, [Markdig](https://github.com/xoofx/markdig) is what makes it happen. Easy!
+But that's just the basics. Under the hood, [Markdig](https://github.com/xoofx/markdig) is what makes it happen. Easy!  
 
+Check out [[Markdown Conversion]] for more on converting raw markdown.
 
 ## Setting up a vault
 
@@ -67,13 +68,13 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 *`_Imports.razor`*
-```razor
+```csharp
 @using Nodsoft.MoltenObsidian.Blazor
 @using Nodsoft.MoltenObsidian.Blazor.Helpers;
 @using Nodsoft.MoltenObsidian.Vault;
 ```
 *`VaultPage.razor`*
-```razor
+```csharp
 @page "/vault/{*VaultPath}"  
 @inject IVault Vault   
   
