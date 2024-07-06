@@ -20,7 +20,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 Alternatively you can instantiate your own Filesystem vault like so:
-```cs
+```csharp
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
 IVault vault = FileSystemVault.FromDirectory("/path/to/vault");
