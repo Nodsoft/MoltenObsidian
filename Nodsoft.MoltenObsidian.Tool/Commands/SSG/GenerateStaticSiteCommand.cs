@@ -148,7 +148,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 					
 						// Print a status message.
 						AnsiConsole.MarkupLine(/*lang=md*/$"[grey]Vault update detected (Entity name: [/]{args.Entity.Path}[grey], Change type: [/]{args.Type})");
-						AnsiConsole.MarkupLine(/*lang=md*/"[blue]Regenerating manifest...[/]");
+						AnsiConsole.MarkupLine(/*lang=md*/"[blue]Regenerating SSG assets...[/]");
 
 						if (settings.GenerateManifest)
 						{
