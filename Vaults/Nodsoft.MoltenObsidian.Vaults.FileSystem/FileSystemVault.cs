@@ -162,7 +162,7 @@ public sealed class FileSystemVault : IWritableVault
 		return (attr & FileAttributes.Directory) is FileAttributes.Directory;
 	}
 	
-	private string ToRelativePath(string fullPath) => fullPath[(_directoryInfo.FullName.Length + 1)..];
+	private string ToRelativePath(string fullPath) => fullPath[(_directoryInfo.FullName.Length + 1)..].Replace('\\', '/');
 	
 	private void OnItemCreated(object sender, FileSystemEventArgs e) => OnItemCreatedAsync(sender, e).AsTask().GetAwaiter().GetResult();
 	private async ValueTask OnItemCreatedAsync(object sender, FileSystemEventArgs e)
