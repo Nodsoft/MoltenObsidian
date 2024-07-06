@@ -14,6 +14,7 @@ moltenobsidian manifest generate "/path/to/vault/root/"
 The given path will then be checked for the existence of the `./.obsidian/` folder, indicative of the presence of an Obsidian Vault. While the creation of a manifest is not contingent on the presence of this folder (as it will be ignored anyways), it is preferred, to ensure that an invalid path was not specified.  
 Nonetheless, if you're adamant on the location, you can bypass the checks by running the same command with the `-f|--force` argument, which will force the creation of a manifest, regardless of that validating folder's presence.
 
+### Ignored Files / Folders
 Similarly, there may be cases where you need to output the manifest to a separate folder. In these edge cases, specifying the `-o|--output <output-folder>` argument will allow you to output the manifest in a different folder (all while retaining the conventionally contingent `moltenobsidian.manifest.json` filename).
 
 Finally, if the default list of excluded folders/files is not sufficient, you can overwrite the list using the `--exclude-folder` and `--exclude-file` arguments. These can be invoked multiple times in the same command, like so:
@@ -32,8 +33,8 @@ For reference, these are the default exclusions:
 | **Files**       | `.DS_STORE`                                       |
 
 ### Developer features
-Some features of the manifest command are specifically oriented for development and automation purposes. 
-Here is a detailed account of some of the extra features baked into this command.
+Some features of the manifest command are specifically oriented for development and automation purposes.  
+Here is a detailed account of some of the extra features baked into this command :
 
 | Flag      | Description                                                              | Notes                                  |
 | --------- | ------------------------------------------------------------------------ | -------------------------------------- |
