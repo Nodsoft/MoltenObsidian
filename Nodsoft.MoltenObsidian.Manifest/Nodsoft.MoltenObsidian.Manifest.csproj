@@ -12,17 +12,12 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+
+		<PackageReference Include="System.Text.Json" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 	</ItemGroup>
-
-	<ItemGroup Condition="$(TargetFramework) == 'net8.0'">
-		<PackageReference Include="System.Text.Json" Version="8.0.3" />
-	</ItemGroup>
 	
-	<ItemGroup Condition="$(TargetFramework) == 'net6.0'">
-		<PackageReference Include="System.Text.Json" Version="7.0.4" />
-	</ItemGroup>
 </Project>
