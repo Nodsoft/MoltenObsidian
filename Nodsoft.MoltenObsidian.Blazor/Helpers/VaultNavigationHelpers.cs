@@ -28,8 +28,8 @@ public static class VaultNavigationHelpers
 		}
 		
 		// Does it have a front matter? Does it have the "moltenobsidian:index:enabled" key? Is it set to false?
-		if (await note.ReadDocumentAsync() is { Frontmatter: { } frontMatter } document
-			&& frontMatter.TryGetValue("moltenobsidian:index:enabled", out object? value)
+		if (await note.ReadDocumentAsync() is { Frontmatter: { } frontmatter }
+			&& frontmatter.TryGetValue("moltenobsidian:index:enabled", out object? value)
 			&& value is false)
 		{
 			// The index note file was unmarked at file level.
