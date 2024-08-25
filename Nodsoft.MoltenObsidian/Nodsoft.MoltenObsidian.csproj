@@ -5,10 +5,10 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
-		<PackageReference Include="Markdig" Version="0.36.2" />
+		<PackageReference Include="JetBrains.Annotations" Version="2024.2.0" />
+		<PackageReference Include="Markdig" Version="0.37.0" />
 		<PackageReference Include="Nodsoft.Markdig.SyntaxHighlighting" Version="1.0.12" />
-		<PackageReference Include="YamlDotNet" Version="15.1.2" />
+		<PackageReference Include="YamlDotNet" Version="16.0.0" />
 	</ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -34,11 +34,11 @@
 
 	<ItemGroup>
 		<!-- Nerdbank.GitVersioning -->
-		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" Condition="!Exists('packages.config')" PrivateAssets="all" />
+		<PackageReference Include="Nerdbank.GitVersioning" Version="3.6.141" Condition="!Exists('packages.config')" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(PackAsTool) != 'true'">
-		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
+		<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.4" PrivateAssets="All"/>
 	</ItemGroup>
 	
 	<ItemGroup Label="PackageInfoFiles">
