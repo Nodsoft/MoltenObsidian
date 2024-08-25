@@ -11,7 +11,7 @@ namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;
 ///	Syntax: <c>[[link]] | [[link|display]] | [[link|display|tooltip]]</c>
 /// The link can be a relative path, an absolute path, and/or a section anchor.
 /// </example>
-public sealed class InternalLink : LinkInline
+public sealed partial class InternalLink : LinkInline
 {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="InternalLink"/> class.
@@ -24,7 +24,8 @@ public sealed class InternalLink : LinkInline
 	/// <summary>
 	/// Regex substitution pattern for internal link anchors, to replace spaces with dashes and remove all other invalid characters.
 	/// </summary>
-	private static readonly Regex AnchorRegex = new(@"[^\w.]+", RegexOptions.Compiled);
+	[GeneratedRegex(@"[^\w.]+", RegexOptions.Compiled | RegexOptions.NonBacktracking)]
+	private static partial Regex AnchorRegex();
 
 	
 	/// <summary>
@@ -44,7 +45,7 @@ public sealed class InternalLink : LinkInline
 	/// <summary>
 	/// The fragment of the section anchor, suitable for use in a URL.
 	/// </summary>
-	public string? TargetSectionLinkFragment => TargetSection is null ? null : AnchorRegex.Replace(TargetSection, "-").Trim('-').ToLowerInvariant();
+	public string? TargetSectionLinkFragment => TargetSection is null ? null : AnchorRegex().Replace(TargetSection, "-").Trim('-').ToLowerInvariant();
 	
 	/// <summary>
 	/// The display text of the internal link, if any.

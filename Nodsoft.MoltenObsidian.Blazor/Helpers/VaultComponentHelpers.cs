@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Components;
 
 namespace Nodsoft.MoltenObsidian.Blazor.Helpers;
@@ -7,13 +8,15 @@ namespace Nodsoft.MoltenObsidian.Blazor.Helpers;
 /// <summary>
 /// Provides helper methods for working with Vault implementation components.
 /// </summary>
-public static class VaultComponentHelpers
+[PublicAPI]
+public static partial class VaultComponentHelpers
 {
 	/// <summary>
 	/// Regex for matching a slug segment at the end of a string. (e.g. "/{*slugName}")
 	/// This is the same regex used by the Blazor Router to match slug segments.
 	/// </summary>
-	private static readonly Regex SlugRegex = new(@"\/\{\*[\w\d]+\}$", RegexOptions.Compiled);
+	[GeneratedRegex(@"\/\{\*[\w\d]+\}$", RegexOptions.Compiled)]
+	private static partial Regex SlugRegex();
 	
 	/// <summary>
 	/// A dictionary containing the base vault path for a component type.
@@ -56,8 +59,8 @@ public static class VaultComponentHelpers
 		
 		// Second. Does the RouteAttribute have a slug segment at the end?
 		// If so, remove it.
-		string basePath = SlugRegex.IsMatch(routeAttribute.Template) 
-			? SlugRegex.Replace(routeAttribute.Template, string.Empty) 
+		string basePath = SlugRegex().IsMatch(routeAttribute.Template) 
+			? SlugRegex().Replace(routeAttribute.Template, string.Empty) 
 			: routeAttribute.Template;
 		
 		// Third. Does the base path end with slashes?

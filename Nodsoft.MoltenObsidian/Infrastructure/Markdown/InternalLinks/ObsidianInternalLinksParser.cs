@@ -10,7 +10,7 @@ namespace Nodsoft.MoltenObsidian.Infrastructure.Markdown.InternalLinks;
 /// Provides parsing for Obsidian internal links for Markdig.
 /// </summary>
 /// <seealso cref="InternalLink" />
-public sealed class ObsidianInternalLinksParser : InlineParser
+public sealed partial class ObsidianInternalLinksParser : InlineParser
 {
 	/// <summary>
 	/// Regex pattern with named variables for internal links.
@@ -23,22 +23,20 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	/// [[note_one|not note one]]
 	/// [[note#section|display|tooltip]]
 	/// </example>
-	private static readonly Regex InternalLinkRegex = new(
+	[GeneratedRegex(
 		"""
-			^\[\[(
-				# link, and optional anchor
-				(?<link>[^\|\#\]]+)?(\#(?<anchor>[^\|\]]+))?
-				# display title (optional)
-				(\|(?<title>[^|\]]+))?
-				# tooltip (optional)
-				(\|(?<tooltip>[^|\]]+))?
-			)\]\]
-		""",
-		RegexOptions.Compiled 
-		| RegexOptions.IgnorePatternWhitespace 
-		| RegexOptions.ExplicitCapture 
-		| RegexOptions.Multiline
-	);
+		^\[\[(
+			# link, and optional anchor
+			(?<link>[^\|\#\]]+)?(\#(?<anchor>[^\|\]]+))?
+			
+			# display title (optional)
+			(\|(?<title>[^|\]]+))?
+			
+			# tooltip (optional)
+			(\|(?<tooltip>[^|\]]+))?
+		)\]\]
+		""", RegexOptions.Multiline | RegexOptions.ExplicitCapture | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.NonBacktracking)]
+	private static partial Regex InternalLinkRegex();
 	
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ObsidianInternalLinksParser"/> class.
@@ -49,7 +47,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 	}
 
 	/// <inheritdoc />
-	public override bool Match(InlineProcessor processor, ref StringSlice slice)
+	public override bool Match(InlineProcessor processor, scoped ref StringSlice slice)
 	{
 		// Seek to the first two opening brackets
 		if (slice.CurrentChar is not '[' && slice.PeekChar() is not '[')
@@ -58,7 +56,7 @@ public sealed class ObsidianInternalLinksParser : InlineParser
 		}
 
 		// Grab the remainder of the slice, and check if it matches the internal link pattern.
-		Match match = InternalLinkRegex.Match(slice.Text[slice.Start..slice.End]);
+		Match match = InternalLinkRegex().Match(slice.Text[slice.Start..slice.End]);
 
 		if (match is { Groups: [{ Name: "0" }]})
 		{
