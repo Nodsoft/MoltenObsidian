@@ -9,7 +9,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
 
-        <PackageReference Include="FluentFTP" Version="46.0.2" />
+        <PackageReference Include="FluentFTP" Version="51.0.0" />
     </ItemGroup>
     
 </Project>
