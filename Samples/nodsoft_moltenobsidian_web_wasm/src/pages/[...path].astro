@@ -1,9 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { Blazor } from "../../../../Nodsoft.MoltenObsidian.WasmContainer/bin/Release/net8.0/wwwroot/_framework/blazor.webassembly.js"
+// import { Blazor } from "../../../../Nodsoft.MoltenObsidian.WasmContainer/bin/Release/net8.0/wwwroot/_framework/blazor.webassembly.js";
 import type { VaultManifest } from "moltenobsidian-ssg-client/vault-manifest";
 import { VaultManifestClient } from "moltenobsidian-ssg-client/manifest-client";
-import * as console from "node:console";
 
 export const vaultBaseUri = "https://nodsoft.github.io/MoltenObsidian/vault/";
 export const vaultManifestUri = vaultBaseUri + "moltenobsidian.manifest.json";
@@ -25,22 +24,37 @@ const { path } = Astro.params;
 const { content, cssclasses } = Astro.props;
 ---
 <Layout>    
-    <article style="margin-top: 4rem; margin-bottom: 4rem;" client:load class:list={cssclasses}>
+    <article style="margin-top: 4rem; margin-bottom: 4rem;" class="moltenobsidian-content" class:list={cssclasses}>
         <Fragment set:html={content} />
     </article>
+  
+    <pre class="moltenobsidian-nav"></pre>
 </Layout>
 
-<script client:load autostart="false" src="http://localhost:8088/_framework/blazor.webassembly.js"></script>
-<!--<script client:load autostart="false" src="file://C:/Source/MoltenObsidian/Nodsoft.MoltenObsidian.WasmContainer/bin/Release/net8.0/publish/wwwroot/_framework/blazor.webassembly.js"></script>-->
-<script src="../../public/blazorBootstrapper.js"></script>
+<script autostart="false" src="http://localhost:8088/_framework/blazor.webassembly.js"></script>
 
 <script>
-    // window.initializeComponent = (name, parameters) => {
-    //     console.log({ name: name, parameters: parameters });
-    // }
-    
-    Blazor.start().then(() => {
-        Blazor.rootComponents.add(document.getElementsByTagName('article'), "moltenobsidian-display-remote", { })
-    }).catch((e) => console.error(e))
+  Blazor.start({
+    loadBootResource: function (type, name, defaultUri, integrity) {
+      if (type == 'dotnetjs') {
+        return `http://localhost:8088/_framework/${name}`;
+        } else {
+        return fetch(`http://localhost:8088/_framework/${name}`, {
+          credentials: "omit",
+          integrity: integrity,
+          });
+        }
+      }
+
+    }).then(() => {
+    Blazor.rootComponents.add(document.getElementsByTagName('article'), "moltenobsidian-display-remote", { })
+    }).catch((e) => console.error(e));
 </script>
+
+
+<!--
+<script client:load autostart="false" src="file://C:/Source/MoltenObsidian/Nodsoft.MoltenObsidian.WasmContainer/bin/Release/net8.0/publish/wwwroot/_framework/blazor.webassembly.js"></script>-->
+
+<!--<script src="../../public/blazorBootstrapper.js"></script>-->
+
 
