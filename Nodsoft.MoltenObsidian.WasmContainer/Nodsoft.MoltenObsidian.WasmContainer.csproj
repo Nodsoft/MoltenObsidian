@@ -3,19 +3,25 @@
     <PropertyGroup>
         <!--suppress MsbuildTargetFrameworkTagInspection, CheckTagEmptyBody -->
         <TargetFrameworks></TargetFrameworks>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net8.0-browser</TargetFramework>
         
         <Description>WASM Container for MoltenObsidian, to be integrated into non-ASP.NET apps</Description>
     </PropertyGroup>
-
+    
     <ItemGroup>
         <ProjectReference Include="..\Nodsoft.MoltenObsidian.Blazor\Nodsoft.MoltenObsidian.Blazor.csproj" />
         <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
     </ItemGroup>
     
     <ItemGroup>        
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.13" PrivateAssets="all"/>
     </ItemGroup>
-
+    
+    <ItemGroup>
+      <Content Update="wwwroot\moltenobsidian.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    
 </Project>

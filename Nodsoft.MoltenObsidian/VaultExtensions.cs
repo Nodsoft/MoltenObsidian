@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian;
@@ -276,5 +276,10 @@ public static class VaultExtensions
 	/// <exception cref="InvalidDataException">Thrown if the file is not a valid Markdown file.</exception>
 	/// <exception cref="UnauthorizedAccessException">Thrown if the file cannot be accessed.</exception>
 	[MustUseReturnValue]
-	public static async ValueTask<ObsidianText> ReadDocumentAsync(this IVaultNote note) => new(Encoding.UTF8.GetString(await note.ReadBytesAsync()), note);
+	public static async ValueTask<ObsidianText> ReadDocumentAsync(this IVaultNote note)
+	{
+		await using Stream stream = await note.OpenReadAsync();
+		using StreamReader sr = new(stream, Encoding.UTF8, leaveOpen: true);
+		return new(await sr.ReadToEndAsync(), note);
+	}
 }
