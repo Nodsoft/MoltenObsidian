@@ -24,7 +24,7 @@ export class VaultManifestClient {
     return VaultManifestClient.fromManifest(manifest);
   }
 
-  protected constructor(
+  constructor(
     public readonly Manifest: VaultManifest
   ) { }
   

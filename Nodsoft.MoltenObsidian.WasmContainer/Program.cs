@@ -7,17 +7,15 @@ WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 // builder.RootComponents.Add<RemoteVaultDisplay>(".moltenobsidian-content");
 builder.RootComponents.RegisterForJavaScript<RemoteVaultDisplay>(
-    identifier: "moltenobsidian-display-remote",
-    javaScriptInitializer: "initializeComponent"
+    identifier: "moltenobsidian-display-remote"
 );
 
 // builder.RootComponents.Add<RemoteVaultNavigation>(".moltenobsidian-nav");
-// builder.RootComponents.RegisterForJavaScript<RemoteVaultNavigation>(
-//     identifier: "moltenobsidian-nav-remote",
-//     javaScriptInitializer: "initializeRemoteVaultNavigation"
-// );
+builder.RootComponents.RegisterForJavaScript<RemoteVaultNavigation>(
+    identifier: "moltenobsidian-nav-remote"
+);
 
 builder.Services.AddMoltenObsidianBlazorIntegration();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 await builder.Build().RunAsync();

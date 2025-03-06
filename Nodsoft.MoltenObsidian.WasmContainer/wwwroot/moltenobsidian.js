@@ -1,5 +1,5 @@
 /* jshint esversion: 11 */
-/* globals Blazor */
+/* globals console, Blazor */
 'use strict';
 
 // `document.CurrentScript` cannot be fetched once in an async context, so we need to store it in a variable first.
@@ -10,7 +10,9 @@ const currentBaseUri = currentScript.src.substring(0, currentScript.src.lastInde
 import("./_framework/blazor.webassembly.js").then(_ => {
 	const vaultUri = currentScript.dataset.vaultUri;
 	const baseSlug = currentScript.dataset.baseSlug ?? window.location.pathname + window.location.search + window.location.hash ?? '/';
-	const elementsSelector = document.getElementsByClassName('moltenobsidian-content')[0];
+	
+	const [contentSelector] = document.getElementsByClassName('moltenobsidian-content') ?? [];
+	const [navSelector] = document.getElementsByClassName('moltenobsidian-nav') ?? [];
 	
 	Blazor.start({
 		loadBootResource: function (type, name, defaultUri, integrity) {
@@ -25,10 +27,18 @@ import("./_framework/blazor.webassembly.js").then(_ => {
 		}
 
 	}).then(() => {
-		Blazor.rootComponents.add(elementsSelector, "moltenobsidian-display-remote", {
-			baseSlug,
-			vaultUri,
-		});
+		if (contentSelector) {
+			Blazor.rootComponents.add(contentSelector, "moltenobsidian-display-remote", {
+				baseSlug,
+				vaultUri,
+			});
+		}
+		
+		if (navSelector) {
+			Blazor.rootComponents.add(navSelector, "moltenobsidian-nav-remote", {
+				vaultUri
+			});
+		}
 	}).catch(console.error);
 });
 

@@ -24,8 +24,8 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 		</button>
 	</div>
 	
-	<div role="presentation" class="vault-nav" aria-label="Vault navigation">
-		<VaultNavTree tree={buildVaultTree(manifestClient.routingTable)} />
+	<div role="presentation" class="moltenobsidian-nav" aria-label="Vault navigation">
+		<!--<VaultNavTree tree={buildVaultTree(manifestClient.routingTable)} />-->
 	</div>
 	
 	<footer role="contentinfo" aria-label="footer">
@@ -33,11 +33,11 @@ export const manifestClient = VaultManifestClient.fromManifest(manifest as Vault
 		
 		<div class="lead" style="display: flex; align-items: center; gap: 0.5rem">
 			<b>MoltenObsidian</b>
-			<span class="badge">SSG</span>
+			<span class="badge">WASM</span>
 		</div>
 		
 		<small>
-			That's right. Everything you read here is powered by MoltenObsidian SSG,
+			That's right. Everything you read here is powered by MoltenObsidian on Blazor WASM,
 			using <a rel="external" target="_blank" href="https://astro.build">Astro</a>.
 		</small>
       

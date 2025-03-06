@@ -28,6 +28,13 @@ const baseHeadTitle = title ? `${title} - ${SITE_TITLE}` : SITE_TITLE;
 			<slot />
 		</main>
 	</body>
+
+	<script
+		async
+		src="http://localhost:8088/moltenobsidian.js"
+		crossorigin="anonymous"
+		data-vault-uri="http://localhost:8089/moltenobsidian.manifest.json"
+	/>
 </html>
 
 <style is:global />

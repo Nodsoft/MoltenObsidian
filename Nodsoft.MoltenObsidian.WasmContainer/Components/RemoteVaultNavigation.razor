@@ -1,6 +1,16 @@
 @inject HttpClient HttpClient
 
-<ObsidianVaultNavigation Vault="@_vault"/>
+@if (_vault is not null)
+{
+    <ObsidianVaultNavigation 
+        Vault="@_vault" 
+        FolderAttributes="GetFolderAttributes"
+        FolderIndexAttributes="GetFolderIndexAttributes"
+        NoteAttributes="GetNoteAttributes"
+        LevelAttributes="GetLevelAttributes"
+        NavigationAttributes="GetNavigationAttributes"
+    />
+}
 
 @code {
     /// <summary>
@@ -22,4 +32,35 @@
         
         _vault = HttpRemoteVault.FromManifest(manifest, HttpClient);
     }
+
+    private static Dictionary<string, object> GetFolderAttributes(IVaultFolder folder) => new()
+    {
+        { "class", "vault-folder-title" },
+    };
+
+    private static Dictionary<string, object> GetFolderIndexAttributes(IVaultFolder folder) => new()
+    {
+        { "class", "vault-folder-title" }
+    };
+
+    private static Dictionary<string, object> GetNoteAttributes(IVaultNote note) => new()
+    {
+        { "class", "vault-item-title" }
+    };
+
+    private static Dictionary<string, object> GetLevelAttributes(IVaultEntity entity) => new()
+    {
+        { "id", entity.Name },
+        { "class", "nav-category" },
+        { "role", "group" },
+        { "aria-expanded", true },
+        { "aria-label", entity == entity.Vault.Root ? "root" : entity.Name }
+    };
+
+    private static Dictionary<string, object> GetNavigationAttributes(IVault arg) => new()
+    {
+        { "class", "vault-nav" },
+        { "aria-label", "Vault navigation" }
+    };
+
 }
