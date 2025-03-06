@@ -1,10 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	
 	<PropertyGroup>
+		<!--suppress CheckTagEmptyBody -->
+		<TargetFramework></TargetFramework>
+		<TargetFrameworks>net8.0-browser;net8.0</TargetFrameworks>
 		<Description>Remote HTTP Vault provider for Molten Obsidian</Description>
 		<PackageTags>$(CommonPackageTags), http</PackageTags>
 	</PropertyGroup>
 	
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-browser'">
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
 	</ItemGroup>
