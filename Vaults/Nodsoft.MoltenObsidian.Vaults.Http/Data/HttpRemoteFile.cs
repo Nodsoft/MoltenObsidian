@@ -1,6 +1,10 @@
 ﻿using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 
+#if BROWSER
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
+#endif
+
 namespace Nodsoft.MoltenObsidian.Vaults.Http.Data;
 
 /// <summary>
@@ -43,10 +47,22 @@ public class HttpRemoteFile : IVaultFile
 	public async ValueTask<Stream> OpenReadAsync()
 	{
 		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
+		using HttpRequestMessage request = new(HttpMethod.Get, _manifestFile.Path);
+		
+#if BROWSER
+		request.SetBrowserResponseStreamingEnabled(true); // Enable response streaming
+		using HttpResponseMessage response = await httpClient.GetAsync(_manifestFile.Path, HttpCompletionOption.ResponseHeadersRead);
+#else
 		using HttpResponseMessage response = await httpClient.GetAsync(_manifestFile.Path);
-		return await response.Content.ReadAsStreamAsync();
+#endif
+		
+		// Copy to ms
+		MemoryStream ms = new();
+		await response.Content.CopyToAsync(ms);
+		ms.Seek(0, SeekOrigin.Begin);
+		return ms;
 	}
-
+	
 	/// <inheritdoc />
 	public IVaultFolder Parent { get; }
 
