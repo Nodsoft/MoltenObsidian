@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// Provides extension methods for configuring MoltenObsidian vaults in the dependency injection container.
 /// </summary>
 [PublicAPI]
+[System.Runtime.Versioning.UnsupportedOSPlatform("browser")]
 public static class VaultDependencyInjectionExtensions
 {
 	/// <summary>
@@ -23,14 +24,8 @@ public static class VaultDependencyInjectionExtensions
 	public static IServiceCollection AddMoltenObsidianHttpVault(this IServiceCollection serviceCollection, Func<IServiceProvider, HttpClient> httpClientProvider)
 		=> serviceCollection.AddSingleton<IVault>(services =>
 		{
-			HttpClient httpClient = httpClientProvider(services);
-
-			// Get the vault manifest from the server
-			RemoteVaultManifest manifest = httpClient.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json").GetAwaiter().GetResult()
-				?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
-
-			return HttpRemoteVault.FromManifest(manifest, httpClient);
-		});
+			return services.GetRequiredService<Task<IVault>>().Result;
+		}).AddMoltenObsidianHttpAsyncVault(httpClientProvider);
 
 	/// <summary>
 	/// Adds a HTTP-based MoltenObsidian vault to the service collection.
@@ -44,4 +39,21 @@ public static class VaultDependencyInjectionExtensions
 	/// <returns>The service collection.</returns>
 	public static IServiceCollection AddMoltenObsidianHttpVault(this IServiceCollection serviceCollection, string vaultRootUri)
 		=> serviceCollection.AddMoltenObsidianHttpVault(_ => new() { BaseAddress = new(vaultRootUri) });
+}
+
+public static class AsyncVaultDependencyInjectionExtensions
+{
+	public static IServiceCollection AddMoltenObsidianHttpAsyncVault(this IServiceCollection serviceCollection, Func<IServiceProvider, HttpClient> httpClientProvider)
+		=> serviceCollection.AddSingleton<Task<IVault>>(async services =>
+		{
+			HttpClient httpClient = httpClientProvider(services);
+
+			// Get the vault manifest from the server
+			RemoteVaultManifest manifest = await httpClient.GetFromJsonAsync<RemoteVaultManifest>("moltenobsidian.manifest.json")
+				?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
+
+			return HttpRemoteVault.FromManifest(manifest, httpClient);
+		});
+	public static IServiceCollection AddMoltenObsidianHttpAsyncVault(this IServiceCollection serviceCollection, string vaultRootUri)
+		=> serviceCollection.AddMoltenObsidianHttpAsyncVault(_ => new() { BaseAddress = new(vaultRootUri) });
 }
