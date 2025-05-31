@@ -9,4 +9,9 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
     </ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Blazor\Nodsoft.MoltenObsidian.Blazor.csproj" />
+	  <ProjectReference Include="..\..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
+	</ItemGroup>
+
 </Project>
