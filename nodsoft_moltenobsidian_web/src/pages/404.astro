@@ -2,11 +2,28 @@
 import { Image } from 'astro:assets';
 import logo from '../../public/android-chrome-512x512.png'
 import Layout from "../layouts/Layout.astro";
+import { Seo } from "astro-seo-meta";
 
 const path = Astro.url
 ---
 
 <Layout>
+    <Seo
+      slot="head"
+      title="MoltenObsidian"
+      description=".NET 6+ CLI Tool & Blazor Library for Obsidian-flavoured Markdown parsing with Vault mapping support."
+      keywords={["MoltenObsidian", "Obsidian", "Markdown", "Vault", "Blazor", "CLI", ".NET"]}
+      themeColor="#883AEB"
+      colorScheme="dark"
+      facebook={{
+          image: "/android-chrome-512x512.png",
+          type: "website"
+      }}
+
+      twitter.image="/android-chrome-512x512.png"
+      twitter.card="summary_large_image"
+    />
+    
     <article class="cover-center">
         <div class="title">
             <h1>404</h1>

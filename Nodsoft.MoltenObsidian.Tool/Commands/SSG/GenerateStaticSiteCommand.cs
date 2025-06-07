@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using JetBrains.Annotations;
+using Nodsoft.MoltenObsidian.Manifest;
+using Nodsoft.MoltenObsidian.Tool.Commands.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -12,7 +14,6 @@ namespace Nodsoft.MoltenObsidian.Tool.Commands.SSG;
 /// Specifies the command line arguments for the <see cref="GenerateStaticSite"/>.
 /// </summary>
 [PublicAPI]
-
 public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 {
     [CommandOption("--from-folder <PATH_TO_VAULT>"), Description("Path to the local moltenobsidian vault")]
@@ -34,14 +35,20 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
     public bool DebugMode { get; set; }
 
     [CommandOption("--ignored-files <IGNONRED_FOLDER>"), Description("Ignore these files when creating the static site.")]
-    public string[]? IgnoredFiles { get; private set; } = FileSystemVault.DefaultIgnoredFiles.ToArray();
+    public string[]? IgnoredFiles { get; private set; } = [..FileSystemVault.DefaultIgnoredFiles];
     
-    [CommandOption("--ignored-folders <IGNORED_FILES>"), Description("Ignore an entire directoroy when creating the static site.")]
-    public string[]? IgnoredFolders { get; private set; } = FileSystemVault.DefaultIgnoredFolders.ToArray();
+    [CommandOption("--ignored-folders <IGNORED_FILES>"), Description("Ignore an entire directory when creating the static site.")]
+    public string[]? IgnoredFolders { get; private set; } = [..FileSystemVault.DefaultIgnoredFolders];
 
+    [CommandOption("--generate-manifest"), Description("Generate a manifest file for the local vault if missing")]
+    public bool GenerateManifest { get; private set; }
+    
+    [CommandOption("--watch"), Description("Watch the vault for changes and regenerate the static site")]
+    public bool Watch { get; private set; }
+    
     public override ValidationResult Validate()
     {
-        if (!string.IsNullOrEmpty(LocalVaultPathString) && !string.IsNullOrEmpty(RemoteManifestUrlString))
+        if (LocalVaultPathString is not "" && RemoteManifestUrlString is not "")
         {
             return ValidationResult.Error("--from-url and --from-folder options cannot be used together");
         }
@@ -55,6 +62,16 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
         {
 	        return ValidationResult.Error($"The output path '{OutputPath}' does not exist.");
         }
+        
+        if (GenerateManifest && RemoteManifestUrlString is not (null or ""))
+        {
+	        return ValidationResult.Error("Cannot generate a manifest for a remote vault");
+        }
+
+        if (Watch && LocalVaultPath is null)
+		{
+	        return ValidationResult.Error("You can only use --watch with local vaults.");
+		}
         
         OutputPath ??= new(Environment.CurrentDirectory);
 
@@ -87,43 +104,92 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
     public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings)
 	{
 		IVault vault = await StaticSiteGenerator.CreateReadVaultAsync(settings);
+		
+		if (settings.DebugMode)
+        {
+        	AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? ["*None*"])}");
+        	AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? ["*None*"])}");
 
-		await AnsiConsole.Status().StartAsync("Generating static assets.", async ctx =>
+        	AnsiConsole.Console.MarkupLine(settings.OutputPath is null
+        		? /*lang=md*/$"[grey]Output path defaulted to current directory: [/]{Environment.CurrentDirectory}"
+        		: /*lang=md*/$"[grey]Output path set: [/]{settings.OutputPath}"
+        	);
+        }
+
+		string[] ignoredFiles = settings.IgnoredFiles ?? [..FileSystemVault.DefaultIgnoredFiles];
+		string[] ignoredFolders = settings.IgnoredFolders ?? [..FileSystemVault.DefaultIgnoredFolders];
+
+		RemoteVaultManifest manifest = null!;
+		
+		if (settings.GenerateManifest)
 		{
-			ctx.Status("Generating static assets.");
-			ctx.Spinner(Spinner.Known.Noise);
-			ctx.SpinnerStyle(Style.Parse("purple bold"));
+			await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true);
+		}
+		
+		await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders);
 
-			if (settings.DebugMode)
+		if (settings.Watch)
+		{
+			await AnsiConsole.Console.Status().StartAsync("Watching vault for changes...", async ctx =>
 			{
-				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring folders:[/] {string.Join("[grey], [/]", settings.IgnoredFolders ?? ["*None*"])}");
-				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoredFiles ?? ["*None*"])}");
+				ctx.Spinner(Spinner.Known.Dots);
+				ctx.SpinnerStyle(Style.Parse("purple bold"));
 
-				AnsiConsole.Console.MarkupLine(settings.OutputPath is null
-					? /*lang=md*/$"[grey]Output path defaulted to current directory: [/]{Environment.CurrentDirectory}"
-					: /*lang=md*/$"[grey]Output path set: [/]{settings.OutputPath}"
-				);
-			}
-
-			string[] ignoredFiles = settings.IgnoredFiles ?? [];
-			string[] ignoredFolders = settings.IgnoredFolders ?? [];
-			
-			foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
-			{
-				if (StaticSiteGenerator.IsIgnored(pathFilePair.Key, ignoredFolders, ignoredFiles))
+				// Watch for changes
+				vault.VaultUpdate += async (_, args) =>
 				{
-					continue;
-				}
+					try
+					{
+						if (args.Entity.Path is RemoteVaultManifest.ManifestFileName)
+						{
+							AnsiConsole.MarkupLine(/*lang=md*/"[grey]Manifest update detected. Ignoring...[/]");
+							return;
+						}
+					
+						// Print a status message.
+						AnsiConsole.MarkupLine(/*lang=md*/$"[grey]Vault update detected (Entity name: [/]{args.Entity.Path}[grey], Change type: [/]{args.Type})");
+						AnsiConsole.MarkupLine(/*lang=md*/"[blue]Regenerating SSG assets...[/]");
 
-				List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(settings.OutputPath!.ToString(), pathFilePair);
-                await Task.WhenAll(fileData.Select(WriteDataAsync));
-			}
-        });
-
-		AnsiConsole.Console.MarkupLine(/*lang=md*/$"Wrote static files to [green link]{settings.OutputPath}[/].");
+						if (settings.GenerateManifest)
+						{
+							await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true);
+						}
+						
+						await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders);
+					}
+					catch (Exception e)
+					{
+						// Print an error message.
+						AnsiConsole.MarkupLine(/*lang=md*/"[red]An error occurred while regenerating the manifest:[/]");
+						AnsiConsole.WriteException(e, ExceptionFormats.ShortenEverything);
+					}
+				};
+				
+				await Task.Delay(-1);
+			});
+		}
+		
 		return 0;
 	}
 
+    internal static async Task WriteStaticFilesAsync(IVault vault, DirectoryInfo outputDirectory, string[] ignoredFiles, string[] ignoredFolders)
+	{
+		AnsiConsole.MarkupLine(/*lang=md*/"Generating static assets...");
+		
+		foreach (KeyValuePair<string, IVaultFile> pathFilePair in vault.Files)
+		{
+			if (StaticSiteGenerator.IsIgnored(pathFilePair.Key, ignoredFolders, ignoredFiles))
+			{
+				continue;
+			}
+
+			List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(outputDirectory.ToString(), pathFilePair);
+			await Task.WhenAll(fileData.Select(WriteDataAsync));
+		}
+		
+		AnsiConsole.Console.MarkupLine(/*lang=md*/$"Wrote static files to [green link]{outputDirectory.FullName}[/].");
+	}
+    
     private static async Task WriteDataAsync(InfoDataPair pair)
     {
 	    if (!pair.FileInfo.Directory!.Exists)

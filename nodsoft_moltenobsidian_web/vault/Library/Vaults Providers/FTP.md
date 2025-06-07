@@ -20,7 +20,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 Alternatively you can instantiate your own FTP vault like so:
-```cs
+```csharp
 using Nodsoft.MoltenObsidian.Vaults.Ftp;
 
 // Instantiate the FtpClient.

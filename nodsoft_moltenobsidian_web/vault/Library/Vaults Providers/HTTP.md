@@ -30,7 +30,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 Alternatively you can instantiate your own HTTP/HTTPS vault like so:
-```cs
+```csharp
 using Nodsoft.MoltenObsidian.Vaults.Http;
 
 // Instantiate the HttpClient.

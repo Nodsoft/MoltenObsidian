@@ -43,8 +43,7 @@ public class HttpRemoteFile : IVaultFile
 	public async ValueTask<Stream> OpenReadAsync()
 	{
 		HttpClient httpClient = ((HttpRemoteVault)Vault).HttpClient;
-		using HttpResponseMessage response = await httpClient.GetAsync(_manifestFile.Path);
-		return await response.Content.ReadAsStreamAsync();
+		return await httpClient.GetStreamAsync(_manifestFile.Path);
 	}
 
 	/// <inheritdoc />

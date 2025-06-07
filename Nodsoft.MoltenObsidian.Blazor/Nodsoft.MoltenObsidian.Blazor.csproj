@@ -10,15 +10,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />		
+		<ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.3" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.28" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.12" />
 	</ItemGroup>
 	
 </Project>
