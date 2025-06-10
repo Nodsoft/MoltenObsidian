@@ -71,7 +71,7 @@ public static class AsyncVaultDependencyInjectionExtensions
 	/// </summary>
 	/// <remarks>
 	/// This overload provides its own <see cref="HttpClient"/> instance, which is configured to use the specified base address. <br />
-	/// In most cases, you should use <see cref="AddMoltenObsidianHttpVault(IServiceCollection,Func{IServiceProvider,HttpClient})"/> instead.
+	/// In most cases, you should use <see cref="AddMoltenObsidianHttpAsyncVault(IServiceCollection,Func{IServiceProvider,HttpClient})"/> instead.
 	/// </remarks>
 	/// <param name="serviceCollection">The service collection to add the vault to.</param>
 	/// <param name="vaultRootUri">The root URI of the vault.</param>
