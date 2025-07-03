@@ -1,0 +1,16 @@
+﻿@page "/{*VaultPath}"
+@inject Task<IVault> VaultTask
+
+<PageTitle>@VaultPath</PageTitle>
+
+<h1>@VaultPath</h1>
+
+@if (VaultTask.IsCompletedSuccessfully)
+{
+    <ObsidianVaultDisplay Vault="@VaultTask.Result" BasePath="@this.GetCallingBaseVaultPath()" CurrentPath="@VaultPath" />
+}
+
+@code {
+    [Parameter] public string VaultPath { get; set; }
+    protected override Task OnInitializedAsync() => VaultTask;
+}
