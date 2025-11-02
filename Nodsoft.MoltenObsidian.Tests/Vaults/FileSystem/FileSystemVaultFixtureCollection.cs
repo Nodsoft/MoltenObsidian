@@ -1,6 +1,6 @@
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
-namespace Nodsoft.MoltenObsidian.Tests.Vaults;
+namespace Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 
 /// <summary>
 /// Provides a test fixture for the <see cref="FileSystemVault"/> class.
