@@ -12,7 +12,10 @@ internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile, IDisposa
     {
         ContentType = MimeTypes.GetMimeType(fileName: name);
         ContentLength = content.Length;
-        _file = MemoryMappedFile.CreateNew(name, Math.Max(ContentLength, 1));
+        
+        // Keep this MMF nameless
+        // See : https://stackoverflow.com/questions/66308340/how-to-use-net-memory-mapped-file-in-linux-without-persisted-file
+        _file = MemoryMappedFile.CreateNew(mapName: null, capacity: Math.Max(ContentLength, 1));
 
         if (content.Length > 0)
         {
