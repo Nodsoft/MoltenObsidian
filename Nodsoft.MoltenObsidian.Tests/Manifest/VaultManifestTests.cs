@@ -1,5 +1,6 @@
 using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Tests.Vaults;
+using Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
 

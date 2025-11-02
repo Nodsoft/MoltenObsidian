@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using FluentFTP;
 using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Manifest;
