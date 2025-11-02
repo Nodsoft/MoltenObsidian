@@ -41,7 +41,7 @@ internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile, IDisposa
             : new InMemoryVaultFile(name, parent, vault, content);
     
     /// <summary>
-    /// Creates a new <see cref="InMemoryVaultFile"/> instance, along with the physical file on disk.
+    /// Creates a new <see cref="InMemoryVaultFile"/> instance, representing a file in memory.
     /// </summary>
     /// <param name="path">The path of the file to create.</param>
     /// <param name="content">The content of the file to create.</param>

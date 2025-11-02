@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Caching.Memory;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
@@ -46,7 +45,6 @@ public sealed class InMemoryVault : IWritableVault
     /// </summary>
     /// <param name="name">The name of the vault.</param>
     /// <param name="setup">Indicates whether the vault is in setup mode.</param>
-    /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
     [PublicAPI]
     public InMemoryVault(string name, bool setup = false) 
@@ -98,7 +96,7 @@ public sealed class InMemoryVault : IWritableVault
         // Now we need to create the rest of the folders
         for (int i = furthestDepth; i < segments.Length; i++)
         {
-            string currentPath = string.Join('/', segments[..^i]);
+            string currentPath = string.Join('/', segments[..(i+1)]);
 			
             // Create the folder
             furthestFolder = InMemoryVaultFolder.CreateFolder(currentPath, (InMemoryVaultFolder)furthestFolder, this);

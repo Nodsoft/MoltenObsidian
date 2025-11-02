@@ -56,7 +56,7 @@ public sealed class InMemoryVaultTests
     {
         // Arrange
         InMemoryVault vault = _fixture.Vault;
-        IVaultNote created = await vault.WriteNoteAsync(path, Stream.Null);
+        await vault.WriteNoteAsync(path, Stream.Null);
         
         // Act
         IVaultFile? file = (vault as IVault).GetFile(path);
