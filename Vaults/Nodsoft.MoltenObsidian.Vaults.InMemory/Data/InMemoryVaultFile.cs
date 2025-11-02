@@ -1,31 +1,73 @@
+using System.IO.MemoryMappedFiles;
 using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
-internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile
+internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile, IDisposable
 {
-    protected InMemoryVaultFile(FileInfo file, IVaultFolder parent, IVault vault) : base(file, parent, vault)
+    private readonly MemoryMappedFile _file;
+
+    protected InMemoryVaultFile(string name, InMemoryVaultFolder parent, InMemoryVault vault, Stream content) : base(name, parent, vault)
     {
-        ContentType = MimeTypes.GetMimeType(fileName: file.Name);
+        ContentType = MimeTypes.GetMimeType(fileName: name);
+        ContentLength = content.Length;
+        _file = MemoryMappedFile.CreateNew(name, Math.Max(ContentLength, 1));
+
+        if (content.Length > 0)
+        {
+            // Copy content to file
+            using MemoryMappedViewStream stream = _file.CreateViewStream();
+            content.CopyTo(stream);
+        }
     }
 
     public virtual string ContentType { get; }
 
-    public string FullPath =>
-        System.IO.Path.Join(((InMemoryVaultFolder)Vault.Root).PhysicalDirectoryInfo.FullName, Path);
-
-    public async ValueTask<byte[]> ReadBytesAsync()
+    private long ContentLength { get; }
+    
+    public ValueTask<Stream> OpenReadAsync()
     {
-        string fullPath = FullPath;
-        return await File.ReadAllBytesAsync(fullPath);
+        MemoryMappedViewStream stream = _file.CreateViewStream(0, ContentLength);
+        return new(stream);
+    }
+    
+    public static InMemoryVaultFile Create(string name, Stream content, InMemoryVaultFolder parent, InMemoryVault vault)
+        => name.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
+            ? new InMemoryVaultNote(name, parent, vault, content)
+            : new InMemoryVaultFile(name, parent, vault, content);
+    
+    /// <summary>
+    /// Creates a new <see cref="InMemoryVaultFile"/> instance, along with the physical file on disk.
+    /// </summary>
+    /// <param name="path">The path of the file to create.</param>
+    /// <param name="content">The content of the file to create.</param>
+    /// <param name="parent">The parent folder of the file to create.</param>
+    /// <param name="vault">The vault that the file belongs to.</param>
+    /// <returns>The newly created <see cref="InMemoryVaultFile"/> instance.</returns>
+    public static async ValueTask<InMemoryVaultFile> WriteFileAsync(string path, Stream content, InMemoryVaultFolder parent, InMemoryVault vault)
+    {
+        InMemoryVaultFile file = Create(path, content, parent, vault);
+        
+        // Add the file to the parent folder
+        if (parent.Files.All(f => f.Path != path))
+        {
+            parent.Files.Add(file);
+            parent.AddChildReference(file);
+        }
+        
+        return file;
+    }
+    
+    public void DeleteFile()
+    {
+        _file.Dispose();
+        Parent?.DeleteChildReference(this);
     }
 
-    public ValueTask<Stream> OpenReadAsync()
-        => ValueTask.FromResult<Stream>(File.OpenRead(FullPath));
-    
-    public static InMemoryVaultFile Create(FileInfo file, IVaultFolder parent, IVault vault)
-        => file.Extension is ".md"
-            ? new InMemoryVaultNote(file, parent, vault)
-            : new InMemoryVaultFile(file, parent, vault);
+    public void Dispose()
+    {
+        _file.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

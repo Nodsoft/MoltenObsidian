@@ -4,15 +4,24 @@ namespace Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
 internal abstract class InMemoryVaultEntityBase : IVaultEntity
 {
-    private protected InMemoryVaultEntityBase(FileSystemInfo entity, IVaultFolder? parent, IVault vault)
+    private protected InMemoryVaultEntityBase(string name, InMemoryVaultFolder? parent, InMemoryVault vault)
     {
-        Name = entity.Name;
+        Name = name;
         Parent = parent;
         Path = Parent is null ? "" : System.IO.Path.Combine(Parent.Path, Name).Replace('\\', '/');
         Vault = vault;
     }
+    
     public string Name { get; }
-    public IVaultFolder? Parent { get; }
+    
+    public InMemoryVaultFolder? Parent { get; }
+    
+    // This is the path relative to the vault root.
     public string Path { get; }
-    public IVault Vault { get; }
+    
+    public InMemoryVault Vault { get; }
+    
+    
+    IVault IVaultEntity.Vault => Vault;
+    IVaultFolder? IVaultEntity.Parent => Parent;
 }

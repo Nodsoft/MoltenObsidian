@@ -1,99 +1,264 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Concurrent;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Caching.Memory;
-using Nodsoft.MoltenObsidian.Utilities;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
 namespace Nodsoft.MoltenObsidian.Vaults.InMemory;
 
 /// <summary>
-/// 
+/// Represents an in-memory vault.
 /// </summary>
-public sealed class InMemoryVault: IVault
+public sealed class InMemoryVault : IWritableVault
 {
-
-    private InMemoryVault(){}
-
-    private MemoryCache Cache { get; set; }
-    public string Name { get; private set; } = null!;
-    public IVaultFolder Root { get; private set; }
-    public IReadOnlyDictionary<string, IVaultFile> Files { get; private set; }
-    public IReadOnlyDictionary<string, IVaultFolder> Folders { get; private set; }
+    private readonly ConcurrentDictionary<string, IVaultFolder> _folders = [];
+    private readonly ConcurrentDictionary<string, IVaultFile> _files = [];
+    private readonly ConcurrentDictionary<string, IVaultNote> _notes = [];
     
-    public IReadOnlyDictionary<string, IVaultNote> Notes { get; private set; }
-    public static IEnumerable<string> DefaultIgnoredFolders { get; } = new[] { ".obsidian", ".git", ".vs", ".vscode", "node_modules" };
-    public static IEnumerable<string> DefaultIgnoredFiles { get; } = new[] { ".DS_Store" };
+    /// <summary>
+    /// Indicates whether the vault is currently in setup mode.
+    /// </summary>
+    /// <remarks>
+    /// When in setup mode, no events are raised for changes to the vault.
+    /// </remarks>
+    public bool Setup { get; set; }
+    
+    /// <inheritdoc />
+    public string Name { get; private set; }
+    
+    /// <inheritdoc />
+    public IVaultFolder Root { get; private set; }
+    
+    /// <inheritdoc />
+    public IReadOnlyDictionary<string, IVaultFile> Files => _files;
+    
+    /// <inheritdoc />
+    public IReadOnlyDictionary<string, IVaultFolder> Folders => _folders;
+    
+    /// <inheritdoc />
+    public IReadOnlyDictionary<string, IVaultNote> Notes => _notes;
+    
+    /// <inheritdoc />
+    public event IVault.VaultUpdateEventHandler? VaultUpdate;
 
     /// <summary>
-    /// 
+    /// Initializes a new instance of the <see cref="InMemoryVault"/> class with a specified name and cache.
     /// </summary>
-    /// <param name="cache"></param>
-    /// <param name="directoryInfo"></param>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    [PublicAPI]
-    public static InMemoryVault FromDirectory(MemoryCache cache, DirectoryInfo directoryInfo) =>
-        FromDirectory(directoryInfo, DefaultIgnoredFolders, DefaultIgnoredFiles, cache);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="directory"></param>
-    /// <param name="excludedFolders"></param>
-    /// <param name="excludedFiles"></param>
-    /// <param name="cache"></param>
+    /// <param name="name">The name of the vault.</param>
+    /// <param name="setup">Indicates whether the vault is in setup mode.</param>
     /// <returns></returns>
     /// <exception cref="DirectoryNotFoundException"></exception>
     [PublicAPI]
-    public static InMemoryVault FromDirectory(DirectoryInfo directory,
-        IEnumerable<string> excludedFolders,
-        IEnumerable<string> excludedFiles, 
-        MemoryCache cache)
+    public InMemoryVault(string name, bool setup = false) 
     {
-        if (!directory.Exists)
+        Name = name;
+        Setup = setup;
+        Root = new InMemoryVaultFolder("/", null, this);
+    }
+    
+    /// <inheritdoc />
+    public async ValueTask<IVaultFolder> CreateFolderAsync(string path)
+    {
+        // Small starters : Strip the leading slash if present
+        if (path.StartsWith('/'))
         {
-            throw new DirectoryNotFoundException("The specified directory does not exist.");
+            path = path[1..];
+        }
+		
+        // First checks : Is this a valid path?
+        if (path is null or "" or "/")
+        {
+            throw new ArgumentException("The specified path is invalid.", nameof(path));
         }
 
-        InMemoryVault vault = new()
+        // Second checks : Does the folder already exist?
+        if (Folders.TryGetValue(path, out IVaultFolder? existing))
         {
-            Cache = cache
-        };
+            return existing;
+        }
+        
+        // Find the furthest folder that exists, and create the rest.
+        string[] segments = path.Split('/');
+        int furthestDepth = 0;
+        IVaultFolder furthestFolder = Root;
+		
+        for (int i = 0; i < segments.Length; i++)
+        {
+            string currentPath = string.Join('/', segments[..i]);
+			
+            if (!Folders.TryGetValue(currentPath, out IVaultFolder? folder))
+            {
+                break;
+            }
 
-        vault.Root = new InMemoryVaultFolder(directory, null, vault);
-        vault.Name = directory.Name;
-        vault.Folders = new Dictionary<string, IVaultFolder>(
-            vault.Root.GetFolders(SearchOption.AllDirectories)
-                .Where(folder =>
-                {
-                    string[] segments = folder.Key.Split("/");
-                    return !segments.Any(excludedFiles.Contains);
-                }));
-        vault.Files = new Dictionary<string, IVaultFile>(
-            vault.Folders.Values.Concat(new[] { vault.Root })
-                .SelectMany(f => f.GetFiles(SearchOption.TopDirectoryOnly))
-                .Where(f =>
-                {
-                    string lastSegment = f.Key.Split("/").Last();
-                    return !excludedFiles.Contains(lastSegment);
-                }));
-        vault.Notes = vault.Files.Where(static x => x.Key.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
-            .ToDictionary(static x => x.Key, static x => (IVaultNote)x.Value);
+            furthestDepth = i;
+            furthestFolder = folder;
+        }
+		
+        // Now we need to create the rest of the folders
+        for (int i = furthestDepth; i < segments.Length; i++)
+        {
+            string currentPath = string.Join('/', segments[..^i]);
+			
+            // Create the folder
+            furthestFolder = InMemoryVaultFolder.CreateFolder(currentPath, (InMemoryVaultFolder)furthestFolder, this);
+            _folders.TryAdd(currentPath, furthestFolder);
+        }
 
-        LoadCache(vault);
-        return vault;
+        if (!Setup && VaultUpdate is not null)
+        {
+            // Raise the vault update event
+            await VaultUpdate.Invoke(this, new(UpdateType.Add, furthestFolder));
+        }
+        
+        return furthestFolder;
     }
 
-    private static void LoadCache(InMemoryVault vault)
+    /// <inheritdoc />
+    public async ValueTask DeleteFolderAsync(string path)
     {
-        foreach (var folder in vault.Folders)
+        // Small step: Strip the leading slash if present
+        if (path.StartsWith('/'))
         {
-            vault.Cache.Set(folder.Key, folder.Value);
+            path = path[1..];
         }
 
-        foreach (var file in vault.Files)
+        // First checks : Is this a valid path?
+        if (path is null or "")
         {
-            vault.Cache.Set(file.Key, file.Value);
+            throw new ArgumentException("The specified path is invalid.", nameof(path));
         }
+
+        // Second checks : Does the folder exist?
+        if (!_folders.TryRemove(path, out IVaultFolder? folder))
+        {
+            throw new DirectoryNotFoundException("The specified directory does not exist inside the instantiated vault.");
+        }
+
+        // Cascade delete any downstream files
+        _TraverseRemoveDownstream(folder);
+
+        // Delete the folder
+        ((InMemoryVaultFolder)folder).DeleteFolder();
+
+        if (!Setup && VaultUpdate is not null)
+        {
+            // Raise the vault update event
+            await VaultUpdate.Invoke(this, new(UpdateType.Remove, folder));
+        }
+        
+        return;
+
+        void _TraverseRemoveDownstream(IVaultFolder f)
+        {
+            foreach (IVaultFolder subfolder in f.Subfolders)
+            {
+                _TraverseRemoveDownstream(subfolder);
+            }
+
+            foreach (IVaultFile file in f.Files)
+            {
+                _files.Remove(file.Path, out _);
+            }
+        }
+    }
+
+
+    /// <inheritdoc />
+    public async ValueTask<IVaultFile> WriteFileAsync(string path, Stream content)
+    {
+        // Small step: Strip the leading slash if present
+        if (path.StartsWith('/'))
+        {
+            path = path[1..];
+        }
+		
+        // First checks : Is this a valid path?
+        if (path is null or "")
+        {
+            throw new ArgumentException("The specified path is invalid.", nameof(path));
+        }
+        
+        // Does the parent folder exist? If not, create it.
+        // Luckily, we can use the CreateFolderAsync method for this.
+        IVaultFolder parent = path.Contains('/') ? await CreateFolderAsync(path[..path.LastIndexOf('/')]) : Root;
+		
+        // Write to file
+        InMemoryVaultFile created = await InMemoryVaultFile.WriteFileAsync(path[(path.LastIndexOf('/') + 1)..], content, (InMemoryVaultFolder)parent, this);
+        _files.TryAdd(path, created);
+		
+        if (created is IVaultNote note)
+        {
+            _notes.TryAdd(path, note);
+        }
+		
+        if (!Setup && VaultUpdate is not null)
+        {
+            // Raise the vault update event
+            await VaultUpdate.Invoke(this, new(UpdateType.Add, created));
+        }
+        
+        return created;
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DeleteFileAsync(string path)
+    {
+        // Small step: Strip the leading slash if present
+        if (path.StartsWith('/'))
+        {
+            path = path[1..];
+        }
+		
+        // First checks : Is this a valid path?
+        if (path is null or "")
+        {
+            throw new ArgumentException("The specified path is invalid.", nameof(path));
+        }
+
+        // Second checks : Does the file exist?
+        if (!_files.TryRemove(path, out IVaultFile? file))
+        {
+            throw new FileNotFoundException("The specified file does not exist inside the instantiated vault.");
+        }
+		
+        // Also remove from notes if it's a note
+        if (file is IVaultNote)
+        {
+            _notes.TryRemove(path, out _);
+        }
+		
+        // Delete the file
+        ((InMemoryVaultFile)file).DeleteFile();
+        
+        if (!Setup && VaultUpdate is not null)
+        {
+            // Raise the vault update event
+            await VaultUpdate.Invoke(this, new(UpdateType.Remove, file));
+        }
+    }
+
+    /// <inheritdoc />
+    public async ValueTask<IVaultNote> WriteNoteAsync(string path, Stream content)
+    {
+        // This is just a wrapper around CreateFileAsync with a check for the extension.
+        if (!path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException("The specified path does not point to a Markdown file.", nameof(path));
+        }
+		
+        return (IVaultNote)await WriteFileAsync(path, content);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DeleteNoteAsync(string path)
+    {
+        // This is just a wrapper around DeleteFileAsync with a check for the extension.
+        if (!path.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException("The specified path does not point to a Markdown file.", nameof(path));
+        }
+		
+        await DeleteFileAsync(path);
     }
 }
