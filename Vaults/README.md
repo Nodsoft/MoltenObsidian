@@ -163,7 +163,7 @@ public void ConfigureServices(IServiceCollection services)
 ```
 
 Alternatively you can instantiate your own In-Memory vault like so:
-```cs
+```csharp
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 
 // Create a new in-memory vault
@@ -179,7 +179,7 @@ await vault.WriteFileAsync("Assets/image.png", imageStream);
 ### Setup Mode
 The In-Memory vault supports a "setup mode" which can be enabled to prevent vault update events from being raised during bulk operations:
 
-```cs
+```csharp
 // Create vault in setup mode
 var vault = new InMemoryVault("MyVault", setup: true);
 
