@@ -6,6 +6,7 @@ The library comes with several vault providers out of the box, to cover most mai
 - [[Filesystem]] ([`Nodsoft.MoltenObsidian.Vaults.FileSystem`](https://www.nuget.org/packages/Nodsoft.MoltenObsidian.Vaults.FileSystem))
 - [[HTTP]] ([`Nodsoft.MoltenObsidian.Vaults.Http`](https://www.nuget.org/packages/Nodsoft.MoltenObsidian.Vaults.Http))
 - [[FTP]] ([`Nodsoft.MoltenObsidian.Vaults.Ftp`](https://www.nuget.org/packages/Nodsoft.MoltenObsidian.Vaults.Ftp))
+- [[InMemory]] ([`Nodsoft.MoltenObsidian.Vaults.InMemory`](https://www.nuget.org/packages/Nodsoft.MoltenObsidian.Vaults.InMemory))
 
 ## Implementing your own
 Implementing your own vault provider is easy, provided you're familiar with the basics of file tree resolution. Indeed, depending on your data source, you'll have a different experiences implementing a provider, with the vault tree building aspect being the most daunting to all but seasoned devs.
