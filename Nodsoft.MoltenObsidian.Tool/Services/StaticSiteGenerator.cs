@@ -49,7 +49,7 @@ public static class StaticSiteGenerator
     /// <paramref name="inputFile"/>
     /// <returns>A new <see cref="FileInfo"/> to be written to and a buffer containing the file data.</returns>
     /// </summary>
-    public static async ValueTask<List<InfoDataPair>> CreateOutputFilesAsync(string outputDir, KeyValuePair<string, IVaultFile> inputFile)
+    public static async ValueTask<List<InfoDataPair>> CreateOutputFilesAsync(string outputDir, KeyValuePair<string, IVaultFile> inputFile, CancellationToken ct = default)
     {
         // hack same directory seperator on all OS's
         inputFile = new(inputFile.Key.Replace('/', Path.DirectorySeparatorChar), inputFile.Value);
@@ -77,7 +77,7 @@ public static class StaticSiteGenerator
     /// <summary>
     /// creates a vault from http url <see cref="HttpRemoteVault" />.
     /// </summary>
-    private static async ValueTask<IVault> ConstructHttpVaultAsync(Uri uri)
+    private static async ValueTask<IVault> ConstructHttpVaultAsync(Uri uri, CancellationToken ct = default)
     {
         if (!uri.IsFile)
         {
@@ -86,7 +86,7 @@ public static class StaticSiteGenerator
 
         HttpClient client = new() { BaseAddress = uri };
         
-        RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>(RemoteVaultManifest.ManifestFileName, CancellationToken.None)
+        RemoteVaultManifest manifest = await client.GetFromJsonAsync<RemoteVaultManifest>(RemoteVaultManifest.ManifestFileName, ct)
 			?? throw new InvalidOperationException("Failed to retrieve the vault manifest from the server.");
 
 		return HttpRemoteVault.FromManifest(manifest, client);
@@ -95,7 +95,7 @@ public static class StaticSiteGenerator
     /// <summary>
     /// creates a vault from ftp url <see cref="FtpRemoteVault" />.
     /// </summary>
-    private static async ValueTask<IVault> ConstructFtpVaultAsync(Uri uri)
+    private static async ValueTask<IVault> ConstructFtpVaultAsync(Uri uri, CancellationToken ct = default)
     {
         // extracts user and pass from ftp url
         (string user, string pass) = uri.UserInfo.Split(':') is { } info ? info.Length is 2 ? (info[0], info[1]) : (info[0], "") : ("", "");
@@ -104,7 +104,7 @@ public static class StaticSiteGenerator
         AsyncFtpClient client = new(uri.Host, user, pass, 21);
 
         await client.EnsureConnected();
-        byte[] bytes = await client.DownloadBytes(RemoteVaultManifest.ManifestFileName, CancellationToken.None);
+        byte[] bytes = await client.DownloadBytes(RemoteVaultManifest.ManifestFileName, ct);
         RemoteVaultManifest? manifest = JsonSerializer.Deserialize<RemoteVaultManifest>(bytes);
 
         return FtpRemoteVault.FromManifest(manifest, client);
