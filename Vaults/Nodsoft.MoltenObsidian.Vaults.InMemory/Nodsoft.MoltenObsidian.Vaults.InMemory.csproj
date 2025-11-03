@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Description>In-Memory Vault provider for Molten Obsidian</Description>
+		<PackageTags>$(CommonPackageTags), memory</PackageTags>
+	</PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
