@@ -1,0 +1,34 @@
+﻿<Solution>
+	<Project Path="Nodsoft.MoltenObsidian.Blazor\Nodsoft.MoltenObsidian.Blazor.csproj" />
+	<Project Path="Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
+	<Project Path="Nodsoft.MoltenObsidian.Tests\Nodsoft.MoltenObsidian.Tests.csproj" />
+	<Project Path="Nodsoft.MoltenObsidian.Tool\Nodsoft.MoltenObsidian.Tool.csproj" />
+	<Project Path="Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
+
+	<Folder Name="/Vaults/">
+		<Project Path="Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
+		<Project Path="Vaults\Nodsoft.MoltenObsidian.Vaults.Ftp\Nodsoft.MoltenObsidian.Vaults.Ftp.csproj" />
+		<Project Path="Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
+		<Project Path="Vaults\Nodsoft.MoltenObsidian.Vaults.InMemory\Nodsoft.MoltenObsidian.Vaults.InMemory.csproj" />
+
+		<File Path="Vaults\Directory.Build.props" />
+		<File Path="Vaults\README.md" />
+	</Folder>
+	
+  <Folder Name="/Samples/">
+    <Project Path="Samples\Nodsoft.MoltenObsidian.Samples.FtpServer\Nodsoft.MoltenObsidian.Samples.FtpServer.csproj" />
+    <Project Path="Samples\Nodsoft.MoltenObsidian.Samples.FtpWasm\Nodsoft.MoltenObsidian.Samples.FtpWasm.csproj" />
+    <Project Path="Samples\Nodsoft.MoltenObsidian.Samples.Server\Nodsoft.MoltenObsidian.Samples.Server.csproj" />
+    <Project Path="Samples\Nodsoft.MoltenObsidian.Samples.Wasm\Nodsoft.MoltenObsidian.Samples.Wasm.csproj" />
+		
+    <File Path="Samples\Directory.Build.props" />
+  </Folder>
+
+	<Folder Name="/Solution Items/">
+		<File Path=".gitignore" />
+		<File Path="Directory.Build.props" />
+		<File Path=".config\dotnet-tools.json" />
+		<File Path="README.md" />
+		<File Path="version.json" />
+	</Folder>
+</Solution>
