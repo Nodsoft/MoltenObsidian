@@ -225,4 +225,53 @@ public sealed class InMemoryVaultTests
         await vault.DeleteFileAsync("README.md");
         await vault.DeleteFileAsync("VeryNiceFolder/Hidden Note.md");
     }
+    
+    /// <summary>
+    /// Tests that a file is not added twice to the parent folder's Files collection.
+    /// This test verifies the fix for a potential race condition where line 58 adds the file
+    /// directly to parent.Files, and line 59 calls AddChildReference which also adds to parent.Files.
+    /// </summary>
+    [Fact]
+    public async Task CreateFile_FileNotAddedTwice_Nominal()
+    {
+        // Arrange
+        InMemoryVault vault = _fixture.Vault;
+        const string filePath = "test-duplicate.md";
+        
+        // Act
+        await vault.WriteNoteAsync(filePath, Stream.Null);
+        InMemoryVaultFolder root = (InMemoryVaultFolder)vault.Root;
+        
+        // Assert - count occurrences of the file in the Files collection
+        int fileCount = root.Files.Count(f => f.Path == filePath);
+        Assert.Equal(1, fileCount);
+        
+        // Cleanup
+        await vault.DeleteFileAsync(filePath);
+    }
+    
+    /// <summary>
+    /// Tests that a file in a subfolder is not added twice to the parent folder's Files collection.
+    /// </summary>
+    [Fact]
+    public async Task CreateFile_InSubfolder_FileNotAddedTwice_Nominal()
+    {
+        // Arrange
+        InMemoryVault vault = _fixture.Vault;
+        const string filePath = "SubFolder/test-duplicate.md";
+        
+        // Act
+        await vault.WriteNoteAsync(filePath, Stream.Null);
+        IVaultFolder? folder = (vault as IVault).GetFolder("SubFolder");
+        
+        // Assert
+        Assert.NotNull(folder);
+        InMemoryVaultFolder inMemoryFolder = (InMemoryVaultFolder)folder;
+        int fileCount = inMemoryFolder.Files.Count(f => f.Path == filePath);
+        Assert.Equal(1, fileCount);
+        
+        // Cleanup
+        await vault.DeleteFileAsync(filePath);
+        await vault.DeleteFolderAsync("SubFolder");
+    }
 }

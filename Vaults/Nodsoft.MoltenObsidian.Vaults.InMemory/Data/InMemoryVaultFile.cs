@@ -55,7 +55,6 @@ internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile, IDisposa
         // Add the file to the parent folder
         if (parent.Files.All(f => f.Path != path))
         {
-            parent.Files.Add(file);
             parent.AddChildReference(file);
         }
         
