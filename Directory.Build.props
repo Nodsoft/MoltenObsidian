@@ -9,6 +9,7 @@
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<IncludeSymbols>true</IncludeSymbols>
+		<DebugType>portable</DebugType>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
 		<Company>Nodsoft Systems</Company>
