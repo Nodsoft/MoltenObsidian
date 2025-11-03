@@ -40,23 +40,23 @@ jobs:
         # Use only 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
         # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
 
+    # Actions pinned to commits to prevent supply-chain attacks.
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with: 
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
           fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
-      - name: Setup .NET 8.0
-        uses: actions/setup-dotnet@v4
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5
         with:
           dotnet-version: '8.0.x'
 
-      - uses: dotnet/nbgv@v0.4
+      - uses: dotnet/nbgv@f088059084cb5d872e9d1a994433ca6440c2bf72 # v0.4.2
         id: nbgv
       
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@0499de31b99561a6d14a36a5f662c2a54f91beee # v4
         with:
           languages: ${{ matrix.language }}
           
@@ -89,6 +89,6 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@0499de31b99561a6d14a36a5f662c2a54f91beee # v4
         with:
           category: "/language:${{matrix.language}}"
