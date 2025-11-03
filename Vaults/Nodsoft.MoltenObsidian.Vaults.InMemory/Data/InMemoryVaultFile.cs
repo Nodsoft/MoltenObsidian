@@ -48,7 +48,7 @@ internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile, IDisposa
     /// <param name="parent">The parent folder of the file to create.</param>
     /// <param name="vault">The vault that the file belongs to.</param>
     /// <returns>The newly created <see cref="InMemoryVaultFile"/> instance.</returns>
-    public static async ValueTask<InMemoryVaultFile> WriteFileAsync(string path, Stream content, InMemoryVaultFolder parent, InMemoryVault vault)
+    public static ValueTask<InMemoryVaultFile> WriteFileAsync(string path, Stream content, InMemoryVaultFolder parent, InMemoryVault vault)
     {
         InMemoryVaultFile file = Create(path, content, parent, vault);
         
@@ -59,7 +59,7 @@ internal class InMemoryVaultFile : InMemoryVaultEntityBase, IVaultFile, IDisposa
             parent.AddChildReference(file);
         }
         
-        return file;
+        return new(file);
     }
     
     public void DeleteFile()

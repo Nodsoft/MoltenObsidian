@@ -45,7 +45,6 @@ public sealed class InMemoryVault : IWritableVault
     /// </summary>
     /// <param name="name">The name of the vault.</param>
     /// <param name="setup">Indicates whether the vault is in setup mode.</param>
-    /// <exception cref="DirectoryNotFoundException"></exception>
     [PublicAPI]
     public InMemoryVault(string name, bool setup = false) 
     {
