@@ -40,20 +40,21 @@ jobs:
           { name: "GitHub Packages", source: "https://nuget.pkg.github.com/Nodsoft", keyname: "GITHUB_TOKEN" } 
         ]
         
+    # Actions pinned to commits to prevent supply-chain attacks.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
           fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5
         with:
           dotnet-version: 8.0.x
 
       - name: Setup NuGet CLI
-        uses: NuGet/setup-nuget@v2.0.0
+        uses: NuGet/setup-nuget@323ab0502cd38fdc493335025a96c8fdb0edc71f # v2.0.1
 
-      - uses: dotnet/nbgv@v0.4
+      - uses: dotnet/nbgv@f088059084cb5d872e9d1a994433ca6440c2bf72 # v0.4.2
         id: nbgv
 
       - name: Restore dependencies
@@ -66,12 +67,12 @@ jobs:
         run: dotnet pack -c Release --no-build --include-symbols
 
       - id: is-public-release
-        uses: ASzc/change-string-case-action@v6
+        uses: ASzc/change-string-case-action@d0603cd0a7dd490be678164909f65c7737470a7f # v6
         with:
           string: ${{ steps.nbgv.outputs.PublicRelease }}
 
       - name: Attest build provenance for .(s)nupkgs
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@977bb373ede98d70efdf65b84cb5f73e068dcc2a # v3
         # Only once per package: take nuget provider
         if: matrix.nuget.name == 'NuGet'
         with:

@@ -5,8 +5,8 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
-		<PackageReference Include="Markdig" Version="0.40.0" />
+		<PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
+		<PackageReference Include="Markdig" Version="0.43.0" />
 		<PackageReference Include="Nodsoft.Markdig.SyntaxHighlighting" Version="1.0.12" />
 		<PackageReference Include="YamlDotNet" Version="16.3.0" />
 	</ItemGroup>

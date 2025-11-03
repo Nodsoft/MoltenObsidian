@@ -71,7 +71,7 @@ public sealed class GenerateManifestSettings : CommandSettings
 [UsedImplicitly]
 public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSettings>
 {
-	public override async Task<int> ExecuteAsync(CommandContext context, GenerateManifestSettings settings)
+	public override async Task<int> ExecuteAsync(CommandContext context, GenerateManifestSettings settings, CancellationToken ct)
 	{
 		if (settings.DebugMode)
 		{
@@ -95,8 +95,8 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 				AnsiConsole.Console.MarkupLine(/*lang=md*/$"[grey]Ignoring files:[/] {string.Join("[grey], [/]", settings.IgnoreFiles ?? ["*None*"])}");
 			}
 
-			settings.IgnoredFolders ??= FileSystemVault.DefaultIgnoredFolders.ToArray();
-			settings.IgnoreFiles ??= FileSystemVault.DefaultIgnoredFiles.ToArray();
+			settings.IgnoredFolders ??= [..FileSystemVault.DefaultIgnoredFolders];
+			settings.IgnoreFiles ??= [..FileSystemVault.DefaultIgnoredFiles];
 
 			// Load the vault.
 			vault = FileSystemVault.FromDirectory(settings.VaultPath, settings.IgnoredFolders, settings.IgnoreFiles);
@@ -135,7 +135,7 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			}
 
 			return true;
-		});
+		}, ct);
 		
 		if (settings.Watch)
 		{
@@ -160,7 +160,7 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 						AnsiConsole.MarkupLine(/*lang=md*/"[blue]Regenerating manifest...[/]");
 					
 						// Regenerate the manifest.
-						await GenerateManifestAsync(vault, settings.VaultPath, settings.OutputPath, settings.DebugMode, _ => true);
+						await GenerateManifestAsync(vault, settings.VaultPath, settings.OutputPath, settings.DebugMode, _ => true, ct);
 					}
 					catch (Exception e)
 					{
@@ -171,7 +171,7 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 				};
 				
 				// Watch the vault for changes.
-				await Task.Delay(-1);
+				await Task.Delay(-1, ct);
 			});
 		}
 		
@@ -183,7 +183,8 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		DirectoryInfo vaultPath, 
 		DirectoryInfo? outputPath, 
 		bool debugMode,
-		Func<FileInfo, bool> promptOverwrite
+		Func<FileInfo, bool> promptOverwrite,
+		CancellationToken ct
 	) {
 		// Assert the vault as FileSystem-Based
 		if (vault is not FileSystemVault)
@@ -206,11 +207,11 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 		}
 
 		// Write the manifest to disk.
-		await WriteManifestFileAsync(manifestFile, manifest, debugMode);
+		await WriteManifestFileAsync(manifestFile, manifest, debugMode, ct);
 		return manifest;
 	}
 
-	private static async Task WriteManifestFileAsync(FileInfo file, RemoteVaultManifest manifest, bool debugMode)
+	private static async Task WriteManifestFileAsync(FileInfo file, RemoteVaultManifest manifest, bool debugMode, CancellationToken ct)
 	{
 		AnsiConsole.MarkupLine(/*lang=md*/$"Writing manifest...");
 		
@@ -224,7 +225,7 @@ public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSetti
 			WriteIndented = debugMode, // If debug mode is enabled, write the manifest with indentation.
 			PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Use camelCase for property names.
 			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull // Don't write null values.
-		});
+		}, ct);
 
 		AnsiConsole.MarkupLine(/*lang=md*/$"Wrote manifest to [green link]{file.FullName}[/].");
 	}

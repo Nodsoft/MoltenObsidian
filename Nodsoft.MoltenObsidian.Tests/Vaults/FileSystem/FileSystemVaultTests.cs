@@ -2,7 +2,7 @@ using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
 
-namespace Nodsoft.MoltenObsidian.Tests.Vaults;
+namespace Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 
 /// <summary>
 /// Provides tests for the <see cref="FileSystemVault"/> class.

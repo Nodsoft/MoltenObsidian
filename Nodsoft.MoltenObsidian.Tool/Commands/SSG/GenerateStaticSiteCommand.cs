@@ -101,7 +101,7 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 [UsedImplicitly]
 public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandSettings>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings, CancellationToken ct)
 	{
 		IVault vault = await StaticSiteGenerator.CreateReadVaultAsync(settings);
 		
@@ -123,10 +123,10 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 		
 		if (settings.GenerateManifest)
 		{
-			await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true);
+			await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true, ct);
 		}
 		
-		await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders);
+		await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders, ct);
 
 		if (settings.Watch)
 		{
@@ -152,10 +152,10 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 
 						if (settings.GenerateManifest)
 						{
-							await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true);
+							await GenerateManifestCommand.GenerateManifestAsync(vault, settings.LocalVaultPath!, settings.OutputPath, settings.DebugMode,_ => true, ct);
 						}
 						
-						await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders);
+						await WriteStaticFilesAsync(vault, settings.OutputPath!, ignoredFiles, ignoredFolders, ct);
 					}
 					catch (Exception e)
 					{
@@ -165,14 +165,14 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 					}
 				};
 				
-				await Task.Delay(-1);
+				await Task.Delay(-1, ct);
 			});
 		}
 		
 		return 0;
 	}
 
-    internal static async Task WriteStaticFilesAsync(IVault vault, DirectoryInfo outputDirectory, string[] ignoredFiles, string[] ignoredFolders)
+    internal static async Task WriteStaticFilesAsync(IVault vault, DirectoryInfo outputDirectory, string[] ignoredFiles, string[] ignoredFolders, CancellationToken ct)
 	{
 		AnsiConsole.MarkupLine(/*lang=md*/"Generating static assets...");
 		
@@ -183,14 +183,14 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 				continue;
 			}
 
-			List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(outputDirectory.ToString(), pathFilePair);
-			await Task.WhenAll(fileData.Select(WriteDataAsync));
+			List<InfoDataPair> fileData = await StaticSiteGenerator.CreateOutputFilesAsync(outputDirectory.ToString(), pathFilePair, ct);
+			await Task.WhenAll(fileData.Select(idp => WriteDataAsync(idp, ct)));
 		}
 		
 		AnsiConsole.Console.MarkupLine(/*lang=md*/$"Wrote static files to [green link]{outputDirectory.FullName}[/].");
 	}
     
-    private static async Task WriteDataAsync(InfoDataPair pair)
+    private static async Task WriteDataAsync(InfoDataPair pair, CancellationToken ct)
     {
 	    if (!pair.FileInfo.Directory!.Exists)
 	    {
@@ -198,7 +198,7 @@ public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandS
 	    }
 	    
 	    await using FileStream stream = pair.FileInfo.Open(FileMode.Create, FileAccess.Write);
-	    await stream.WriteAsync(pair.FileData);
-	    await stream.FlushAsync();
+	    await stream.WriteAsync(pair.FileData, ct);
+	    await stream.FlushAsync(ct);
     }
 }

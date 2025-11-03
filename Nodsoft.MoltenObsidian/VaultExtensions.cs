@@ -232,7 +232,7 @@ public static class VaultExtensions
 		await using MemoryStream ms = new(content);
 		return await vault.WriteFileAsync(path, ms);
 	}
-	
+
 	/// <summary>
 	/// Writes content to a specified note, creating the note if it does not exist.
 	/// </summary>
@@ -256,25 +256,30 @@ public static class VaultExtensions
 	/// <summary>
 	/// Reads the contents of the file, as a buffer.
 	/// </summary>
+	/// <param name="file">The file to read.</param>
+	/// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
 	/// <returns>A buffer containing the file contents.</returns>
 	/// <exception cref="IOException">An error occurred while reading the file.</exception>
 	/// <exception cref="UnauthorizedAccessException">The file could not be accessed.</exception>
 	[MustUseReturnValue]
-	public static async ValueTask<byte[]> ReadBytesAsync(this IVaultFile file)
+	public static async ValueTask<byte[]> ReadBytesAsync(this IVaultFile file, CancellationToken ct = default)
 	{
 		await using Stream stream = await file.OpenReadAsync();
 		await using MemoryStream ms = new();
-		await stream.CopyToAsync(ms);
+		await stream.CopyToAsync(ms, ct);
 		return ms.ToArray();
 	}
 	
 	/// <summary>
 	/// Reads the file as an ObsidianText instance.
 	/// </summary>
+	/// <param name="note">The note to read.</param>
+	/// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
 	/// <returns>An ObsidianText instance.</returns>
 	/// <exception cref="IOException">Thrown if the file cannot be read.</exception>
 	/// <exception cref="InvalidDataException">Thrown if the file is not a valid Markdown file.</exception>
 	/// <exception cref="UnauthorizedAccessException">Thrown if the file cannot be accessed.</exception>
 	[MustUseReturnValue]
-	public static async ValueTask<ObsidianText> ReadDocumentAsync(this IVaultNote note) => new(Encoding.UTF8.GetString(await note.ReadBytesAsync()), note);
+	public static async ValueTask<ObsidianText> ReadDocumentAsync(this IVaultNote note, CancellationToken ct = default) 
+		=> new(Encoding.UTF8.GetString(await note.ReadBytesAsync(ct)), note);
 }

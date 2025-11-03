@@ -26,6 +26,7 @@ dotnet package add "Nodsoft.MoltenObsidian.Blazor" # For Blazor Integration
 dotnet package add "Nodsoft.MoltenObsidian.Vaults.FileSystem" # For local vaults, imported from the filesystem
 dotnet package add "Nodsoft.MoltenObsidian.Vaults.Http" # For remote vaults pulled over HTTP
 dotnet package add "Nodsoft.MoltenObsidian.Vaults.Ftp" # For remote vaults located on FTP shares
+dotnet package add "Nodsoft.MoltenObsidian.Vaults.InMemory" # For in-memory vaults, ideal for testing and runtime content
 ```
 Not all packages are necessary depending on your needs.
 

@@ -22,12 +22,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
+    # Actions pinned to commits to prevent supply-chain attacks.
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         
       - name: Setup MoltenObsidian
-        uses: nodsoft/setup-moltenobsidian@main
+        uses: nodsoft/setup-moltenobsidian@275c0a1e4688e1df03c207a70c58ac28f1fef007
         
       - name: Generate Vault manifest
         working-directory: "nodsoft_moltenobsidian_web"
@@ -53,7 +54,7 @@ jobs:
         run: pnpm recursive install --prod
         
       - name: Install, build, and upload
-        uses: withastro/action@v4
+        uses: withastro/action@2226b5671ff302b175d9843add614af27e60bbfc # v5
         with:
           path: './nodsoft_moltenobsidian_web' # The root location of your Astro project inside the repository. (optional)
           # node-version: 18 # The specific version of Node that should be used to build your site. Defaults to 18. (optional)
@@ -70,4 +71,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
