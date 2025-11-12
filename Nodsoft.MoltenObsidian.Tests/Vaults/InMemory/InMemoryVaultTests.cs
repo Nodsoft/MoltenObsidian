@@ -1,8 +1,5 @@
 using System.Text;
-using Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.FileSystem;
-using Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 using Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
@@ -144,7 +141,7 @@ public sealed class InMemoryVaultTests
     // }
     
     /// <summary>
-    /// Tests the correct typing of a markdown file as a note.
+    /// Tests the correct typing of a Markdown file as a note.
     /// </summary>
     [Theory]
     [InlineData("mynote.md")]
@@ -178,7 +175,7 @@ public sealed class InMemoryVaultTests
         
         // Act
         IVaultNote note = vault.Notes["VeryNiceFolder/Hidden Note.md"];
-        string content = await note.ReadDocumentAsync();
+        string content = await note.ReadDocumentAsync(TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(note);
@@ -214,7 +211,7 @@ public sealed class InMemoryVaultTests
         
         // Act
         IVaultNote note = vault.Notes["README.md"];
-        ObsidianText content = await note.ReadDocumentAsync();
+        ObsidianText content = await note.ReadDocumentAsync(TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(note);

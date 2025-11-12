@@ -170,7 +170,7 @@ public sealed class ObsidianTextTests
     }
     
     /// <summary>
-    /// Tests the string representation of an <see cref="ObsidianText"/> with a markdown string.
+    /// Tests the string representation of an <see cref="ObsidianText"/> with a Markdown string.
     /// </summary>
     [Fact]
     public void ToString_Nominal()
@@ -186,7 +186,7 @@ public sealed class ObsidianTextTests
     }
     
     /// <summary>
-    /// Tests the string representation of an <see cref="ObsidianText"/> with a frontmatter markdown string.
+    /// Tests the string representation of an <see cref="ObsidianText"/> with a frontmatter Markdown string.
     /// </summary>
     [Fact]
     public void ToString_Frontmatter_Nominal()

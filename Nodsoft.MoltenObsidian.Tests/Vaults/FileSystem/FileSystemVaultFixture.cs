@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
 namespace Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
@@ -6,6 +7,7 @@ namespace Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 /// Provides a test fixture for the <see cref="FileSystemVault"/> class.
 /// </summary>
 
+[UsedImplicitly]
 public sealed class FileSystemVaultFixture : IDisposable
 {
     /// <summary>

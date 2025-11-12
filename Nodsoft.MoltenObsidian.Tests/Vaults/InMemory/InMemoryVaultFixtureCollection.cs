@@ -1,4 +1,3 @@
-using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 
 namespace Nodsoft.MoltenObsidian.Tests.Vaults.InMemory;

@@ -9,7 +9,7 @@ namespace Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 /// </summary>
 /// <seealso cref="FileSystemVault"/>
 [Collection(nameof(FileSystemVault))]
-public class FileSystemVaultTests
+public sealed class FileSystemVaultTests
 {
     private readonly FileSystemVaultFixture _fixture;
 
@@ -52,6 +52,7 @@ public class FileSystemVaultTests
         DirectoryInfo nonExistentFolder = new("NonExistentFolder");
         
         // Act
+        // ReSharper disable once ConvertToLocalFunction
         Action act = () => FileSystemVault.FromDirectory(nonExistentFolder);
         
         // Assert
@@ -150,7 +151,7 @@ public class FileSystemVaultTests
     }
     
     /// <summary>
-    /// Tests the correct typing of a markdown file as a note.
+    /// Tests the correct typing of a Markdown file as a note.
     /// </summary>
     [Fact]
     public void GetFile_FileIsNote_Nominal()
@@ -179,7 +180,7 @@ public class FileSystemVaultTests
         IVaultNote note = vault.Notes["VeryNiceFolder/Hidden Note.md"];
         
         // Act
-        string content = await note.ReadDocumentAsync();
+        string content = await note.ReadDocumentAsync(ct: TestContext.Current.CancellationToken);
         
         
         
@@ -199,7 +200,7 @@ public class FileSystemVaultTests
         IVaultNote note = vault.Notes["README.md"];
         
         // Act
-        ObsidianText content = await note.ReadDocumentAsync();
+        ObsidianText content = await note.ReadDocumentAsync(ct: TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(note);
