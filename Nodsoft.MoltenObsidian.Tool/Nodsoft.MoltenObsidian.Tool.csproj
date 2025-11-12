@@ -4,8 +4,7 @@
 		<OutputType>Exe</OutputType>
 
 		<!--suppress MsbuildTargetFrameworkTagInspection, CheckTagEmptyBody -->
-		<TargetFrameworks></TargetFrameworks>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFrameworks>net8.0;net10.0</TargetFrameworks>
 
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>moltenobsidian</ToolCommandName>
