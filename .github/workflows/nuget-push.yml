@@ -49,7 +49,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: '10.0'
 
       - name: Setup NuGet CLI
         uses: NuGet/setup-nuget@323ab0502cd38fdc493335025a96c8fdb0edc71f # v2.0.1
