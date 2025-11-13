@@ -71,7 +71,7 @@ public sealed class FileSystemVault : IWritableVault
 	/// <summary>
 	/// Gets the default list of files to ignore when loading a vault.
 	/// </summary>
-	public static IEnumerable<string> DefaultIgnoredFiles { get; } = [".DS_Store"];
+	public static IEnumerable<string> DefaultIgnoredFiles { get; } = [".DS_Store", "moltenobsidian.manifest.json"];
 
 	/// <summary>
 	/// Creates a new <see cref="FileSystemVault"/> instance from the specified path.

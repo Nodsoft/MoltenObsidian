@@ -251,7 +251,7 @@ public sealed class InMemoryVaultTests
     /// Tests that a file in a subfolder is not added twice to the parent folder's Files collection.
     /// </summary>
     [Fact]
-    public async Task CreateFile_InSubfolder_FileNotAddedTwice_Nominal()
+    public async Task CreateFile_InSubfolderFileNotAddedTwice_Nominal()
     {
         // Arrange
         InMemoryVault vault = _fixture.Vault;
@@ -270,5 +270,26 @@ public sealed class InMemoryVaultTests
         // Cleanup
         await vault.DeleteFileAsync(filePath);
         await vault.DeleteFolderAsync("SubFolder");
+    }
+    
+    /// <summary>
+    /// Tests the error handling when creating folders on invalid paths
+    /// </summary>
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("/")]
+    public async Task CreateFolder_InvalidPath_ThrowsArgumentException(string path)
+    {
+        // Arrange
+        InMemoryVault vault = _fixture.Vault;
+        
+        // Act
+        // ReSharper disable once ConvertToLocalFunction
+        Func<Task<IVaultFolder>> action = async () => await vault.CreateFolderAsync(path!);
+        
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(action);
     }
 }
