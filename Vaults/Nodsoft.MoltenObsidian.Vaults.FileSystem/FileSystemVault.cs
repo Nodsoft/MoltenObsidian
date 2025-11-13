@@ -287,18 +287,9 @@ public sealed class FileSystemVault : IWritableVault
 	/// <inheritdoc />
 	public ValueTask<IVaultFolder> CreateFolderAsync(string path)
 	{
-		// Small starters : Strip the leading slash if present
-		if (path.StartsWith('/'))
-		{
-			path = path[1..];
-		}
+		// First checks : Strip leading slashes and make sure the path is valid
+		path = NormalizePath(path);
 		
-		// First checks : Is this a valid path?
-		if (path is null or "" or "/")
-		{
-			throw new ArgumentException("The specified path is invalid.", nameof(path));
-		}
-
 		// Second checks : Does the folder already exist?
 		if (Folders.TryGetValue(path, out IVaultFolder? existing))
 		{
@@ -339,17 +330,8 @@ public sealed class FileSystemVault : IWritableVault
 	/// <inheritdoc />
 	public async ValueTask<IVaultFile> WriteFileAsync(string path, Stream content)
 	{
-		// Small step: Strip the leading slash if present
-		if (path.StartsWith('/'))
-		{
-			path = path[1..];
-		}
-		
-		// First checks : Is this a valid path?
-		if (path is null or "")
-		{
-			throw new ArgumentException("The specified path is invalid.", nameof(path));
-		}
+		// First checks : Strip leading slashes and make sure the path is valid
+		path = NormalizePath(path);
 		
 		// Does the parent folder exist? If not, create it.
 		// Luckily, we can use the CreateFolderAsync method for this.
@@ -382,17 +364,8 @@ public sealed class FileSystemVault : IWritableVault
 	/// <inheritdoc />
 	public async ValueTask DeleteFolderAsync(string path)
 	{
-		// Small step: Strip the leading slash if present
-		if (path.StartsWith('/'))
-		{
-			path = path[1..];
-		}
-		
-		// First checks : Is this a valid path?
-		if (path is null or "")
-		{
-			throw new ArgumentException("The specified path is invalid.", nameof(path));
-		}
+		// First checks : Strip leading slashes and make sure the path is valid
+		path = NormalizePath(path);
 
 		// Second checks : Does the folder exist?
 		if (!_folders.TryRemove(path, out IVaultFolder? folder))
@@ -426,17 +399,8 @@ public sealed class FileSystemVault : IWritableVault
 	/// <inheritdoc />
 	public async ValueTask DeleteFileAsync(string path)
 	{
-		// Small step: Strip the leading slash if present
-		if (path.StartsWith('/'))
-		{
-			path = path[1..];
-		}
-		
-		// First checks : Is this a valid path?
-		if (path is null or "")
-		{
-			throw new ArgumentException("The specified path is invalid.", nameof(path));
-		}
+		// First checks : Strip leading slashes and make sure the path is valid
+		path = NormalizePath(path);
 
 		// Second checks : Does the file exist?
 		if (!_files.TryRemove(path, out IVaultFile? file))
@@ -466,5 +430,31 @@ public sealed class FileSystemVault : IWritableVault
 		}
 		
 		return DeleteFileAsync(path);
+	}
+	
+	/// <summary>
+	/// Strips the leading slash from a path if present, and ensures it is valid.
+	/// </summary>
+	/// <returns>The normalized path.</returns>
+	/// <exception cref="ArgumentException">Thrown if the path is null, empty or invalid.</exception>
+	[Pure]
+	private static string NormalizePath(string? path)
+	{
+		if (path is not null)
+		{
+			// Strip the leading slash if present
+			if (path.StartsWith('/'))
+			{
+				path = path[1..];
+			}
+		}
+
+		// Is this a valid path?
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			throw new ArgumentException("The specified path is invalid.", nameof(path));
+		}
+
+		return path;
 	}
 }
