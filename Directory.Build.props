@@ -54,6 +54,9 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>Nodsoft.MoltenObsidian.Tests</_Parameter1>
 		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>Nodsoft.MoltenObsidian.Blazor.Tests</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 	
 </Project>
