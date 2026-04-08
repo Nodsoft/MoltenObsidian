@@ -1,9 +1,7 @@
 using System.Text;
 using Bunit;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using Nodsoft.MoltenObsidian.Blazor.Services;
-using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 
 namespace Nodsoft.MoltenObsidian.Blazor.Tests.Components;

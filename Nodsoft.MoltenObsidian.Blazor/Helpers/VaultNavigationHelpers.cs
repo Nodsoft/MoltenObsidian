@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Nodsoft.MoltenObsidian.Vault;
+﻿using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Blazor.Helpers;
 

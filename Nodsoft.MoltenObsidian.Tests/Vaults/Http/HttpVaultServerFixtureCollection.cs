@@ -3,7 +3,7 @@ using Nodsoft.MoltenObsidian.Vaults.Http;
 namespace Nodsoft.MoltenObsidian.Tests.Vaults.Http;
 
 /// <summary>
-/// Provides a test fixture for the <see cref="FileSystemVault"/> class.
+/// Provides a test fixture for the <see cref="HttpRemoteVault" /> class.
 /// </summary>
 [CollectionDefinition(nameof(HttpRemoteVault))]
 public abstract class HttpVaultServerFixtureCollection : ICollectionFixture<HttpVaultServerFixture>

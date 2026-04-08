@@ -1,5 +1,4 @@
 using Bunit;
-using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 
 namespace Nodsoft.MoltenObsidian.Blazor.Tests.Components;
