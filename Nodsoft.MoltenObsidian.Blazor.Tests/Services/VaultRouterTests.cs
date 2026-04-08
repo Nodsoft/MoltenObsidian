@@ -153,7 +153,7 @@ public sealed class VaultRouterTests
 	/// Tests that adding multiple notes are all registered in the routing table.
 	/// </summary>
 	[Fact]
-	public async Task RouteTo_MultipleNotes_AllRouteable()
+	public async Task RouteTo_MultipleNotes_AllRoutable()
 	{
 		// Arrange
 		InMemoryVault vault = new("TestVault");
