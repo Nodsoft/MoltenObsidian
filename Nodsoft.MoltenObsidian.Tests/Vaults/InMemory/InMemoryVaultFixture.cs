@@ -1,4 +1,4 @@
-using Nodsoft.MoltenObsidian.Vaults.FileSystem;
+using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 
 namespace Nodsoft.MoltenObsidian.Tests.Vaults.InMemory;
@@ -7,6 +7,7 @@ namespace Nodsoft.MoltenObsidian.Tests.Vaults.InMemory;
 /// Provides a test fixture for the <see cref="InMemoryVault"/> class.
 /// </summary>
 
+[UsedImplicitly]
 public sealed class InMemoryVaultFixture : IDisposable
 {
     /// <summary>

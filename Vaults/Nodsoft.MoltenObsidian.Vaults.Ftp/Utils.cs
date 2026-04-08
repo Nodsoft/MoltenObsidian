@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using FluentFTP;
+﻿using FluentFTP;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Ftp;
 

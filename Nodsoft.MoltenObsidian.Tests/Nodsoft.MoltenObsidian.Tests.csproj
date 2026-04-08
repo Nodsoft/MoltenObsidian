@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -11,13 +11,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
+        <PackageReference Include="coverlet.collector" Version="8.0.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-        <PackageReference Include="xunit.v3" Version="3.2.0" />
-        <PackageReference Include="xunit.v3.runner.msbuild" Version="3.2.0">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+        <PackageReference Include="xunit.v3" Version="3.2.2" />
+        <PackageReference Include="xunit.v3.runner.msbuild" Version="3.2.2">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -31,6 +31,7 @@
       <ProjectReference Include="..\Nodsoft.MoltenObsidian.Manifest\Nodsoft.MoltenObsidian.Manifest.csproj" />
       <ProjectReference Include="..\Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
       <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.FileSystem\Nodsoft.MoltenObsidian.Vaults.FileSystem.csproj" />
+      <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.Http\Nodsoft.MoltenObsidian.Vaults.Http.csproj" />
       <ProjectReference Include="..\Vaults\Nodsoft.MoltenObsidian.Vaults.InMemory\Nodsoft.MoltenObsidian.Vaults.InMemory.csproj" />
     </ItemGroup>
 

@@ -1,5 +1,4 @@
 using Nodsoft.MoltenObsidian.Manifest;
-using Nodsoft.MoltenObsidian.Tests.Vaults;
 using Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 
@@ -11,7 +10,7 @@ namespace Nodsoft.MoltenObsidian.Tests.Manifest;
 /// Provides tests for the vault manifest system
 /// </summary>
 [Collection("VaultManifest")]
-public class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
+public sealed class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
 {
     private readonly FileSystemVaultFixture _fixture;
 
@@ -34,7 +33,7 @@ public class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
         FileSystemVault vault = _fixture.Vault;
         
         // Act
-        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
+        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault, TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(manifest);
@@ -51,7 +50,7 @@ public class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
         FileSystemVault vault = _fixture.Vault;
         
         // Act
-        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
+        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault, TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(manifest);
@@ -73,7 +72,7 @@ public class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
         FileSystemVault vault = _fixture.Vault;
         
         // Act
-        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
+        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault, TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(manifest);
@@ -97,7 +96,7 @@ public class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
         FileSystemVault vault = _fixture.Vault;
         
         // Act
-        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault);
+        RemoteVaultManifest manifest = await VaultManifestGenerator.GenerateManifestAsync(vault, TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(manifest);
@@ -106,7 +105,7 @@ public class VaultManifestTests : IClassFixture<FileSystemVaultFixture>
         {
             ManifestFile manifestFile = manifest.Files.FirstOrDefault(mf => mf.Path == f.Key);
             await using Stream stream = await f.Value.OpenReadAsync();
-            string hash = await VaultManifestGenerator.HashDataAsync(stream);
+            string hash = await VaultManifestGenerator.HashDataAsync(stream, TestContext.Current.CancellationToken);
 
             Assert.Equal(hash, manifestFile.Hash);
         });

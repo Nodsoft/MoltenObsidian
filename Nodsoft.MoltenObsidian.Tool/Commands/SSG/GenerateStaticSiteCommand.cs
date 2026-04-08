@@ -101,7 +101,7 @@ public sealed class GenerateStaticSiteCommandSettings : CommandSettings
 [UsedImplicitly]
 public sealed class GenerateStaticSite : AsyncCommand<GenerateStaticSiteCommandSettings>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings, CancellationToken ct)
+    protected override async Task<int> ExecuteAsync(CommandContext context, GenerateStaticSiteCommandSettings settings, CancellationToken ct)
 	{
 		IVault vault = await StaticSiteGenerator.CreateReadVaultAsync(settings);
 		

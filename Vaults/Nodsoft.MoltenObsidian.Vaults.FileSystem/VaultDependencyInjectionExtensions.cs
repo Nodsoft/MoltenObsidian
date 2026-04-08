@@ -1,5 +1,4 @@
-﻿using System.Runtime.Versioning;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Nodsoft.MoltenObsidian.Vault;
 using Nodsoft.MoltenObsidian.Vaults.FileSystem;
 

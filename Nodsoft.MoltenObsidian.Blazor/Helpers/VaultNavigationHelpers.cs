@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Nodsoft.MoltenObsidian.Vault;
+﻿using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Blazor.Helpers;
 
@@ -19,8 +18,8 @@ public static class VaultNavigationHelpers
 		// Find an index note file in the folder.
 		if (folder.GetNotes(SearchOption.TopDirectoryOnly)
 			.FirstOrDefault(static n
-				=> n.Key.Equals("README.md", StringComparison.OrdinalIgnoreCase)
-				|| n.Key.Equals("index.md", StringComparison.OrdinalIgnoreCase)) 
+				=> n.Value.Name.Equals("README.md", StringComparison.OrdinalIgnoreCase)
+				|| n.Value.Name.Equals("index.md", StringComparison.OrdinalIgnoreCase)) 
 			is not { Value: { } note })
 		{
 			// No index note file found.
@@ -30,7 +29,8 @@ public static class VaultNavigationHelpers
 		// Does it have a front matter? Does it have the "moltenobsidian:index:enabled" key? Is it set to false?
 		if (await note.ReadDocumentAsync() is { Frontmatter: { } frontmatter }
 			&& frontmatter.TryGetValue("moltenobsidian:index:enabled", out object? value)
-			&& value is false)
+			&& (value is false
+				|| value is string stringValue && stringValue.Equals("false", StringComparison.OrdinalIgnoreCase)))
 		{
 			// The index note file was unmarked at file level.
 			return null;

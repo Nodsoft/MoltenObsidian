@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Nodsoft.MoltenObsidian.Manifest;
+﻿using Nodsoft.MoltenObsidian.Manifest;
 using Nodsoft.MoltenObsidian.Vault;
 
 namespace Nodsoft.MoltenObsidian.Vaults.Ftp.Data;

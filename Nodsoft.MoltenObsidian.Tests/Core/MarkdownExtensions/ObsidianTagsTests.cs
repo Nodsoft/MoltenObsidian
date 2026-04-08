@@ -12,7 +12,7 @@ namespace Nodsoft.MoltenObsidian.Tests.Core.MarkdownExtensions;
 /// Provides tests for the Obsidian Tags parser and renderer.
 /// </summary>
 [Collection("ObsidianTags")]
-public class ObsidianTagsTests
+public sealed class ObsidianTagsTests
 {
     private readonly MarkdownPipeline _pipeline;
     
@@ -48,7 +48,7 @@ public class ObsidianTagsTests
     /// <summary>
     /// Tests that a valid tag is correctly parsed and rendered.
     /// </summary>
-    /// <param name="markdown">The markdown to parse.</param>
+    /// <param name="markdown">The Markdown to parse.</param>
     /// <param name="expectedHtml">The expected HTML output.</param>
     [Theory, MemberData(nameof(ValidTags))]
     public void ParseAndRender_Standalone_Nominal(string markdown, string expectedHtml)
@@ -69,7 +69,7 @@ public class ObsidianTagsTests
     /// <summary>
     /// Tests that an invalid tag is correctly parsed and rendered.
     /// </summary>
-    /// <param name="markdown">The markdown to parse.</param>
+    /// <param name="markdown">The Markdown to parse.</param>
     /// <param name="expectedHtml">The expected HTML output.</param>
     [Theory, MemberData(nameof(InvalidTags))]
     public void ParseAndRender_Standalone_Ignored(string markdown, string expectedHtml)
@@ -81,7 +81,7 @@ public class ObsidianTagsTests
     /// <summary>
     /// Tests that a tag is correctly parsed and rendered when it is part of a larger text block.
     /// </summary>
-    /// <param name="markdown">The markdown to parse.</param>
+    /// <param name="markdown">The Markdown to parse.</param>
     /// <param name="expectedHtml">The expected HTML output.</param>
     [Theory, MemberData(nameof(ValidTags))]
     public void ParseAndRender_InTextBlock_Nominal(string markdown, string expectedHtml)
@@ -93,7 +93,7 @@ public class ObsidianTagsTests
     /// <summary>
     /// Tests that an invalid tag is correctly parsed and rendered when it is part of a larger text block.
     /// </summary>
-    /// <param name="markdown">The markdown to parse.</param>
+    /// <param name="markdown">The Markdown to parse.</param>
     /// <param name="expectedHtml">The expected HTML output.</param>
     [Theory, MemberData(nameof(InvalidTags))]
     public void ParseAndRender_InTextBlock_Ignored(string markdown, string expectedHtml)

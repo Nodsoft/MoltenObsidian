@@ -1,8 +1,5 @@
 using System.Text;
-using Nodsoft.MoltenObsidian.Tests.Vaults.FileSystem;
 using Nodsoft.MoltenObsidian.Vault;
-using Nodsoft.MoltenObsidian.Vaults.FileSystem;
-using Nodsoft.MoltenObsidian.Vaults.FileSystem.Data;
 using Nodsoft.MoltenObsidian.Vaults.InMemory;
 using Nodsoft.MoltenObsidian.Vaults.InMemory.Data;
 
@@ -144,7 +141,7 @@ public sealed class InMemoryVaultTests
     // }
     
     /// <summary>
-    /// Tests the correct typing of a markdown file as a note.
+    /// Tests the correct typing of a Markdown file as a note.
     /// </summary>
     [Theory]
     [InlineData("mynote.md")]
@@ -178,7 +175,7 @@ public sealed class InMemoryVaultTests
         
         // Act
         IVaultNote note = vault.Notes["VeryNiceFolder/Hidden Note.md"];
-        string content = await note.ReadDocumentAsync();
+        string content = await note.ReadDocumentAsync(TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(note);
@@ -214,7 +211,7 @@ public sealed class InMemoryVaultTests
         
         // Act
         IVaultNote note = vault.Notes["README.md"];
-        ObsidianText content = await note.ReadDocumentAsync();
+        ObsidianText content = await note.ReadDocumentAsync(TestContext.Current.CancellationToken);
         
         // Assert
         Assert.NotNull(note);
@@ -254,7 +251,7 @@ public sealed class InMemoryVaultTests
     /// Tests that a file in a subfolder is not added twice to the parent folder's Files collection.
     /// </summary>
     [Fact]
-    public async Task CreateFile_InSubfolder_FileNotAddedTwice_Nominal()
+    public async Task CreateFile_InSubfolderFileNotAddedTwice_Nominal()
     {
         // Arrange
         InMemoryVault vault = _fixture.Vault;
@@ -273,5 +270,26 @@ public sealed class InMemoryVaultTests
         // Cleanup
         await vault.DeleteFileAsync(filePath);
         await vault.DeleteFolderAsync("SubFolder");
+    }
+    
+    /// <summary>
+    /// Tests the error handling when creating folders on invalid paths
+    /// </summary>
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("/")]
+    public async Task CreateFolder_InvalidPath_ThrowsArgumentException(string path)
+    {
+        // Arrange
+        InMemoryVault vault = _fixture.Vault;
+        
+        // Act
+        // ReSharper disable once ConvertToLocalFunction
+        Func<Task<IVaultFolder>> action = async () => await vault.CreateFolderAsync(path!);
+        
+        // Assert
+        await Assert.ThrowsAsync<ArgumentException>(action);
     }
 }

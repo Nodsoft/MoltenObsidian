@@ -71,7 +71,7 @@ public sealed class GenerateManifestSettings : CommandSettings
 [UsedImplicitly]
 public sealed class GenerateManifestCommand : AsyncCommand<GenerateManifestSettings>
 {
-	public override async Task<int> ExecuteAsync(CommandContext context, GenerateManifestSettings settings, CancellationToken ct)
+	protected override async Task<int> ExecuteAsync(CommandContext context, GenerateManifestSettings settings, CancellationToken ct)
 	{
 		if (settings.DebugMode)
 		{
