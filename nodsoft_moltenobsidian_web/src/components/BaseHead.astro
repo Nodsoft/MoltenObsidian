@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 const base = import.meta.env.BASE_URL ?? "/";
 ---
 
@@ -19,7 +19,7 @@ const base = import.meta.env.BASE_URL ?? "/";
 <meta name="msapplication-TileColor" content="#da532c" />
 <meta name="generator" content={Astro.generator} />
 
-<ViewTransitions />
+<ClientRouter />
 
 <!-- Preconnects -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous" />

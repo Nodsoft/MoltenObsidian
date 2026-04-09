@@ -53,8 +53,7 @@ const { content, cssclasses } = Astro.props;
           type: "website"
       }}
       
-      twitter.image="/android-chrome-512x512.png"
-      twitter.card="summary_large_image"
+      twitter={{ image: "/android-chrome-512x512.png", card: "summary_large_image" }}
     />
     
     <article style="margin-top: 4rem; margin-bottom: 4rem;" class:list={cssclasses}>

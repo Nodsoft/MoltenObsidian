@@ -11,12 +11,16 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.1.6",
-    "astro": "^4.11.0",
-    "astro-seo-meta": "^4.1.1",
-    "bootstrap-icons": "^1.11.3",
-    "moltenobsidian-ssg-client": "link:..\\nodsoft_moltenobsidian_ssg_client",
-    "sass": "^1.77.6",
-    "sharp": "^0.33.4"
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.0.0",
+    "astro-seo-meta": "^6.0.0",
+    "bootstrap-icons": "^1.13.1",
+    "moltenobsidian-ssg-client": "link:../nodsoft_moltenobsidian_ssg_client",
+    "sass": "^1.99.0",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "typescript": "^6.0.2"
   }
 }
