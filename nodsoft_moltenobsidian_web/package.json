@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
-    "astro": "^6.0.0",
+    "astro": "^6.1.5",
     "astro-seo-meta": "^6.0.0",
     "bootstrap-icons": "^1.13.1",
-    "moltenobsidian-ssg-client": "link:../nodsoft_moltenobsidian_ssg_client",
+    "moltenobsidian-ssg-client": "link:..\\nodsoft_moltenobsidian_ssg_client",
     "sass": "^1.99.0",
     "sharp": "^0.34.5"
   },
