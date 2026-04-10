@@ -1,14 +1,15 @@
 @use "mixins" as *;
 @use "variables" as *;
+@use "sass:map";
 
 
 &.landing {
-  @media (min-device-width: map-get($breakpoints, "xl")) {
+  @media (min-device-width: map.get($breakpoints, "xl")) {
     font-size: 20px;
     line-height: 1.6;
   }
   
-  @media (max-device-width: map-get($breakpoints, "xxl")) {
+  @media (max-device-width: map.get($breakpoints, "xxl")) {
     .flex-row-xxl {
       text-align: center;
     }
