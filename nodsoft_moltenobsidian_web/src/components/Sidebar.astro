@@ -8,7 +8,7 @@ import VaultNavTree from "./vault/VaultNavTree.astro";
 import { buildVaultTree } from "../vault-utils";
 import manifest from '../../public/vault/moltenobsidian.manifest.json';
 import { VaultManifestClient } from "moltenobsidian-ssg-client/manifest-client";
-import { VaultManifest } from "moltenobsidian-ssg-client/vault-manifest";
+import type { VaultManifest } from "moltenobsidian-ssg-client/vault-manifest";
 
 export const manifestClient = VaultManifestClient.fromManifest(manifest as VaultManifest);
 

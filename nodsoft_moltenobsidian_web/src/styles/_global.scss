@@ -1,5 +1,6 @@
 @use "variables" as *;
 @use "mixins" as *;
+@use "sass:map";
 
 @import "./responsive";
 
@@ -14,7 +15,7 @@
 html, .html {
   font-size: 16px;
   
-  @media (max-device-width: map-get($breakpoints, "md")) {
+  @media (max-device-width: map.get($breakpoints, "md")) {
     font-size: 14px
   }
   
@@ -113,7 +114,7 @@ h6 {
   @include font-styles(1.25em);
 }
 
-@media (max-device-width: map-get($breakpoints, "md")) {
+@media (max-device-width: map.get($breakpoints, "md")) {
   h1 {
     @include font-styles(3em);
   }

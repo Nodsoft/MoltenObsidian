@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Reflection;
 using Nodsoft.MoltenObsidian.Tool.Commands.Manifest;
 using Nodsoft.MoltenObsidian.Tool.Commands.SSG;
 using Spectre.Console.Cli;
@@ -9,6 +10,10 @@ CommandApp app = new();
 app.Configure(static config =>
 {
 	config.SetApplicationName("moltenobsidian");
+	config.SetApplicationVersion(
+		typeof(Program).Assembly
+			.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+			?.InformationalVersion ?? "unknown");
 
 #if DEBUG
 	config.PropagateExceptions();

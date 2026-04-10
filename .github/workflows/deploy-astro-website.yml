@@ -54,10 +54,10 @@ jobs:
         run: pnpm recursive install --prod
         
       - name: Install, build, and upload
-        uses: withastro/action@2226b5671ff302b175d9843add614af27e60bbfc # v5
+        uses: withastro/action@44706356b4eb735f8b9035699eb4796241a040c4 # v6
         with:
           path: './nodsoft_moltenobsidian_web' # The root location of your Astro project inside the repository. (optional)
-          # node-version: 18 # The specific version of Node that should be used to build your site. Defaults to 18. (optional)
+          node-version: 22 # Astro 6 requires Node 22+
           package-manager: pnpm@latest # The Node package manager that should be used to install dependencies and build your site. Automatically detected based on your lockfile. (optional)
 
   deploy:

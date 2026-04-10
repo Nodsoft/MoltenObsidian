@@ -1,5 +1,6 @@
 @use "../styles/variables" as *;
 @use "../styles/mixins" as *;
+@use "sass:map";
 
 header {
   margin: 0;
@@ -14,12 +15,12 @@ nav {
   padding: 1rem;
   overflow: auto;
   
-  @media (min-width: map-get($breakpoints, 'lg')) {
+  @media (min-width: map.get($breakpoints, 'lg')) {
     position: sticky;
     width: 20rem;
   }
 
-  @media (max-width: map-get($breakpoints, 'lg')) {
+  @media (max-width: map.get($breakpoints, 'lg')) {
     position: fixed;
     height: calc(100vh - 2rem);
     width: calc(100vw - 2rem);
@@ -135,7 +136,7 @@ footer {
 }
 
 .sidebar-toggler {
-  @media (min-width: map-get($breakpoints, 'lg')) {
+  @media (min-width: map.get($breakpoints, 'lg')) {
     display: none;
   }
   
