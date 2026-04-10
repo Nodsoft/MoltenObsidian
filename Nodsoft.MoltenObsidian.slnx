@@ -4,6 +4,7 @@
 	<Project Path="Nodsoft.MoltenObsidian.Blazor.Tests\Nodsoft.MoltenObsidian.Blazor.Tests.csproj" />
 	<Project Path="Nodsoft.MoltenObsidian.Tests\Nodsoft.MoltenObsidian.Tests.csproj" />
 	<Project Path="Nodsoft.MoltenObsidian.Tool\Nodsoft.MoltenObsidian.Tool.csproj" />
+	<Project Path="Nodsoft.MoltenObsidian.Tool.Tests\Nodsoft.MoltenObsidian.Tool.Tests.csproj" />
 	<Project Path="Nodsoft.MoltenObsidian\Nodsoft.MoltenObsidian.csproj" />
 
 	<Folder Name="/Vaults/">
