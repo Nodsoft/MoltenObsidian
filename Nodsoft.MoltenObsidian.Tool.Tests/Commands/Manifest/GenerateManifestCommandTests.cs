@@ -112,7 +112,8 @@ public sealed class GenerateManifestCommandTests : IDisposable
 
 		string newContent = await File.ReadAllTextAsync(manifestPath, TestContext.Current.CancellationToken);
 		Assert.NotEqual(originalContent, newContent);
-		Assert.Contains(RemoteVaultManifest.ManifestFileName, manifestPath);
+		// The overwritten file should contain valid JSON (starts with '{')
+		Assert.StartsWith("{", newContent.TrimStart());
 	}
 
 	/// <summary>
