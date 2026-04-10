@@ -7,10 +7,10 @@
 		"build": "tsc"
 	},
 	"devDependencies": {
-		"typescript": "^5.1.6"
+		"typescript": "^5.9.3"
 	},
 	"dependencies": {
-		"@types/mime-types": "^2.1.1",
-		"yaml": "^2.3.1"
+		"@types/mime-types": "^3.0.1",
+		"yaml": "^2.8.3"
 	}
 }

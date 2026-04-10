@@ -9,20 +9,20 @@ importers:
   .:
     dependencies:
       '@types/mime-types':
-        specifier: ^2.1.1
-        version: 2.1.4
+        specifier: ^3.0.1
+        version: 3.0.1
       yaml:
-        specifier: ^2.3.1
+        specifier: ^2.8.3
         version: 2.8.3
     devDependencies:
       typescript:
-        specifier: ^5.1.6
+        specifier: ^5.9.3
         version: 5.9.3
 
 packages:
 
-  '@types/mime-types@2.1.4':
-    resolution: {integrity: sha512-lfU4b34HOri+kAY5UheuFMWPDOI+OPceBSHZKp69gEyTL/mmJ4cnU6Y/rlme3UL3GyOn6Y42hyIEw0/q8sWx5w==}
+  '@types/mime-types@3.0.1':
+    resolution: {integrity: sha512-xRMsfuQbnRq1Ef+C+RKaENOxXX87Ygl38W1vDfPHRku02TgQr+Qd8iivLtAMcR0KF5/29xlnFihkTlbqFrGOVQ==}
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -36,7 +36,7 @@ packages:
 
 snapshots:
 
-  '@types/mime-types@2.1.4': {}
+  '@types/mime-types@3.0.1': {}
 
   typescript@5.9.3: {}
 
